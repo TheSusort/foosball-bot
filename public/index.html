@@ -17,6 +17,7 @@
     <script defer src="/__/firebase/9.1.1/firebase-analytics-compat.js"></script>
     <script defer src="/__/firebase/9.1.1/firebase-remote-config-compat.js"></script>
     <script defer src="/__/firebase/9.1.1/firebase-performance-compat.js"></script>
+    <script defer src="app.js"></script>
     <!-- 
       initialize the SDK after all desired features are loaded, set useEmulator to false
       to avoid connecting the SDK to running emulators.
@@ -48,6 +49,9 @@
     <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
+
+
+
       document.addEventListener('DOMContentLoaded', function() {
         const loadEl = document.querySelector('#load');
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
@@ -84,6 +88,8 @@
           loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
         }
       });
+
+
     </script>
   </body>
 </html>
