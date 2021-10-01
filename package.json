@@ -1,0 +1,29 @@
+{
+  "name": "foosball-bot",
+  "version": "0.0.1",
+  "description": "Foosballbot for slack",
+  "main": "public/app.js",
+  "scripts": {
+    "start": "nodemon public/app.js --exec babel-node"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thesusort/foosball-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thesusort/foosball-bot/issues"
+  },
+  "homepage": "https://github.com/thesusort/foosball-bot#readme"
+}
