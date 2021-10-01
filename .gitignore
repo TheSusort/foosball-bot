@@ -8,6 +8,18 @@ lerna-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Firebase cache
+.firebase/
+
+# Firebase config
+
+# Uncomment this if you'd like others to create their own Firebase project.
+# For a team working on the same Firebase project(s), it is recommended to leave
+# it commented so all members can deploy to the same project(s) in .firebaserc.
+# .firebaserc
 
 # Runtime data
 pids
@@ -26,6 +38,8 @@ coverage
 .nyc_output
 
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+=======
+# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
 # Bower dependency directory (https://bower.io/)
@@ -35,6 +49,7 @@ bower_components
 .lock-wscript
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
+# Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
 # Dependency directories
