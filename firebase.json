@@ -1,0 +1,6 @@
+{
+  "hosting": {
+
+    "public": "client/build"  // "public" is the only required attribute for Hosting
+  }
+}
