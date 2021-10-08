@@ -9,7 +9,7 @@ function App() {
     const [games, setGames] = useState([])
     const [finishLoadingUsers, setFinishLoadingUsers] = useState(false)
     const [finishLoadingGames, setFinishLoadingGames] = useState(false)
-    const serverUrl = '/';
+    const serverUrl = 'https://us-central1-foosball-bot-1b613.cloudfunctions.net/app';
 
 
     useEffect(() => {
