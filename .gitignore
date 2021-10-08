@@ -25,3 +25,5 @@ yarn-error.log*
 .idea
 client/build
 client/node_modules
+
+functions/ui-debug.log
