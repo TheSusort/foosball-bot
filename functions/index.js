@@ -13,7 +13,7 @@ const installer = new InstallProvider({
   clientId: "2546793580229.2549842880403",
   clientSecret: "01cb4dd7cff0c0044346ee3570efc046",
   stateSecret: "fussballbot",
-  stateVerification: false
+  stateVerification: false,
 });
 
 const app = express();
