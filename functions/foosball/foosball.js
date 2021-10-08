@@ -36,13 +36,13 @@ const handleCommands = (text, user) => {
     case "join":
       console.log(user + " trying to join");
       // @TODO add check for exisiting user in joined
-      if (started && joined.length < maxJoined) {
+      if (started && joined.length < maxJoined && !joined.includes(user)) {
         addPlayerToGame(user);
       }
       break;
     case "join single":
       // @TODO add check for exisiting user in joined
-      if (started && joined.length < maxJoined) {
+      if (started && joined.length < maxJoined && !joined.includes(user)) {
         maxJoined -= 1;
         addPlayerToGame(user);
       }

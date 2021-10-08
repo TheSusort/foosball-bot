@@ -1,5 +1,5 @@
 const request = require("request");
-const webhookUrl = "https://hooks.slack.com/services/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";
+const webhookUrl = "https://hooks.slack.com/services/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";
 /**
  * Shuffles an array
  * @param {array} array
