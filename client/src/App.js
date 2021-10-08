@@ -30,7 +30,6 @@ function App() {
         const result = await axios(
             serverUrl + "getusers"
         )
-        console.log(result.data)
         setUsers(result.data)
         setFinishLoadingUsers(true)
     }
@@ -38,16 +37,15 @@ function App() {
         const result = await axios(
             serverUrl + "getgames"
         )
-        console.log(result.data)
         setGames(Object.values(result.data))
         setFinishLoadingGames(true)
     }
 
     return (
         <React.Fragment>
-            <div className="container mx-auto p-4">
-                <div className="text-center">
-                    <h1 className="text-2xl">Slæckball</h1>
+            <div className="container mx-auto p-4 ">
+                <div className="text-center my-5">
+                    <h1 className="text-4xl">Slæckball</h1>
                 </div>
 
                 <UserList users={Object.values(users)} isLoaded={finishLoadingUsers}/>
