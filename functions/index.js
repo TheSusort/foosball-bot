@@ -6,15 +6,6 @@ const bodyParser = require("body-parser");
 const {db} = require("./firebase");
 const cors = require("cors");
 const foosball = require("./foosball/foosball");
-const {InstallProvider} = require("@slack/oauth");
-
-// initialize the installProvider
-const installer = new InstallProvider({
-  clientId: "2546793580229.2549842880403",
-  clientSecret: "01cb4dd7cff0c0044346ee3570efc046",
-  stateSecret: "fussballbot",
-  stateVerification: false,
-});
 
 const app = express();
 
@@ -89,10 +80,6 @@ app.get("/getgames", (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
-});
-
-app.get("/slack/oauth_redirect", (req, res) => {
-  installer.handleCallback(req, res);
 });
 
 exports.app = functions.https.onRequest(app);
