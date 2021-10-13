@@ -1,5 +1,5 @@
 const request = require("request");
-const webhookUrl = "https://hooks.slack.com/services/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";
+const webhookUrl = "https://hooks.slack.com/services/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";
 /**
  * Shuffles an array
  * @param {array} array
@@ -35,21 +35,25 @@ const prepareUserIdForMessage = (userId) => {
  * @param {string} message
  */
 const sendSlackMessage = (message) => {
-  request.post({
-    headers: {"content-type": "application/json"},
-    url: webhookUrl,
-    json: {
-      "blocks": [
-        {
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": message,
+  console.log("should display message: " + message);
+  let shouldPostToSlack = true;
+  if (shouldPostToSlack) {
+    request.post({
+      headers: {"content-type": "application/json"},
+      url: webhookUrl,
+      json: {
+        "blocks": [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": message,
+            },
           },
-        },
-      ],
-    },
-  });
+        ],
+      },
+    });
+  }
 };
 
 /**
@@ -80,7 +84,7 @@ function Timer(callback, delay) {
       this.start();
     }
     const date = new Date(remaining);
-    return date.getMinutes() + ":" + date.getSeconds();
+    return (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ":" + (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
   };
 
   this.getStateRunning = function() {

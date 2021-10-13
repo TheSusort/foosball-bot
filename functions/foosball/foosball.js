@@ -1,7 +1,7 @@
 const {
-  shuffle,
-  prepareUserIdForMessage,
-  sendSlackMessage,
+    shuffle,
+    prepareUserIdForMessage,
+    sendSlackMessage,
 } = require("./helpers");
 
 const {db} = require("../firebase");
@@ -11,7 +11,9 @@ let started = false;
 let joined = [];
 let maxJoined = 4;
 let timeLeft;
+let keepAlive;
 let users = {};
+let single = [];
 
 const documentation = "Fussball bot commands \n" +
     "   *start*                        start game \n" +
@@ -22,289 +24,442 @@ const documentation = "Fussball bot commands \n" +
     "   */help*                       show commands \n";
 
 
-const handleCommands = (text, user) => {
-  switch (text) {
-    case "start":
-      if (!started) {
-        startGame(user);
+const handleCommands = async (text, user) => {
+    switch (text) {
+        case "start":
+            if (!started) {
+                console.log("Starting game.");
+                await startGame(user);
+                await addPlayerToGame(user);
 
-        break;
-      } else {
-        sendSlackMessage("Already another game.");
-        break;
-      }
-    case "join":
-      console.log(user + " trying to join");
-      // @TODO add check for exisiting user in joined
-      if (started && joined.length < maxJoined && !joined.includes(user)) {
-        addPlayerToGame(user);
-      }
-      break;
-    case "join single":
-      // @TODO add check for exisiting user in joined
-      if (started && joined.length < maxJoined && !joined.includes(user)) {
-        maxJoined -= 1;
-        addPlayerToGame(user);
-      }
-      break;
-    case "help":
-      sendSlackMessage(
-          "<@" + user + "> requested help :smirk: \n" + documentation
-      );
-      break;
-    case "user":
-      getUser(user);
-  }
+                break;
+            } else {
+                console.log(user + " is trying to start another game.");
+                sendSlackMessage("Already another game.");
+                break;
+            }
+        case "start single":
+            if (!started) {
+                console.log("Starting game.");
+                single.push(user)
+                await startGame(user);
+                await addPlayerToGame(user, true);
+
+                break;
+            } else {
+                console.log(user + " is trying to start another game.");
+                sendSlackMessage("Already another game.");
+                break;
+            }
+
+        case "force start":
+            if (joined.length >= 2) {
+                maxJoined = joined.length;
+                shuffleTeams().then((teams) => {
+                    lockInGame(teams)
+                })
+            }
+            break;
+        case "join":
+            console.log(user + " trying to join");
+            console.log(started, joined.length, !joined.includes(user))
+            if (started && joined.length < maxJoined /*&& !joined.includes(user)*/) {
+                await addPlayerToGame(user);
+            } else {
+                sendSlackMessage(prepareUserIdForMessage(user) + ", you've already joined ")
+            }
+            break;
+        case "join single":
+            // @TODO add check for exisiting user in joined
+            if (started && joined.length < maxJoined /*&& !joined.includes(user)*/) {
+                single.push(user)
+                await addPlayerToGame(user, true);
+            }
+            break;
+        case "help":
+            sendSlackMessage(
+                "<@" + user + "> requested help :smirk: \n" + documentation
+            );
+            break;
+        case "user":
+            getUser(user).then((currentUser) => {
+                sendSlackMessage(prepareUserIdForMessage(user) + " is going by the username " + currentUser.name)
+            });
+
+            break;
+
+        case "timeleft":
+            sendSlackMessage(getTimeLeft());
+            break;
+
+        case "leave":
+            sendSlackMessage("No one leaves");
+            break;
+
+        case "stop":
+            sendSlackMessage("You can't stop this");
+            break;
+    }
 };
 
-const addPlayerToGame = (playerName) => {
-  joined.push(playerName);
+/**
+ * Adds player to game
+ * @param playerName
+ * @param isSingle
+ * @returns {Promise<void>}
+ */
+const addPlayerToGame = async (playerName, isSingle) => {
+    // add to joined
+    joined.push(await getUser(playerName));
+    if(isSingle) {
+        maxJoined--;
+    }
+    // if has enough players
+    if (joined.length === maxJoined) {
 
-  getUser(playerName);
-  if (joined.length === maxJoined) {
-    joined = shuffle(joined);
-    const joinedForMessage = joined.map((player) => {
-      return prepareUserIdForMessage(player);
+        shuffleTeams().then((teams) => {
+            lockInGame(teams)
+        })
+
+    } else {
+        sendSlackMessage(
+            "<@" + playerName + ">" +
+            " joined, " + (maxJoined - joined.length) +
+            " space(s) left" +
+            ", time left: " + getTimeLeft()
+        );
+    }
+
+};
+
+const shuffleTeams = async () => {
+    let teams;
+    //split into teams and shuffle, save as current game
+    console.log(single.length, joined.length)
+    if (single.length === 1 && joined.length === 3) {
+        // if single, then loop through single, find index in joined, and set these to own team
+        let singleIndex = joined.findIndex(x => x.userId === single[0]);
+        let withoutSingle = [...joined];
+        withoutSingle.splice(singleIndex, 1);
+        teams = [
+            [joined[singleIndex]],
+            shuffle(withoutSingle)
+        ]
+    } else {
+        joined = shuffle(joined);
+        let half = Math.ceil(joined.length / 2)
+
+        teams = [
+            joined.slice(0, half),
+            joined.slice(half)
+        ]
+    }
+    joined = shuffle(teams);
+
+    await db.ref("current_game").set(joined)
+    return joined
+
+}
+
+/**
+ * Starts game
+ * @param user
+ * @returns {Promise<void>}
+ */
+const startGame = async (user) => {
+    timeLeft = new Timer(() => stopGame(), 120000);
+    started = true;
+
+    sendSlackMessage(
+        "Game started by " +
+        "<@" + user + ">" +
+        " time left: " + getTimeLeft() +
+        ", HURRY @here"
+    );
+};
+
+const forceStart = () => {
+    shuffleTeams().then((teams) => {
+            lockInGame(teams)
+        }
+    )
+}
+
+const lockInGame = (teams) => {
+    let joinedForMessage = [].concat.apply([], teams)
+
+    joinedForMessage = joinedForMessage.map((player) => {
+        return prepareUserIdForMessage(player.userId)
     });
+
+    console.log(joinedForMessage)
     sendSlackMessage(
         "GAME FILLED by " +
-            joinedForMessage.join(", ") +
-            ". Post result to start new game."
+        joinedForMessage.join(", ") +
+        ". Post result to start new game."
     );
     timeLeft = null;
-  } else {
-    sendSlackMessage(
-        "<@" + playerName + ">" +
-            " joined, " + (4 - joined.length) +
-            " space(s) left" +
-            ", time left: " + timeLeft.getTimeLeft()
-    );
-  }
-};
+    console.log(getTimeLeft())
+}
 
-const startGame = (user) => {
-  timeLeft = new Timer(() => stopGame(), 300000);
-  getUser(user);
-  started = true;
-  joined.push(user);
-  sendSlackMessage(
-      "Game started by " +
-        "<@" + user + ">" +
-        " time left: " + timeLeft.getTimeLeft()
-  );
-};
-
+/**
+ * Stops game
+ */
 const stopGame = () => {
-  started = false;
-  joined = [];
-  timeLeft = null;
-  sendSlackMessage("Timed out.");
-};
-
-const handleResult = (text) => {
-  if (!joined.length) {
-    joined = shuffle([
-      "test",
-      "test2",
-      "test3",
-      "test4",
-    ]);
-
-    getUser("test");
-    getUser("test2");
-    getUser("test3");
-    getUser("test4");
-    started = true;
-  }
-
-  const scores = text.split(" ");
-
-  for (const score in scores) {
-    if (!Number.isInteger(Number(score))) {
-      return "Enter result of match '/result [int] [int]'";
-    }
-  }
-
-  if (scores.length === 2 && started) {
-    submitGame(
-        scores,
-        joined
-    );
-
-    let scoreText = scores[0] + " - " + scores[1] + " :ez::clap_gif:";
-    if (Number(scores[0]) > Number(scores[1])) {
-      scoreText += prepareUserIdForMessage(joined[0]) +
-          " and " + prepareUserIdForMessage(joined[1]);
-    } else {
-      scoreText += prepareUserIdForMessage(joined[2]) +
-          " and " + prepareUserIdForMessage(joined[3]);
-    }
-
-    sendSlackMessage(scoreText);
-    timeLeft = null;
-    joined = [];
     started = false;
-  } else {
-    return "Enter result of match '/result [int] [int]'";
-  }
+    joined = [];
+    timeLeft = null;
+    keepAlive = null;
+    sendSlackMessage("Timed out.");
 };
 
-const submitGame = (result, players) => {
-  const winningScore = 10;
+
+/**
+ * Handle result
+ * @param text
+ * @returns {Promise<void>}
+ */
+const handleResult = async (text) => {
+    try {
+        if (joined.length) {
+            await handleScore(text, joined);
+        } else {
+            let ref = db.ref("current_game")
+            ref.once("value")
+                .then((snapshot) => {
+                    if (snapshot.val()) {
+                        console.log(snapshot.val())
+                        joined = snapshot.val();
+                        handleScore(text, joined);
+                    }
+                });
+        }
+
+    } catch (error) {
+        console.error(error)
+    }
+};
+
+/**
+ * Handle result post and update db
+ * @param text
+ * @param teams
+ * @returns {Promise<string>}
+ */
+const handleScore = async (text, teams) => {
+    const scores = text.split(" ");
+    console.log("scores: ", scores)
+
+    for (const score in scores) {
+        if (!Number.isInteger(Number(score))) {
+            return "Enter result of match '/result [int] [int]'";
+        }
+    }
+
+    if (scores.length === 2) {
+        await submitGame(
+            scores,
+            teams
+        );
+
+        let scoreText = scores[0] + " - " + scores[1] + " :ez::clap_gif:";
+        if (Number(scores[0]) > Number(scores[1])) {
+            scoreText += buildResultMessage(teams[0])
+
+        } else {
+            scoreText += buildResultMessage(teams[1])
+        }
+
+        sendSlackMessage(scoreText);
+        timeLeft = null;
+        joined = [];
+        started = false;
+    } else {
+        return "Enter result of match '/result [int] [int]'";
+    }
+}
+
+const buildResultMessage = (team) => {
+    let text = '';
+    console.log("team for building message: ",team)
+    team.map((player, index) => {
+        text += prepareUserIdForMessage(player.userId);
+        if (index !== team.length - 1) {
+            text += " and "
+        }
+    })
+    return text;
+}
+
+const buildTeams = async (players, result) => {
+
+    return players.map((teams, index) => {
+        return {
+            players: players[index],
+            resultValue: Number(result[index])
+        }
+    })
+}
+
+const submitGame = async (result, teams) => {
+    const winningScore = 10;
 
 
-  // update users
-  const teams = [
-    {
-      players: [
-        getUser(players[0]),
-        getUser(players[1]),
-      ],
-      resultValue: Number(result[0]),
-    },
+    // update users
+    buildTeams(teams, result).then(teams => {
 
-    {
-      players: [
-        getUser(players[2]),
-        getUser(players[3]),
-      ],
-      resultValue: Number(result[1]),
-    },
-  ];
+        // calculate combined ratings
 
+        teams.map((team) => {
+            team.combinedRating = 0;
+            team.players.map((player) => {
+                team.combinedRating += player.rating;
+                return player;
+            });
 
-  // calculate combined ratings
+            team.combinedRating = team.combinedRating / team.players.length;
+            return team;
+        });
 
-  teams.map((team) => {
-    team.combinedRating = 0;
-    team.players.map((player) => {
-      team.combinedRating += player.rating;
-      return player;
-    });
+        /**
+         * new ratings
+         * 1. get new combined rating
+         * 2. delta of combined rating is delta for each players new rating
+         */
 
-    team.combinedRating = team.combinedRating / team.players.length;
-    return team;
-  });
+        teams.map((team, index) => {
+            team.didWin = team.resultValue >= winningScore ? 1 : 0;
+            const newCombinedRating = calculateNewRating(
+                team.combinedRating,
+                teams[Number(!index)].combinedRating,
+                team.didWin
+            );
+            team.newDeltaRating = newCombinedRating - team.combinedRating;
+            return team;
+        });
 
-  /**
-     * new ratings
-     * 1. get new combined rating
-     * 2. delta of combined rating is delta for each players new rating
-     */
+        teams.map((team) => {
+            team.players.map((player) => {
+                updateUser(
+                    player.userId,
+                    team.didWin,
+                    player.rating + team.newDeltaRating
+                );
+                return player;
+            });
+            return team;
+        });
 
-  teams.map((team, index) => {
-    team.didWin = team.resultValue >= winningScore ? 1 : 0;
-    const newCombinedRating = calculateNewRating(
-        team.combinedRating,
-        teams[Number(!index)].combinedRating,
-        team.didWin
-    );
-    team.newDeltaRating = newCombinedRating - team.combinedRating;
-    return team;
-  });
+        // create game in games
 
-  teams.map((team) => {
-    team.players.map((player) => {
-      updateUser(
-          player.userId,
-          team.didWin,
-          player.rating + team.newDeltaRating
-      );
-      return player;
-    });
-    return team;
-  });
+        const uid = new Date().getTime().toString();
+        const game = {
+            uid,
+            teams: [
+                teams[0].players.map((player) => player.userId),
+                teams[1].players.map((player) => player.userId),
+            ],
+            result: result[0] + "-" + result[1],
+            delta: teams[0].newDeltaRating,
+        };
 
-  // create game in games
+        db.ref("users").set(users).then(() => console.log("users saved"));
 
-  const uid = new Date().getTime().toString();
-  const game = {
-    uid,
-    teams: [
-      [players[0], players[1]],
-      [players[2], players[3]],
-    ],
-    result: result[0] + "-" + result[1],
-    delta: teams[0].newDeltaRating,
-  };
-
-  console.log(users);
-
-  db.ref("users").set(users).then(() => console.log("users saved"));
-
-  db.ref("games").push(game).then(() => console.log("game saved"));
+        db.ref("games").push(game).then(() => console.log("game saved"));
+        db.ref("current_game").set([]).then(() => console.log("current game cleared"));
+    })
 };
 
 const calculateNewRating = (rating, oppRating, result) => {
-  const ratio = (oppRating - rating) / 400;
-  const expectedScore = 1 / (1 + (Math.pow(10, ratio)));
-  return Math.round(rating + (40 * (result - expectedScore)));
+    const ratio = (oppRating - rating) / 400;
+    const expectedScore = 1 / (1 + (Math.pow(10, ratio)));
+    return Math.round(rating + (40 * (result - expectedScore)));
 };
 
-const getUser = (userId) => {
-  if (users && users[userId]) {
+const getUser = async (userId) => {
+    console.log(userId + ": " + users[userId])
+    if (users && users[userId]) {
+        return users[userId];
+    } else {
+        try {
+            let userFromDb = await db.ref("users/" + userId).once("value")
+                .then((snapshot) => {
+                    console.log(userId + " from DB: " + snapshot.val())
+                    return snapshot.val()
+                })
+
+            if (userFromDb) {
+                return userFromDb
+            } else {
+                return await createUser(userId)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+};
+
+const getAllUsers = async () => {
+    console.log("getting users");
+    console.log(getTimeLeft())
+
+    if (!started) {
+        const ref = db.ref("users");
+        await ref.once("value")
+            .then((snapshot) => {
+                if (snapshot.val()) {
+                    users = snapshot.val();
+                    console.log(users)
+                }
+                return users;
+            });
+    }
+};
+
+const syncHandler = async () => {
+    await getAllUsers();
+
+    db.ref("current_game").on("child_added", (r) => {
+        console.log(r.val())
+    })
+};
+
+const createUser = async (userId) => {
+    if (!users[userId]) {
+        const newPlayer = {
+            userId: userId,
+            name: "player" + userId,
+            wins: 0,
+            totalGames: 0,
+            rating: 1000,
+        };
+        users[userId] = newPlayer;
+        db.ref("users")
+            .update({[userId]: newPlayer})
+            .then(() => console.log(userId + " saved"));
+    }
     return users[userId];
-  } else {
-    return createUser(userId);
-  }
-};
-
-const getAllUsers = () => {
-  console.log("getting users");
-  if (!started) {
-    const ref = db.ref("users");
-    ref.once("value")
-        .then((snapshot) => {
-          if (snapshot.val()) {
-            users = snapshot.val();
-          }
-          return users;
-        });
-  }
-  console.log(users);
-};
-
-const syncHandler = () => {
-  getAllUsers();
-  setInterval(getAllUsers, 60000);
-};
-
-const createUser = (userId) => {
-  if (!users[userId]) {
-    const newPlayer = {
-      userId: userId,
-      name: "player" + userId,
-      wins: 0,
-      totalGames: 0,
-      rating: 1000,
-    };
-    users[userId] = newPlayer;
-    db.ref("users")
-        .set({[userId]: newPlayer})
-        .then(() => console.log(userId + " saved"));
-  }
-  return users[userId];
 };
 
 const updateUser = (userId, win, newRating) => {
-  if (!users[userId]) {
-    userId = createUser(userId);
-  }
-  users[userId].wins += win;
-  users[userId].rating = newRating;
-  users[userId].totalGames++;
+    if (!users[userId]) {
+        userId = createUser(userId);
+    }
+    users[userId].wins += win;
+    users[userId].rating = newRating;
+    users[userId].totalGames++;
 };
 
 const updateUserName = (userId, newUserName) => {
-  if (users[userId]) {
-    db.ref("users").child(userId).update({"name": String(newUserName)});
-  }
+    if (users[userId]) {
+        db.ref("users").child(userId).update({"name": String(newUserName)});
+    }
 };
 const getTimeLeft = () => {
-  if (timeLeft) {
-    return "Time left: " + timeLeft.getTimeLeft();
-  }
-  return "No timers running";
+    if (timeLeft) {
+        return "Time left: " + timeLeft.getTimeLeft();
+    }
+    return "No timers running";
 };
 
 
@@ -317,6 +472,7 @@ exports.submitGame = submitGame;
 exports.calculateNewRating = calculateNewRating;
 exports.getTimeLeft = getTimeLeft;
 exports.syncHandler = syncHandler;
+exports.forceStart = forceStart;
 
 exports.getUser = getUser;
 exports.getAllUsers = getAllUsers;

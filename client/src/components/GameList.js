@@ -33,7 +33,7 @@ const GameList = ({games, users, isLoaded}) => {
     }
     return (
         <>
-            <div className="loader">loading games</div>
+            <div className="loader text-center mt-5">loading games</div>
         </>
     )
 }

@@ -1,12 +1,13 @@
 import React from "react";
 
 const Game = ({game, users}) => {
+    const date = new Date(Number(game.uid))
     return (
         <>
-            <p className={"px-4 py-3 hidden md:inline col-span-2"}>{game.uid}</p>
+            <p className={"px-4 py-3 hidden md:inline col-span-2"}>{date.toLocaleString('nb-NO')}</p>
             {game.teams.map((team,index) =>
                 <p className={"px-4 py-3 overflow-ellipsis overflow-hidden col-span-3"} key={index}>
-                    {team.map((player, index) =>
+                    { team.map((player, index) =>
                         <span key={player + Math.random()} className={'overflow-hidden overflow-ellipsis'}>
                             {users[player] &&
                                 users[player].name
@@ -18,7 +19,7 @@ const Game = ({game, users}) => {
                                 <> / </>
                             }
                         </span>
-                    )}
+                    ) }
                 </p>
             )}
             <p className={"px-4 py-3 text-right md:text-left"}>{game.result}</p>
