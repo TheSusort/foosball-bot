@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 const {db} = require("./firebase");
 const cors = require("cors");
 const foosball = require("./foosball/foosball");
-const {shuffle} = require("./foosball/helpers");
 
 const app = express();
 
@@ -56,25 +55,24 @@ app.post("/username", (req, res) => {
   res.send("updated to username to " + String(req.body.text));
 });
 
-app.post("/add", async (req, res) => {
+app.post("/add", (req, res) => {
   if (req.body.text === "2v1") {
-    await foosball.handleCommands("start", "test")
-    await foosball.handleCommands("join single", "test2")
-    await foosball.handleCommands("join", "test3")
-
+    foosball.handleCommands("start", "test");
+    foosball.handleCommands("join single", "test2");
+    foosball.handleCommands("join", "test3");
   } else if (req.body.text === "single") {
-    await foosball.handleCommands("start single", "test")
-    await foosball.handleCommands("join single", "test2")
+    foosball.handleCommands("start single", "test");
+    foosball.handleCommands("join single", "test2");
   } else {
-    await foosball.handleCommands("start", "test")
-    await foosball.handleCommands("join", "test2")
-    await foosball.handleCommands("join", "test3")
-    await foosball.handleCommands("join", "test4")
+    foosball.handleCommands("start", "test");
+    foosball.handleCommands("join", "test2");
+    foosball.handleCommands("join", "test3");
+    foosball.handleCommands("join", "test4");
   }
 
-  await foosball.handleResult("10 0")
-  res.json("ok")
-})
+  foosball.handleResult("10 0");
+  res.json("ok");
+});
 
 app.get("/getusers", (req, res) => {
   try {

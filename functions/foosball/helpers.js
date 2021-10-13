@@ -36,7 +36,7 @@ const prepareUserIdForMessage = (userId) => {
  */
 const sendSlackMessage = (message) => {
   console.log("should display message: " + message);
-  let shouldPostToSlack = true;
+  const shouldPostToSlack = true;
   if (shouldPostToSlack) {
     request.post({
       headers: {"content-type": "application/json"},
@@ -84,7 +84,9 @@ function Timer(callback, delay) {
       this.start();
     }
     const date = new Date(remaining);
-    return (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ":" + (date.getSeconds() < 10 ? '0' : '') + date.getSeconds();
+    return (date.getMinutes() < 10 ? "0" : "") +
+        date.getMinutes() + ":" +
+        (date.getSeconds() < 10 ? "0" : "") + date.getSeconds();
   };
 
   this.getStateRunning = function() {
