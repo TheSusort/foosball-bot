@@ -202,8 +202,8 @@ const forceStart = () => {
 const lockInGame = (teams) => {
   let joinedForMessage = [].concat.spread([], teams);
 
-  joinedForMessage = joinedForMessage.map((player) => {
-    return prepareUserIdForMessage(player.userId);
+  joinedForMessage = joinedForMessage.map((player, index) => {
+    return (index + 1) + ": " + prepareUserIdForMessage(player.userId);
   });
 
   console.log(joinedForMessage);
