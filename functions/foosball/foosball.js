@@ -5,7 +5,7 @@ const {
 } = require("./helpers");
 
 const {db} = require("../firebase");
-const {Timer} = require("./helpers");
+// const {Timer} = require("./helpers");
 
 let started = false;
 let joined = [];
@@ -27,6 +27,7 @@ const documentation = "Fussball bot commands \n" +
 
 
 const handleCommands = async (text, user) => {
+  let playerString;
   switch (text) {
     case "start":
       if (!started) {
@@ -56,40 +57,38 @@ const handleCommands = async (text, user) => {
     case "force start":
       if (joined.length >= 2) {
         maxJoined = joined.length;
-        start()
+        start();
       }
       break;
     case "join":
       console.log(user + " trying to join");
-      // @TODO add check for exisiting user in joined
       if (started) {
         if (joined.length < maxJoined) {
-          if (/*!joined.includes(user)*/ true) {
+          if (!joined.includes(user)) {
             await addPlayerToGame(user, false);
           } else {
-            sendSlackMessage("Already joined")
+            sendSlackMessage("Already joined");
           }
         } else {
-          sendSlackMessage("No more room")
+          sendSlackMessage("No more room");
         }
       } else {
-        handleCommands("start", user)
+        handleCommands("start", user);
       }
       break;
     case "join single":
-      // @TODO add check for exisiting user in joined
-      if (started && (joined.length <= maxJoined - 2) /* && !joined.includes(user)*/) {
+      if (started) {
         if (joined.length <= maxJoined - 2) {
-          if (/*!joined.includes(user)*/true) {
+          if (!joined.includes(user)) {
             await addPlayerToGame(user, true);
           } else {
-            sendSlackMessage("Already joined")
+            sendSlackMessage("Already joined");
           }
         } else {
-            sendSlackMessage("No more room")
-          }
+          sendSlackMessage("No more room");
+        }
       } else {
-        handleCommands("start single", user)
+        handleCommands("start single", user);
       }
       break;
     case "help":
@@ -119,19 +118,22 @@ const handleCommands = async (text, user) => {
     case "stop":
       db.ref("current_game").set({}).then(() => {
         started = false;
-        stopGame()
-      })
+        stopGame();
+      });
       break;
     case "status":
-        let playerString = joined.map(player => prepareUserIdForMessage(player.userId)).join(", ");
-        console.log(playerString)
+      playerString = joined.map(
+          (player) => prepareUserIdForMessage(player.userId),
+      ).join(", ");
+
       sendSlackMessage(
           "STATUS \n" +
           "Game started: " + started + "\n" +
-          "participants: "  + (playerString === "" ? "none" : playerString) + "\n" +
+          "participants: " + (playerString === "" ? "none" : playerString) +
+          "\n" +
           "Spots left: " + (maxJoined - joined.length) + "\n" +
-          "Timer: " + timeLeft()
-      )
+          "Timer: " + timeLeft(),
+      );
       break;
   }
 };
@@ -144,7 +146,7 @@ const handleCommands = async (text, user) => {
  */
 const addPlayerToGame = async (playerName, isSingle) => {
   // add to joined
-  console.log(maxJoined)
+  console.log(maxJoined);
   joined.push(await getUser(playerName));
   if (isSingle) {
     single.push(playerName);
@@ -152,11 +154,11 @@ const addPlayerToGame = async (playerName, isSingle) => {
   }
   // if has enough players
   if (joined.length === maxJoined) {
-    start()
+    start();
   } else {
     sendSlackMessage(
         "<@" + playerName + ">" +
-        " joined" + (isSingle ? ' as single' : '') + ", " +
+        " joined" + (isSingle ? " as single" : "") + ", " +
         (maxJoined - joined.length) +
         " space(s) left" +
         ", time left: " + timeLeft(),
@@ -203,7 +205,7 @@ const shuffleTeams = async () => {
  * @return {Promise<void>}
  */
 const startGame = async (user) => {
-  timeLeft(120000)
+  timeLeft(120000);
   started = true;
 
   sendSlackMessage(
@@ -229,15 +231,16 @@ const start = () => {
  * @param {[]} teams
  */
 const lockInGame = (teams) => {
-  console.log("locking in game")
+  console.log("locking in game");
 
-  let joinedForMessage = teams.map((team, index) => {
-    let message = "team " + (index ? ':red_circle:' : ':large_blue_circle:') + ": ";
+  const joinedForMessage = teams.map((team, index) => {
+    let message = "team " +
+        (index ? ":red_circle:" : ":large_blue_circle:") + ": ";
     message += team.map((player) => {
       if (player.userId) {
         return prepareUserIdForMessage(player.userId);
       }
-    })
+    });
     return message;
   });
 
@@ -556,13 +559,14 @@ const updateUserName = (userId, newUserName) => {
 
 /**
  * gets time left of timers
+ * @param {number|null} int
  * @return {string}
  */
 const timeLeft = (int) => {
   if (int > 0) {
-    time = new Timer(() => stopGame(), int)
+    // time = new Timer(() => stopGame(), int)
   } else if (int === null) {
-    time = null
+    time = null;
   }
   if (time) {
     return "Time left: " + time.getTimeLeft();
