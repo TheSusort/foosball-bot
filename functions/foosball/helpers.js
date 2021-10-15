@@ -32,7 +32,7 @@ const prepareUserIdForMessage = (userId) => {
 
 /**
  * sends slack message
- * @param {string} message
+ * @param {unknown[]} message
  */
 const sendSlackMessage = (message) => {
   console.log("should display message: " + message);

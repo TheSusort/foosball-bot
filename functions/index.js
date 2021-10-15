@@ -75,16 +75,30 @@ app.post("/add", (req, res) => {
 });
 
 app.get("/getusers", (req, res) => {
-  try {
-    const ref = db.ref("users");
-    ref.once("value")
-        .then((snapshot) => {
-          if (snapshot.val()) {
-            res.json(snapshot.val());
-          }
-        });
-  } catch (error) {
-    res.status(500).send(error);
+  if (req.query.userid) {
+    try {
+      const ref = db.ref("users/" + req.query.userid);
+      ref.once("value")
+          .then((snapshot) => {
+            if (snapshot.val()) {
+              res.json(snapshot.val());
+            }
+          });
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  } else {
+    try {
+      const ref = db.ref("users");
+      ref.once("value")
+          .then((snapshot) => {
+            if (snapshot.val()) {
+              res.json(snapshot.val());
+            }
+          });
+    } catch (error) {
+      res.status(500).send(error);
+    }
   }
 });
 

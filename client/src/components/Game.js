@@ -1,7 +1,9 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 const Game = ({game, users}) => {
     const date = new Date(Number(game.uid))
+
     return (
         <>
             <p className={"px-4 py-3 hidden md:inline col-span-2"}>{date.toLocaleString('nb-NO')}</p>
@@ -10,7 +12,7 @@ const Game = ({game, users}) => {
                     { team.map((player, index) =>
                         <span key={player + Math.random()} className={'overflow-hidden overflow-ellipsis'}>
                             {users[player] &&
-                                users[player].name
+                                <Link to={`/profile/${users[player].userId}`}>{users[player].name}</Link>
                             }
                             {!users[player] &&
                                 player

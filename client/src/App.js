@@ -1,57 +1,48 @@
-import React, {useEffect, useState} from "react";
-import axios from "axios";
-import UserList from "./components/UserList";
-import GameList from "./components/GameList";
+
+import {Route, Switch} from "react-router-dom";
+import Home from "./components/Home";
+import UserProfile from "./components/UserProfile";
+import {useEffect, useState} from "react";
+import {getGamesData, getUserData} from "./fetch/Data";
 
 function App() {
-
     const [users, setUsers] = useState({})
     const [games, setGames] = useState([])
-    const [finishLoadingUsers, setFinishLoadingUsers] = useState(false)
-    const [finishLoadingGames, setFinishLoadingGames] = useState(false)
-    const serverUrl = 'https://us-central1-foosball-bot-1b613.cloudfunctions.net/app/';
-
 
     useEffect(() => {
-        getUserData()
-        getGamesData()
-        const interval = setInterval(() => {
-            try {
-                getUserData()
-                getGamesData()
-            } catch (error) {
-                console.error(error)
-            }
-        }, 60000);
-        return () => clearInterval(interval)
+        getUsers()
+        getGames()
     },[]);
 
-    const getUserData = async () => {
-        const result = await axios(
-            serverUrl + "getusers"
-        )
-        setUsers(result.data)
-        setFinishLoadingUsers(true)
+    const getUsers = async () => {
+        getUserData().then((response) => {
+            console.log(response)
+            setUsers(response)
+        })
+
     }
-    const getGamesData = async () => {
-        const result = await axios(
-            serverUrl + "getgames"
-        )
-        setGames(Object.values(result.data))
-        setFinishLoadingGames(true)
+
+    const getGames = async () => {
+        getGamesData().then((response) => {
+            console.log(response)
+            setGames(Object.values(response))
+        })
     }
+
 
     return (
-        <React.Fragment>
-            <div className="container mx-auto p-4 ">
-                <div className="text-center my-5">
-                    <h1 className="text-4xl">Slæckball 3000</h1>
-                </div>
+        <main>
+            <Switch>
+                <Route exact path={"/profile/:id"}>
+                    <UserProfile users={users} games={games} />
+                </Route>
+                <Route path={"/"} >
+                    <Home users={users} games={games} />
+                </Route>
 
-                <UserList users={Object.values(users)} isLoaded={finishLoadingUsers}/>
-                <GameList games={games} users={users} isLoaded={finishLoadingGames}/>
-            </div>
-        </React.Fragment>
+                <Route component={Error} />
+            </Switch>
+        </main>
     );
 }
 

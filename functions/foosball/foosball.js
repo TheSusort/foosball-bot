@@ -12,7 +12,7 @@ let joined = [];
 let maxJoined = 4;
 let timeLeft;
 let users = {};
-const single = [];
+let single = [];
 
 const documentation = "Fussball bot commands \n" +
     "   *start*                        start game \n" +
@@ -20,7 +20,10 @@ const documentation = "Fussball bot commands \n" +
     "   *join single*               join game as single \n" +
     "   */result [int] [int]*     end game and log result \n" +
     "   */time*                       get time left until timeout \n" +
-    "   */help*                       show commands \n";
+    "   */help*                       show commands \n" +
+    "   */username [string]*        set new username"
+
+;
 
 
 const handleCommands = async (text, user) => {
@@ -40,7 +43,7 @@ const handleCommands = async (text, user) => {
     case "start single":
       if (!started) {
         console.log("Starting game.");
-        single.push(user);
+
         await startGame(user);
         await addPlayerToGame(user, true);
 
@@ -74,7 +77,6 @@ const handleCommands = async (text, user) => {
     case "join single":
       // @TODO add check for exisiting user in joined
       if (started && joined.length < maxJoined /* && !joined.includes(user)*/) {
-        single.push(user);
         await addPlayerToGame(user, true);
       }
       break;
@@ -105,6 +107,18 @@ const handleCommands = async (text, user) => {
     case "stop":
       sendSlackMessage("You can't stop this");
       break;
+    case "whosin":
+
+
+      sendSlackMessage(
+          [].concat(...joined).map((player, index) => {
+            if (player.userId) {
+              return (index + 1) + ": " +
+                  prepareUserIdForMessage(player.userId);
+            }
+          }),
+      );
+      break;
   }
 };
 
@@ -118,6 +132,7 @@ const addPlayerToGame = async (playerName, isSingle) => {
   // add to joined
   joined.push(await getUser(playerName));
   if (isSingle) {
+    single.push(playerName);
     maxJoined--;
   }
   // if has enough players
@@ -200,10 +215,12 @@ const forceStart = () => {
  * @param {[]} teams
  */
 const lockInGame = (teams) => {
-  let joinedForMessage = [].concat.spread([], teams);
+  let joinedForMessage = [].concat(...teams);
 
   joinedForMessage = joinedForMessage.map((player, index) => {
-    return (index + 1) + ": " + prepareUserIdForMessage(player.userId);
+    if (player.userId) {
+      return (index + 1) + ": " + prepareUserIdForMessage(player.userId);
+    }
   });
 
   console.log(joinedForMessage);
@@ -222,7 +239,9 @@ const lockInGame = (teams) => {
 const stopGame = () => {
   started = false;
   joined = [];
+  single = [];
   timeLeft = null;
+  maxJoined = 4;
   sendSlackMessage("Timed out.");
 };
 
