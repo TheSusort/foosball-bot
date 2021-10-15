@@ -10,7 +10,7 @@ const {Timer} = require("./helpers");
 let started = false;
 let joined = [];
 let maxJoined = 4;
-let timeLeft;
+let time;
 let users = {};
 let single = [];
 
@@ -32,8 +32,7 @@ const handleCommands = async (text, user) => {
       if (!started) {
         console.log("Starting game.");
         await startGame(user);
-        await addPlayerToGame(user);
-
+        await addPlayerToGame(user, false);
         break;
       } else {
         console.log(user + " is trying to start another game.");
@@ -42,7 +41,7 @@ const handleCommands = async (text, user) => {
       }
     case "start single":
       if (!started) {
-        console.log("Starting game.");
+        console.log("Starting a game as single.");
 
         await startGame(user);
         await addPlayerToGame(user, true);
@@ -57,27 +56,40 @@ const handleCommands = async (text, user) => {
     case "force start":
       if (joined.length >= 2) {
         maxJoined = joined.length;
-        shuffleTeams().then((teams) => {
-          lockInGame(teams);
-        });
+        start()
       }
       break;
     case "join":
       console.log(user + " trying to join");
-      console.log(started, joined.length, !joined.includes(user));
       // @TODO add check for exisiting user in joined
-      if (started && joined.length < maxJoined /* && !joined.includes(user)*/) {
-        await addPlayerToGame(user);
+      if (started) {
+        if (joined.length < maxJoined) {
+          if (/*!joined.includes(user)*/ true) {
+            await addPlayerToGame(user, false);
+          } else {
+            sendSlackMessage("Already joined")
+          }
+        } else {
+          sendSlackMessage("No more room")
+        }
       } else {
-        sendSlackMessage(
-            prepareUserIdForMessage(user) + ", you've already joined ",
-        );
+        handleCommands("start", user)
       }
       break;
     case "join single":
       // @TODO add check for exisiting user in joined
-      if (started && joined.length < maxJoined /* && !joined.includes(user)*/) {
-        await addPlayerToGame(user, true);
+      if (started && (joined.length <= maxJoined - 2) /* && !joined.includes(user)*/) {
+        if (joined.length <= maxJoined - 2) {
+          if (/*!joined.includes(user)*/true) {
+            await addPlayerToGame(user, true);
+          } else {
+            sendSlackMessage("Already joined")
+          }
+        } else {
+            sendSlackMessage("No more room")
+          }
+      } else {
+        handleCommands("start single", user)
       }
       break;
     case "help":
@@ -97,7 +109,7 @@ const handleCommands = async (text, user) => {
       break;
 
     case "timeleft":
-      sendSlackMessage(getTimeLeft());
+      sendSlackMessage(timeLeft());
       break;
 
     case "leave":
@@ -105,19 +117,21 @@ const handleCommands = async (text, user) => {
       break;
 
     case "stop":
-      sendSlackMessage("You can't stop this");
+      db.ref("current_game").set({}).then(() => {
+        started = false;
+        stopGame()
+      })
       break;
-    case "whosin":
-
-
+    case "status":
+        let playerString = joined.map(player => prepareUserIdForMessage(player.userId)).join(", ");
+        console.log(playerString)
       sendSlackMessage(
-          [].concat(...joined).map((player, index) => {
-            if (player.userId) {
-              return (index + 1) + ": " +
-                  prepareUserIdForMessage(player.userId);
-            }
-          }),
-      );
+          "STATUS \n" +
+          "Game started: " + started + "\n" +
+          "participants: "  + (playerString === "" ? "none" : playerString) + "\n" +
+          "Spots left: " + (maxJoined - joined.length) + "\n" +
+          "Timer: " + timeLeft()
+      )
       break;
   }
 };
@@ -130,6 +144,7 @@ const handleCommands = async (text, user) => {
  */
 const addPlayerToGame = async (playerName, isSingle) => {
   // add to joined
+  console.log(maxJoined)
   joined.push(await getUser(playerName));
   if (isSingle) {
     single.push(playerName);
@@ -137,15 +152,14 @@ const addPlayerToGame = async (playerName, isSingle) => {
   }
   // if has enough players
   if (joined.length === maxJoined) {
-    shuffleTeams().then((teams) => {
-      lockInGame(teams);
-    });
+    start()
   } else {
     sendSlackMessage(
         "<@" + playerName + ">" +
-            " joined, " + (maxJoined - joined.length) +
-            " space(s) left" +
-            ", time left: " + getTimeLeft(),
+        " joined" + (isSingle ? ' as single' : '') + ", " +
+        (maxJoined - joined.length) +
+        " space(s) left" +
+        ", time left: " + timeLeft(),
     );
   }
 };
@@ -189,13 +203,13 @@ const shuffleTeams = async () => {
  * @return {Promise<void>}
  */
 const startGame = async (user) => {
-  timeLeft = new Timer(() => stopGame(), 120000);
+  timeLeft(120000)
   started = true;
 
   sendSlackMessage(
       "Game started by " +
         "<@" + user + ">" +
-        " time left: " + getTimeLeft() +
+        " time left: " + timeLeft() +
         ", HURRY @here",
   );
 };
@@ -203,7 +217,7 @@ const startGame = async (user) => {
 /**
  * Force start game
  */
-const forceStart = () => {
+const start = () => {
   shuffleTeams().then((teams) => {
     lockInGame(teams);
   },
@@ -215,22 +229,23 @@ const forceStart = () => {
  * @param {[]} teams
  */
 const lockInGame = (teams) => {
-  let joinedForMessage = [].concat(...teams);
+  console.log("locking in game")
 
-  joinedForMessage = joinedForMessage.map((player, index) => {
-    if (player.userId) {
-      return (index + 1) + ": " + prepareUserIdForMessage(player.userId);
-    }
+  let joinedForMessage = teams.map((team, index) => {
+    let message = "team " + (index ? ':red_circle:' : ':large_blue_circle:') + ": ";
+    message += team.map((player) => {
+      if (player.userId) {
+        return prepareUserIdForMessage(player.userId);
+      }
+    })
+    return message;
   });
 
-  console.log(joinedForMessage);
   sendSlackMessage(
       "GAME FILLED by " +
         joinedForMessage.join(", ") +
         ". Post result to start new game.",
   );
-  timeLeft = null;
-  console.log(getTimeLeft());
 };
 
 /**
@@ -240,9 +255,9 @@ const stopGame = () => {
   started = false;
   joined = [];
   single = [];
-  timeLeft = null;
+  timeLeft(null);
   maxJoined = 4;
-  sendSlackMessage("Timed out.");
+  sendSlackMessage("Stopped");
 };
 
 
@@ -301,7 +316,7 @@ const handleScore = async (text, teams) => {
     }
 
     sendSlackMessage(scoreText);
-    timeLeft = null;
+    timeLeft(null);
     joined = [];
     started = false;
   } else {
@@ -464,7 +479,7 @@ const getUser = async (userId) => {
  */
 const getAllUsers = async () => {
   console.log("getting users");
-  console.log(getTimeLeft());
+  console.log(timeLeft());
 
   if (!started) {
     const ref = db.ref("users");
@@ -543,9 +558,14 @@ const updateUserName = (userId, newUserName) => {
  * gets time left of timers
  * @return {string}
  */
-const getTimeLeft = () => {
-  if (timeLeft) {
-    return "Time left: " + timeLeft.getTimeLeft();
+const timeLeft = (int) => {
+  if (int > 0) {
+    time = new Timer(() => stopGame(), int)
+  } else if (int === null) {
+    time = null
+  }
+  if (time) {
+    return "Time left: " + time.getTimeLeft();
   }
   return "No timers running";
 };
@@ -558,9 +578,8 @@ exports.stopGame = stopGame;
 exports.handleResult = handleResult;
 exports.submitGame = submitGame;
 exports.calculateNewRating = calculateNewRating;
-exports.getTimeLeft = getTimeLeft;
+exports.timeLeft = timeLeft;
 exports.syncHandler = syncHandler;
-exports.forceStart = forceStart;
 
 exports.getUser = getUser;
 exports.getAllUsers = getAllUsers;
@@ -571,5 +590,4 @@ exports.updateUserName = updateUserName;
 exports.documentation = documentation;
 exports.joined = joined;
 exports.users = users;
-exports.timeLeft = timeLeft;
 exports.maxJoined = maxJoined;
