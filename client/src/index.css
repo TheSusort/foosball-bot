@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .compact-grid-cell {
+        @apply p-2 md:px-4 md:py-3;
+    }
+
+    .name {
+        @apply whitespace-nowrap overflow-ellipsis overflow-hidden;
+    }
+}

@@ -6,11 +6,11 @@ const Game = ({game, users}) => {
 
     return (
         <>
-            <p className={"px-4 py-3 hidden md:inline col-span-2"}>{date.toLocaleString('nb-NO')}</p>
+            <p className={"compact-grid-cell hidden md:inline col-span-2"}>{date.toLocaleString('nb-NO')}</p>
             {game.teams.map((team,index) =>
-                <p className={"px-4 py-3 overflow-ellipsis overflow-hidden col-span-3"} key={index}>
+                <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3"} key={index}>
                     { team.map((player, index) =>
-                        <span key={player + Math.random()} className={'overflow-hidden overflow-ellipsis'}>
+                        <span key={player + Math.random()} className={'name block'}>
                             {users[player] &&
                                 <Link to={`/profile/${users[player].userId}`}>{users[player].name}</Link>
                             }
@@ -24,8 +24,8 @@ const Game = ({game, users}) => {
                     ) }
                 </p>
             )}
-            <p className={"px-4 py-3 text-right md:text-left"}>{game.result}</p>
-            <p className={"px-4 py-3 text-right hidden md:block"}>{game.delta ?? ""}</p>
+            <p className={"compact-grid-cell text-right md:text-left whitespace-nowrap"}>{game.result}</p>
+            <p className={"compact-grid-cell text-right hidden md:block"}>{game.delta ?? ""}</p>
         </>
     )
 }
