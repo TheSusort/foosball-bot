@@ -3,10 +3,11 @@ import {Link} from "react-router-dom";
 
 const Game = ({game, users}) => {
     const date = new Date(Number(game.uid))
+    const dateString = [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("/")
 
     return (
         <>
-            <p className={"compact-grid-cell hidden md:inline col-span-2"}>{date.toLocaleString('nb-NO')}</p>
+            <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
             {game.teams.map((team,index) =>
                 <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3"} key={index}>
                     { team.map((player, index) =>
