@@ -16,7 +16,6 @@ app.use(cors());
 foosball.syncHandler();
 
 
-
 app.post("/game", async (req, res) => {
   if (Object.prototype.hasOwnProperty.call(req.body, "challenge")) {
     res.json(req.body);

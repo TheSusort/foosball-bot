@@ -14,6 +14,7 @@ let time;
 let users = {};
 let single = [];
 
+/* eslint-disable */
 const documentation =
     "**Fussball bot commands** \n" +
     "```" +
@@ -35,7 +36,7 @@ const documentation =
     "```"
 
 ;
-
+/* eslint-enable */
 
 const handleCommands = async (text, user) => {
   let playerString;
@@ -130,7 +131,7 @@ const handleCommands = async (text, user) => {
       break;
 
     case "stop":
-      stopGame()
+      stopGame();
       break;
 
     case "status":
@@ -151,27 +152,26 @@ const handleCommands = async (text, user) => {
   let score;
   switch (true) {
     case /^test.*/.test(text):
-      console.log(text)
+      console.log(text);
       score = text.split("test ")[1];
       sendSlackMessage(
           "new rating for : " + Number(score.split(" ")[0]) + ": " +
           calculateNewRating(
               Number(score.split(" ")[0]),
               Number(score.split(" ")[1]),
-              Boolean(score.split(" ")[2])
+              Boolean(score.split(" ")[2]),
           ) +
           ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
           calculateNewRating(
               Number(score.split(" ")[1]),
               Number(score.split(" ")[0]),
-              !Boolean(score.split(" ")[2])
-          )
+              !score.split(" ")[2],
+          ),
       );
-      break
-
+      break;
   }
 
-  db.ref("joined").off()
+  db.ref("joined").off();
 };
 
 /**
@@ -183,9 +183,9 @@ const handleCommands = async (text, user) => {
 const addPlayerToGame = async (playerName, isSingle) => {
   // add to joined
   console.log(maxJoined);
-  let user = await getUser(playerName)
+  const user = await getUser(playerName);
   joined.push(user);
-  db.ref("joined").push(user)
+  db.ref("joined").push(user);
 
 
   if (isSingle) {
@@ -293,8 +293,7 @@ const lockInGame = (teams) => {
  * Stops game
  */
 const stopGame = () => {
-
-  db.ref("joined").off()
+  db.ref("joined").off();
   db.ref("current_game").remove().then(() => {
     db.ref("joined").remove().then(() => {
       started = false;
@@ -303,9 +302,8 @@ const stopGame = () => {
       timeLeft(null);
       maxJoined = 4;
       sendSlackMessage("Stopped");
-    })
-  })
-
+    });
+  });
 };
 
 
@@ -395,12 +393,12 @@ const buildResultMessage = (team) => {
  * @return {Promise<*>}
  */
 const buildTeams = async (players, result) => {
-    return players.map((teams, index) => {
-      return {
-        players: players[index],
-        resultValue: Number(result[index]),
-      };
-    });
+  return players.map((teams, index) => {
+    return {
+      players: players[index],
+      resultValue: Number(result[index]),
+    };
+  });
 };
 
 /**
@@ -530,7 +528,7 @@ const getAllUsers = async () => {
         .then((snapshot) => {
           if (snapshot.val()) {
             users = snapshot.val();
-            console.log("all users retrieved")
+            console.log("all users retrieved");
           }
           return users;
         });
@@ -538,23 +536,23 @@ const getAllUsers = async () => {
 };
 
 const getJoined = async () => {
-  console.log("checking for joined")
+  console.log("checking for joined");
   if (joined && joined.length) {
-    console.log("found joined in memory")
+    console.log("found joined in memory");
     started = true;
-    return joined
+    return joined;
   } else {
     await db.ref("joined").once("value", (snap) => {
       if (snap.val()) {
-        console.log("found joined in db")
-        joined = Object.values(snap.val())
+        console.log("found joined in db");
+        joined = Object.values(snap.val());
         started = true;
-        return joined
+        return joined;
       }
-      return []
-    })
+      return [];
+    });
   }
-}
+};
 
 /**
  * starts getting users
@@ -562,14 +560,14 @@ const getJoined = async () => {
  */
 const syncHandler = async () => {
   await getAllUsers();
-  await getJoined()
-  console.log(joined)
-/*
+  await getJoined();
+  console.log(joined);
+  /*
   db.ref("current_game").on("child_added", (r) => {
     sendSlackMessage(r.val())
   });*/
   db.ref("joined").on("child_added", (r) => {
-    console.log(r.val() + " added to joined")
+    console.log(r.val() + " added to joined");
   });
 };
 
