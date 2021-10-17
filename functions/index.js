@@ -13,11 +13,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
 
-
 foosball.syncHandler();
 
 
-app.post("/game", (req, res) => {
+
+app.post("/game", async (req, res) => {
   if (Object.prototype.hasOwnProperty.call(req.body, "challenge")) {
     res.json(req.body);
     return;
@@ -26,8 +26,7 @@ app.post("/game", (req, res) => {
     if (req.body.event.type !== "message") {
       return;
     }
-    console.log("game request: ", req.body.event.text);
-    foosball.handleCommands(req.body.event.text, req.body.event.user);
+    await foosball.handleCommands(req.body.event.text, req.body.event.user);
   }
   res.send("ok");
 });
@@ -115,5 +114,6 @@ app.get("/getgames", (req, res) => {
     res.status(500).send(error);
   }
 });
+
 
 exports.app = functions.https.onRequest(app);

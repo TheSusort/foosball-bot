@@ -14,14 +14,25 @@ let time;
 let users = {};
 let single = [];
 
-const documentation = "Fussball bot commands \n" +
-    "   *start*                        start game \n" +
-    "   *join*                          join game \n" +
-    "   *join single*               join game as single \n" +
-    "   */result [int] [int]*     end game and log result \n" +
-    "   */time*                       get time left until timeout \n" +
-    "   */help*                       show commands \n" +
-    "   */username [string]*        set new username"
+const documentation =
+    "**Fussball bot commands** \n" +
+    "```" +
+    "   start                     start game \n" +
+    "   start single              start game as single\n" +
+    "   join                      join game \n" +
+    "   join single               join game as single \n" +
+    "   /result [int] [int]       end game and log result \n" +
+    "   /time                     timers have been disabled \n" +
+    "   help|/help                show commands \n" +
+    "   /username [string]        set new username \n" +
+    "   /add 2v1|single|[]        test command for testing modes \n" +
+    "   force start               experimental feature to start game with currently\n" +
+    "                             joined players \n" +
+    "   stop                      force stops the game \n" +
+    "   status                    gets current status \n" +
+    "   test [int] [int] [bool]   test rating system. input your score, opponents \n" +
+    "                             score and win(true/false)" +
+    "```"
 
 ;
 
@@ -34,12 +45,12 @@ const handleCommands = async (text, user) => {
         console.log("Starting game.");
         await startGame(user);
         await addPlayerToGame(user, false);
-        break;
       } else {
         console.log(user + " is trying to start another game.");
         sendSlackMessage("Already another game.");
-        break;
       }
+      break;
+
     case "start single":
       if (!started) {
         console.log("Starting a game as single.");
@@ -60,6 +71,7 @@ const handleCommands = async (text, user) => {
         start();
       }
       break;
+
     case "join":
       console.log(user + " trying to join");
       if (started) {
@@ -76,6 +88,7 @@ const handleCommands = async (text, user) => {
         handleCommands("start", user);
       }
       break;
+
     case "join single":
       if (started) {
         if (joined.length <= maxJoined - 2) {
@@ -91,11 +104,13 @@ const handleCommands = async (text, user) => {
         handleCommands("start single", user);
       }
       break;
+
     case "help":
       sendSlackMessage(
           "<@" + user + "> requested help :smirk: \n" + documentation,
       );
       break;
+
     case "user":
       getUser(user).then((currentUser) => {
         sendSlackMessage(
@@ -104,7 +119,6 @@ const handleCommands = async (text, user) => {
             currentUser.name,
         );
       });
-
       break;
 
     case "timeleft":
@@ -116,11 +130,9 @@ const handleCommands = async (text, user) => {
       break;
 
     case "stop":
-      db.ref("current_game").set({}).then(() => {
-        started = false;
-        stopGame();
-      });
+      stopGame()
       break;
+
     case "status":
       playerString = joined.map(
           (player) => prepareUserIdForMessage(player.userId),
@@ -136,6 +148,30 @@ const handleCommands = async (text, user) => {
       );
       break;
   }
+  let score;
+  switch (true) {
+    case /^test.*/.test(text):
+      console.log(text)
+      score = text.split("test ")[1];
+      sendSlackMessage(
+          "new rating for : " + Number(score.split(" ")[0]) + ": " +
+          calculateNewRating(
+              Number(score.split(" ")[0]),
+              Number(score.split(" ")[1]),
+              Boolean(score.split(" ")[2])
+          ) +
+          ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
+          calculateNewRating(
+              Number(score.split(" ")[1]),
+              Number(score.split(" ")[0]),
+              !Boolean(score.split(" ")[2])
+          )
+      );
+      break
+
+  }
+
+  db.ref("joined").off()
 };
 
 /**
@@ -147,7 +183,11 @@ const handleCommands = async (text, user) => {
 const addPlayerToGame = async (playerName, isSingle) => {
   // add to joined
   console.log(maxJoined);
-  joined.push(await getUser(playerName));
+  let user = await getUser(playerName)
+  joined.push(user);
+  db.ref("joined").push(user)
+
+
   if (isSingle) {
     single.push(playerName);
     maxJoined--;
@@ -173,7 +213,6 @@ const addPlayerToGame = async (playerName, isSingle) => {
 const shuffleTeams = async () => {
   let teams;
   // split into teams and shuffle, save as current game
-  console.log(single.length, joined.length);
   if (single.length === 1 && joined.length === 3) {
     // if single, then loop through single,
     // find index in joined, and set these to own team
@@ -222,8 +261,7 @@ const startGame = async (user) => {
 const start = () => {
   shuffleTeams().then((teams) => {
     lockInGame(teams);
-  },
-  );
+  });
 };
 
 /**
@@ -255,12 +293,19 @@ const lockInGame = (teams) => {
  * Stops game
  */
 const stopGame = () => {
-  started = false;
-  joined = [];
-  single = [];
-  timeLeft(null);
-  maxJoined = 4;
-  sendSlackMessage("Stopped");
+
+  db.ref("joined").off()
+  db.ref("current_game").remove().then(() => {
+    db.ref("joined").remove().then(() => {
+      started = false;
+      joined = [];
+      single = [];
+      timeLeft(null);
+      maxJoined = 4;
+      sendSlackMessage("Stopped");
+    })
+  })
+
 };
 
 
@@ -278,7 +323,6 @@ const handleResult = async (text) => {
       ref.once("value")
           .then((snapshot) => {
             if (snapshot.val()) {
-              console.log(snapshot.val());
               joined = snapshot.val();
               handleScore(text, joined);
             }
@@ -351,12 +395,12 @@ const buildResultMessage = (team) => {
  * @return {Promise<*>}
  */
 const buildTeams = async (players, result) => {
-  return players.map((teams, index) => {
-    return {
-      players: players[index],
-      resultValue: Number(result[index]),
-    };
-  });
+    return players.map((teams, index) => {
+      return {
+        players: players[index],
+        resultValue: Number(result[index]),
+      };
+    });
 };
 
 /**
@@ -372,7 +416,6 @@ const submitGame = async (result, teams) => {
   // update users
   buildTeams(teams, result).then((teams) => {
     // calculate combined ratings
-
     teams.map((team) => {
       team.combinedRating = 0;
       team.players.map((player) => {
@@ -429,9 +472,7 @@ const submitGame = async (result, teams) => {
     db.ref("users").set(users).then(() => console.log("users saved"));
 
     db.ref("games").push(game).then(() => console.log("game saved"));
-    db.ref("current_game").set([]).then(() =>
-      console.log("current game cleared"),
-    );
+    stopGame();
   });
 };
 
@@ -482,7 +523,6 @@ const getUser = async (userId) => {
  */
 const getAllUsers = async () => {
   console.log("getting users");
-  console.log(timeLeft());
 
   if (!started) {
     const ref = db.ref("users");
@@ -490,12 +530,31 @@ const getAllUsers = async () => {
         .then((snapshot) => {
           if (snapshot.val()) {
             users = snapshot.val();
-            console.log(users);
+            console.log("all users retrieved")
           }
           return users;
         });
   }
 };
+
+const getJoined = async () => {
+  console.log("checking for joined")
+  if (joined && joined.length) {
+    console.log("found joined in memory")
+    started = true;
+    return joined
+  } else {
+    await db.ref("joined").once("value", (snap) => {
+      if (snap.val()) {
+        console.log("found joined in db")
+        joined = Object.values(snap.val())
+        started = true;
+        return joined
+      }
+      return []
+    })
+  }
+}
 
 /**
  * starts getting users
@@ -503,9 +562,14 @@ const getAllUsers = async () => {
  */
 const syncHandler = async () => {
   await getAllUsers();
-
+  await getJoined()
+  console.log(joined)
+/*
   db.ref("current_game").on("child_added", (r) => {
-    console.log(r.val());
+    sendSlackMessage(r.val())
+  });*/
+  db.ref("joined").on("child_added", (r) => {
+    console.log(r.val() + " added to joined")
   });
 };
 
