@@ -1,5 +1,6 @@
 const {db} = require("../../firebase");
 const {getUsers, setUsers} = require("./shared");
+const {escapeHtml} = require("./helpers");
 
 /**
  * gets user
@@ -81,12 +82,16 @@ const updateUser = async (userId, win, newRating) => {
  */
 const updateUserName = async (userId, newUserName) => {
     const users = await getUsers();
+    let user;
     if (users[userId]) {
-        return await db.ref("users")
-            .child(userId).update({"name": String(newUserName)}).then(
-                () => "updated to username to " + String(newUserName),
-            );
+        user = users[userId];
+    } else {
+        user = await getUser(userId);
     }
+
+    user.name = escapeHtml(newUserName);
+    users[userId] = user;
+    setUsers(users);
 };
 
 module.exports = {
