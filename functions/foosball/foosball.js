@@ -116,8 +116,8 @@ const handleCommands = async (text, user) => {
       getUser(user).then((currentUser) => {
         sendSlackMessage(
             prepareUserIdForMessage(user) +
-            " is going by the username " +
-            currentUser.name,
+                    " is going by the username " +
+                    currentUser.name,
         );
       });
       break;
@@ -141,11 +141,11 @@ const handleCommands = async (text, user) => {
 
       sendSlackMessage(
           "STATUS \n" +
-          "Game started: " + started + "\n" +
-          "participants: " + (playerString === "" ? "none" : playerString) +
-          "\n" +
-          "Spots left: " + (maxJoined - joined.length) + "\n" +
-          "Timer: " + timeLeft(),
+                "Game started: " + started + "\n" +
+                "participants: " + (playerString === "" ? "none" : playerString) +
+                "\n" +
+                "Spots left: " + (maxJoined - joined.length) + "\n" +
+                "Timer: " + timeLeft(),
       );
       break;
   }
@@ -156,17 +156,17 @@ const handleCommands = async (text, user) => {
       score = text.split("test ")[1];
       sendSlackMessage(
           "new rating for : " + Number(score.split(" ")[0]) + ": " +
-          calculateNewRating(
-              Number(score.split(" ")[0]),
-              Number(score.split(" ")[1]),
-              Boolean(score.split(" ")[2]),
-          ) +
-          ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
-          calculateNewRating(
-              Number(score.split(" ")[1]),
-              Number(score.split(" ")[0]),
-              !score.split(" ")[2],
-          ),
+                calculateNewRating(
+                    Number(score.split(" ")[0]),
+                    Number(score.split(" ")[1]),
+                    Boolean(score.split(" ")[2]),
+                ) +
+                ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
+                calculateNewRating(
+                    Number(score.split(" ")[1]),
+                    Number(score.split(" ")[0]),
+                    !score.split(" ")[2],
+                ),
       );
       break;
   }
@@ -198,10 +198,10 @@ const addPlayerToGame = async (playerName, isSingle) => {
   } else {
     sendSlackMessage(
         "<@" + playerName + ">" +
-        " joined" + (isSingle ? " as single" : "") + ", " +
-        (maxJoined - joined.length) +
-        " space(s) left" +
-        ", time left: " + timeLeft(),
+            " joined" + (isSingle ? " as single" : "") + ", " +
+            (maxJoined - joined.length) +
+            " space(s) left" +
+            ", time left: " + timeLeft(),
     );
   }
 };
@@ -273,7 +273,7 @@ const lockInGame = (teams) => {
 
   const joinedForMessage = teams.map((team, index) => {
     let message = "team " +
-        (index ? ":red_circle:" : ":large_blue_circle:") + ": ";
+            (index ? ":red_circle:" : ":large_blue_circle:") + ": ";
     message += team.map((player) => {
       if (player.userId) {
         return prepareUserIdForMessage(player.userId);
@@ -563,9 +563,9 @@ const syncHandler = async () => {
   await getJoined();
   console.log(joined);
   /*
-  db.ref("current_game").on("child_added", (r) => {
-    sendSlackMessage(r.val())
-  });*/
+        db.ref("current_game").on("child_added", (r) => {
+          sendSlackMessage(r.val())
+        });*/
   db.ref("joined").on("child_added", (r) => {
     console.log(r.val() + " added to joined");
   });
