@@ -45,7 +45,7 @@ const sendSlackMessage = (message) => {
     if (shouldPostToSlack) {
         request.post({
             headers: {"content-type": "application/json"},
-            url: webhookUrl,
+            url: webhookUrl.fussball,
             json: {
                 "blocks": [
                     {
