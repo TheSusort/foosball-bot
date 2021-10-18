@@ -1,8 +1,37 @@
 const request = require("request");
+let time;
+
 const webhookUrl = {
     fussball: "https://hooks.slack.com/services/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",
     test: "https://hooks.slack.com/services/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",
 };
+
+/* eslint-disable max-len */
+const documentation =
+
+    "```" +
+    "**Fussball bot commands** \n" +
+    "------------------------------------------------------------------------------\n" +
+    "   start                     start game \n" +
+    "   start single              start game as single\n" +
+    "   join                      join game \n" +
+    "   join single               join game as single \n" +
+    "   /result [int] [int]       end game and log result \n" +
+    "   /time                     timers have been disabled \n" +
+    "   help|/help                show commands \n" +
+    "   /username [string]        set new username \n" +
+    "   /add 2v1|single|[]        test command for testing modes \n" +
+    "   force start               experimental feature to start game with currently\n" +
+    "                             joined players \n" +
+    "   stop                      force stops the game \n" +
+    "   status                    gets current status \n" +
+    "   test [int] [int] [bool]   test rating system. input your score, opponents \n" +
+    "                             score and win(true/false)" +
+    "```"
+
+;
+/* eslint-enable max-len */
+
 /**
  * Shuffles an array
  * @param {array} array
@@ -45,7 +74,7 @@ const sendSlackMessage = (message) => {
     if (shouldPostToSlack) {
         request.post({
             headers: {"content-type": "application/json"},
-            url: webhookUrl.fussball,
+            url: webhookUrl.test,
             json: {
                 "blocks": [
                     {
@@ -105,7 +134,29 @@ function Timer(callback, delay) {
     return this;
 }
 
-exports.shuffle = shuffle;
-exports.prepareUserIdForMessage = prepareUserIdForMessage;
-exports.sendSlackMessage = sendSlackMessage;
-exports.Timer = Timer;
+/**
+ * gets time left of timers
+ * @param {?number} number
+ * @return {string}
+ */
+const timeLeft = (number = null) => {
+    if (number > 0) {
+        // time = new Timer(() => stopGame(), int)
+    } else if (number === null) {
+        time = null;
+    }
+    if (time) {
+        return "Time left: " + time.getTimeLeft();
+    }
+    return "No timers running";
+};
+
+
+module.exports = {
+    documentation,
+    shuffle,
+    prepareUserIdForMessage,
+    sendSlackMessage,
+    Timer,
+    timeLeft,
+};
