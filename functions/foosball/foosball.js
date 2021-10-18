@@ -142,7 +142,8 @@ const handleCommands = async (text, user) => {
         sendSlackMessage(
             "STATUS \n" +
                 "Game started: " + started + "\n" +
-                "participants: " + (playerString === "" ? "none" : playerString) +
+                "participants: " +
+                (playerString === "" ? "none" : playerString) +
                 "\n" +
                 "Spots left: " + (maxJoined - joined.length) + "\n" +
                 "Timer: " + timeLeft(),
@@ -622,7 +623,7 @@ const updateUserName = (userId, newUserName) => {
 
 /**
  * gets time left of timers
- * @param {number|null} int
+ * @param {?number} int
  * @return {string}
  */
 const timeLeft = (int) => {
