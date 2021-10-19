@@ -46,7 +46,9 @@ const handleScore = async (text, teams, user) => {
             !Number.isInteger(Number(score)) &&
             Number(score) >= 10
         ) {
-            sendSlackMessage(errorString + text + " has to be numbers");
+            sendSlackMessage(
+                errorString + text + " has to be numbers equal or below 10",
+            );
         }
     }
 
