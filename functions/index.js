@@ -36,7 +36,7 @@ app.post("/game", async (req, res) => {
 app.post("/result", (req, res) => {
     // register teams and result, and clear everything for new game.
     console.log("result request: ", req.body.text);
-    res.send(handleResult(req.body.text));
+    res.send(handleResult(req.body.text, req.body.user_id));
 });
 
 app.post("/time", (req, res) => {

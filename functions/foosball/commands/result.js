@@ -12,15 +12,16 @@ const {stopGame} = require("./stop");
 /**
  * Handle result
  * @param {string} text
+ * @param {string} user
  * @return {Promise<void>}
  */
-const handleResult = async (text) => {
+const handleResult = async (text, user) => {
     try {
         const ref = db.ref("current_game");
         ref.once("value")
             .then((snapshot) => {
                 if (snapshot.val()) {
-                    handleScore(text, snapshot.val());
+                    handleScore(text, snapshot.val(), user);
                 }
             });
     } catch (error) {
@@ -32,16 +33,25 @@ const handleResult = async (text) => {
  * Handle result post and update db
  * @param {string} text
  * @param {[]} teams
+ * @param {string} user
  * @return {Promise<string>}
  */
-const handleScore = async (text, teams) => {
+const handleScore = async (text, teams, user) => {
     const scores = text.split(" ");
     console.log("scores: ", scores);
-
+    const errorString = prepareUserIdForMessage(user) +
+        " is a great QA worker: ";
     for (const score in scores) {
-        if (!Number.isInteger(Number(score))) {
-            return "Enter result of match '/result [int] [int]'";
+        if (
+            !Number.isInteger(Number(score)) &&
+            Number(score) >= 10
+        ) {
+            sendSlackMessage(errorString + text + " has to be numbers");
         }
+    }
+
+    if (scores.length !== 2 || scores[0] !== scores[1]) {
+        sendSlackMessage(errorString + text + " can't be a tie");
     }
 
     if (scores.length === 2) {
@@ -56,11 +66,13 @@ const handleScore = async (text, teams) => {
         } else {
             scoreText += buildResultMessage(teams[1]);
         }
-
+        sendSlackMessage(
+            prepareUserIdForMessage(user) + " is registering score: " + text,
+        );
         sendSlackMessage(scoreText);
         stopGame();
     } else {
-        return "Enter result of match '/result [int] [int]'";
+        sendSlackMessage(errorString + text + " both teams needs a score");
     }
 };
 
