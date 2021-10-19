@@ -13,21 +13,14 @@ function App() {
         getGames()
     }, []);
 
-    useEffect(() => {
-        console.log("change")
-    })
-
     const getUsers = async () => {
         getUserData().then((response) => {
-            console.log(response)
             setUsers(response)
         })
-
     }
 
     const getGames = async () => {
         getGamesData().then((response) => {
-            console.log(response)
             setGames(Object.values(response))
         })
     }

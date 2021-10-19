@@ -37,7 +37,7 @@ const UserProfile = (props) => {
         getUsers()
         getGames()
         setLoading(true)
-        setTimeout(() => setLoading(false), 500)
+        setTimeout(() => setLoading(false), 1000)
     }, [id])
 
     const getUser = async (userId) => {

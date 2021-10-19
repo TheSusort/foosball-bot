@@ -9,7 +9,7 @@ const LoadingIndicator = props => {
             classNames="fade"
             unmountOnExit
         >
-            <div className={"fixed w-full h-full flex justify-center items-center z-50"}>
+            <div className={"fixed w-full h-full flex justify-center items-center"}>
                 <img src={loadingImage} alt={"loading"} className={"animate-spin-slow absolute"}/>
             </div>
         </CSSTransition>
