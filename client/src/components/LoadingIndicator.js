@@ -1,10 +1,18 @@
 import loadingImage from "../slackball.png";
+import {CSSTransition} from "react-transition-group";
 
 const LoadingIndicator = props => {
     return (
-        <div className={"fixed w-full h-full flex justify-center items-center"}>
-            <img src={loadingImage} alt={"loading"} className={"animate-spin-slow absolute"}/>
-        </div>
+        <CSSTransition
+            in={props.loading}
+            timeout={300}
+            classNames="fade"
+            unmountOnExit
+        >
+            <div className={"fixed w-full h-full flex justify-center items-center"}>
+                <img src={loadingImage} alt={"loading"} className={"animate-spin-slow absolute"}/>
+            </div>
+        </CSSTransition>
     )
 }
 

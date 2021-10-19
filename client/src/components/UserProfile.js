@@ -3,7 +3,8 @@ import {useParams} from "react-router-dom";
 import {getGamesData, getUserData} from "../fetch/Data";
 import GameList from "./GameList";
 import DetailedUser from "./DetailedUser";
-import {trackPromise} from "react-promise-tracker";
+import {CSSTransition} from "react-transition-group";
+import LoadingIndicator from "./LoadingIndicator";
 
 const UserProfile = (props) => {
     let {id} = useParams()
@@ -11,6 +12,7 @@ const UserProfile = (props) => {
     const [users, setUsers] = useState(props.users)
     const [games, setGames] = useState(props.games)
     const [filteredGames, setFilteredGames] = useState(props.games);
+    const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
@@ -34,42 +36,48 @@ const UserProfile = (props) => {
         getUser(id)
         getUsers()
         getGames()
-
+        setLoading(true)
+        setTimeout(() => setLoading(false), 500)
     }, [id])
 
     const getUser = async (userId) => {
-        trackPromise(
-            getUserData(userId).then((response) => {
-                setUser(response)
-            })
-        )
+        getUserData(userId).then((response) => {
+            setUser(response)
+        })
     }
 
     const getUsers = async () => {
-        trackPromise(
-            getUserData().then((response) => {
-                setUsers(response)
-            })
-        )
+        getUserData().then((response) => {
+            setUsers(response)
+        })
     }
 
     const getGames = async () => {
-        trackPromise(
-            getGamesData().then((response) => {
-                setGames(Object.values(response))
-            })
-        )
+        getGamesData().then((response) => {
+            setGames(Object.values(response))
+        })
     }
 
     return (
-        <div className="container mx-auto p-4 ">
-            <div className="text-center my-5">
-                <h1 className="text-4xl">Slæckball 3000</h1>
-            </div>
-            <DetailedUser {...user} />
-            <GameList users={users} games={filteredGames}/>
+        <>
+            <LoadingIndicator loading={loading}/>
+            <CSSTransition
+                key={"profile"}
+                in={!loading}
+                timeout={500}
+                classNames="fade"
+                unmountOnExit
+            >
+                <div className="container mx-auto p-4 ">
+                    <div className="text-center my-5">
+                        <h1 className="text-4xl">Slæckball 3000</h1>
+                    </div>
+                    <DetailedUser {...user} />
+                    <GameList users={users} games={filteredGames}/>
 
-        </div>
+                </div>
+            </CSSTransition>
+        </>
     )
 }
 
