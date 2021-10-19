@@ -3,9 +3,10 @@ import {useParams} from "react-router-dom";
 import {getGamesData, getUserData} from "../fetch/Data";
 import GameList from "./GameList";
 import DetailedUser from "./DetailedUser";
+import {trackPromise} from "react-promise-tracker";
 
 const UserProfile = (props) => {
-    let { id } = useParams()
+    let {id} = useParams()
     const [user, setUser] = useState({})
     const [users, setUsers] = useState(props.users)
     const [games, setGames] = useState(props.games)
@@ -27,7 +28,7 @@ const UserProfile = (props) => {
         setFilteredGames(
             filter
         )
-    },[games, id])
+    }, [games, id])
 
     useEffect(() => {
         getUser(id)
@@ -37,22 +38,27 @@ const UserProfile = (props) => {
     }, [id])
 
     const getUser = async (userId) => {
-        getUserData(userId).then((response) => {
-            setUser(response)
-        })
+        trackPromise(
+            getUserData(userId).then((response) => {
+                setUser(response)
+            })
+        )
     }
 
     const getUsers = async () => {
-        getUserData().then((response) => {
-            setUsers(response)
-        })
-
+        trackPromise(
+            getUserData().then((response) => {
+                setUsers(response)
+            })
+        )
     }
 
     const getGames = async () => {
-        getGamesData().then((response) => {
-            setGames(Object.values(response))
-        })
+        trackPromise(
+            getGamesData().then((response) => {
+                setGames(Object.values(response))
+            })
+        )
     }
 
     return (

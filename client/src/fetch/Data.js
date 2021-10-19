@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export const serverUrl = 'http://localhost:5001/foosball-bot-1b613/us-central1/app/';
+export const serverUrl = 'https://us-central1-foosball-bot-1b613.cloudfunctions.net/app/';
 
 export const getUserData = async (userId) => {
     if (userId) {
-        return  await axios.get(serverUrl + "getusers/?userid=" + userId).then((response) => {
+        return await axios.get(serverUrl + "getusers/?userid=" + userId).then((response) => {
             return response.data
         })
     }

@@ -1,4 +1,8 @@
-const {prepareUserIdForMessage, sendSlackMessage, timeLeft} = require("../services/helpers");
+const {
+    prepareUserIdForMessage,
+    sendSlackMessage,
+    timeLeft,
+} = require("../services/helpers");
 const {getStarted, getMaxJoined, getJoined} = require("../services/shared");
 
 const handleStatus = async () => {
