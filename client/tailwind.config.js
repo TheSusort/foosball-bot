@@ -1,5 +1,15 @@
 module.exports = {
-    purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    purge: {
+        content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+        safelist: [
+            'fade-enter',
+            'fade-enter-active',
+            'fade-enter-done',
+            'fade-exit',
+            'fade-exit-active',
+            'face-exit-done'
+        ],
+    },
     darkMode: false, // or 'media' or 'class'
     theme: {
         extend: {
