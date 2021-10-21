@@ -110,7 +110,9 @@ const syncHandler = async () => {
     db.ref("current_score").on("child_changed", (r) => {
         console.log("SCORE");
         if (r.val()) {
-            console.log(r.val() + " for team " + (Number(r.key) ? "red" : "blue"));
+            console.log(
+                r.val() + " for team " + (Number(r.key) ? "red" : "blue"),
+            );
             if (r.val() === 10) {
                 finishGame();
                 db.ref("current_score").off();
