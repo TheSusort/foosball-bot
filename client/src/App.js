@@ -3,6 +3,7 @@ import Home from "./components/Home";
 import UserProfile from "./components/UserProfile";
 import React, {useEffect, useState} from "react";
 import {getGamesData, getUserData} from "./fetch/Data";
+import CurrentMatch from "./components/CurrentMatch";
 
 function App() {
     const [users, setUsers] = useState({})
@@ -30,6 +31,9 @@ function App() {
             <Switch>
                 <Route key={"/profile/:id"} exact path={"/profile/:id"}>
                     <UserProfile users={users} games={games}/>
+                </Route>
+                <Route key="/current-match" exact path={"/current-match"}>
+                    <CurrentMatch/>
                 </Route>
                 <Route key="/" exact path={"/"}>
                     <Home users={users} games={games}/>

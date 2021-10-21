@@ -12,9 +12,23 @@ module.exports = {
     },
     darkMode: false, // or 'media' or 'class'
     theme: {
+        rotate: {
+            '720': '720deg'
+        },
         extend: {
             animation: {
                 'spin-slow': 'spin 5s linear infinite',
+                'reverse-spin-slow': 'reverse-spin 5s linear infinite'
+            },
+            keyframes: {
+                'reverse-spin': {
+                    from: {
+                        transform: 'rotate(360deg)'
+                    },
+                }
+            },
+            transitionDuration: {
+                '5000': '5000ms'
             }
         }
     },

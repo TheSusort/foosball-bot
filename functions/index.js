@@ -3,7 +3,7 @@
 const functions = require("firebase-functions");
 const express = require("express");
 const bodyParser = require("body-parser");
-const {db} = require("./firebase");
+const {db, firebase} = require("./firebase");
 const cors = require("cors");
 const {syncHandler, handleCommands} = require("./foosball/foosball");
 const {handleResult} = require("./foosball/commands/result");
@@ -115,6 +115,56 @@ app.get("/getgames", (req, res) => {
     } catch (error) {
         res.status(500).send(error);
     }
+});
+
+app.get("/getcurrentgame", (req, res) => {
+    try {
+        const ref = db.ref("current_game");
+        ref.once("value")
+            .then((snapshot) => {
+                if (snapshot.val()) {
+                    res.json(snapshot.val());
+                } else {
+                    res.json();
+                }
+            });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.get("/getcurrentscore", (req, res) => {
+    try {
+        const ref = db.ref("current_score");
+        ref.once("value")
+            .then((snapshot) => {
+                if (snapshot.val()) {
+                    res.json(snapshot.val());
+                } else {
+                    res.json([0, 0]);
+                }
+            });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.post("/scoreblue", (req, res) => {
+    const updates = {
+        "current_score/0": firebase.database.ServerValue.increment(1),
+    };
+    db.ref().update(updates).then(() => {
+        res.json("Go blue");
+    });
+});
+
+app.post("/scorered", (req, res) => {
+    const updates = {
+        "current_score/1": firebase.database.ServerValue.increment(1),
+    };
+    db.ref().update(updates).then(() => {
+        res.json("Go red");
+    });
 });
 
 

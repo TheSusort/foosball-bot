@@ -2,9 +2,11 @@ const request = require("request");
 let time;
 
 const webhookUrl = {
-    fussball: "https://hooks.slack.com/services/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",
+    live: "https://hooks.slack.com/services/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",
     test: "https://hooks.slack.com/services/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",
 };
+
+const env = "live";
 
 /* eslint-disable max-len */
 const documentation =
@@ -74,7 +76,7 @@ const sendSlackMessage = (message) => {
     if (shouldPostToSlack) {
         request.post({
             headers: {"content-type": "application/json"},
-            url: webhookUrl.fussball,
+            url: webhookUrl[env],
             json: {
                 "blocks": [
                     {

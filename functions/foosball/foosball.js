@@ -7,7 +7,7 @@ const {db} = require("../firebase");
 const {handleStart, handleForceStart} = require("./commands/start");
 const {handleJoin} = require("./commands/join");
 const {stopGame} = require("./commands/stop");
-const {calculateNewRating} = require("./commands/result");
+const {calculateNewRating, finishGame} = require("./commands/result");
 
 const {
     getUsers,
@@ -106,12 +106,16 @@ const handleCommands = async (text, user) => {
 const syncHandler = async () => {
     await getUsers();
     await getJoined();
-    /*
-            db.ref("current_game").on("child_added", (r) => {
-              sendSlackMessage(r.val())
-            });*/
-    db.ref("joined").on("child_added", (r) => {
-        console.log(r.val() + " added to joined");
+
+    db.ref("current_score").on("child_changed", (r) => {
+        console.log("SCORE");
+        if (r.val()) {
+            console.log(r.val() + " for team " + (Number(r.key) ? "red" : "blue"));
+            if (r.val() === 10) {
+                finishGame();
+                db.ref("current_score").off();
+            }
+        }
     });
 };
 

@@ -30,7 +30,7 @@ const getJoined = async () => {
                 joined = Object.values(snap.val());
                 setSinglesFromJoined(joined);
                 setStarted(true);
-                console.log("joined from db: ", joined);
+                console.log("joined from db");
                 return joined;
             }
             console.log("no joined found, returning []");

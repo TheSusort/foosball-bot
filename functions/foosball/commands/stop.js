@@ -14,6 +14,7 @@ const stopGame = (showMessage = false) => {
     db.ref("joined").off();
     db.ref("current_game").remove().then(() => {
         db.ref("joined").remove().then(() => {
+            db.ref("current_score").remove();
             setStarted(false);
             setJoined([]);
             setSingles([]);

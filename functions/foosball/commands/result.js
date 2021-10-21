@@ -9,13 +9,22 @@ const {
 } = require("../services/shared");
 const {stopGame} = require("./stop");
 
+const finishGame = async () => {
+    const result = await db.ref("current_score")
+        .once("value")
+        .then((scores) => {
+            return scores.val();
+        });
+    await handleResult(result.join(" "));
+};
+
 /**
  * Handle result
  * @param {string} text
  * @param {string} user
  * @return {Promise<void>}
  */
-const handleResult = async (text, user) => {
+const handleResult = async (text, user = "Slæckball") => {
     try {
         const ref = db.ref("current_game");
         ref.once("value")
@@ -52,7 +61,7 @@ const handleScore = async (text, teams, user) => {
         }
     }
 
-    if (scores.length !== 2 || scores[0] !== scores[1]) {
+    if (scores.length !== 2 || scores[0] === scores[1]) {
         sendSlackMessage(errorString + text + " can't be a tie");
     }
 
@@ -196,6 +205,7 @@ const calculateNewRating = (rating, oppRating, result) => {
 };
 
 module.exports = {
+    finishGame,
     handleResult,
     handleScore,
     submitGame,
