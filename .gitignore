@@ -27,3 +27,8 @@ client/build
 client/node_modules
 
 functions/ui-debug.log
+
+.env
+*/**/.env
+*/**/.runtimeconfig.json
+*/**/firebase-debug.log
