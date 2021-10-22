@@ -59,7 +59,8 @@ const BouncingLogo = () => {
         <img src={loadingImage} width={widthDVDLogo} height={heightDVDLogo}
              style={{top: `${position.y}px`, left: `${position.x}px`}}
              alt={"bounce"}
-             className={"absolute top-1 left-0 animate-spin-slow"}/>
+             className={"absolute animate-spin-slow"}
+        />
     )
 
 }

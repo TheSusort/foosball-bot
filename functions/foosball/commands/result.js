@@ -154,7 +154,9 @@ const submitGame = async (result, teams) => {
                 teams[Number(!index)].combinedRating,
                 team.didWin,
             );
-            team.newDeltaRating = newCombinedRating - team.combinedRating;
+            team.newDeltaRating = Math.round(
+                newCombinedRating - team.combinedRating,
+            );
             return team;
         });
 
