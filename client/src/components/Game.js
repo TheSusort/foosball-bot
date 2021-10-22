@@ -1,7 +1,8 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import UserName from "./UserName";
 
-const Game = ({game, users}) => {
+const Game = ({game, users, emojis}) => {
     const date = new Date(Number(game.uid))
     const dateString = [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("/")
 
@@ -13,7 +14,9 @@ const Game = ({game, users}) => {
                     {team.map((player, index) =>
                         <span key={player + Math.random()} className={'name block'}>
                             {users[player] &&
-                            <Link to={`/profile/${users[player].userId}`}>{users[player].name}</Link>
+                            <Link to={`/profile/${users[player].userId}`}>
+                                <UserName user={users[player]} emojis={emojis} size={"h-3 md:h-5"}/>
+                            </Link>
                             }
                             {!users[player] &&
                             player

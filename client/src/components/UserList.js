@@ -1,7 +1,20 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import User from "./User";
+import {getEmojisData} from "../fetch/Data";
 
 const UserList = ({users, ranking}) => {
+    const [emojis, setEmojis] = useState({})
+
+    const getEmojis = () => {
+        getEmojisData().then((response) => {
+            setEmojis(response)
+        })
+    }
+
+    useEffect(() => {
+        getEmojis()
+    }, [])
+
     return (
         <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 rounded rounded-lg shadow-lg"}>
             {ranking &&
@@ -26,7 +39,7 @@ const UserList = ({users, ranking}) => {
                                 (index === 2 && ranking ? ' bg-yellow-600' : '')
                             }
                         >
-                            <User user={user}/>
+                            <User user={user} emojis={emojis} ranking={index}/>
                         </div>
                     ))}
             </div>

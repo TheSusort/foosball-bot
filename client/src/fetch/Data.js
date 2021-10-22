@@ -26,3 +26,10 @@ export const getCurrentScoreData = async () => {
         return response.data
     })
 }
+
+export const getEmojisData = async () => {
+    return await axios.get(serverUrl[process.env.NODE_ENV] + "getemojis").then((response) => {
+        console.log(response.data)
+        return response.data.emoji
+    })
+}

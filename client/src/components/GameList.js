@@ -1,8 +1,21 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Game from "./Game";
+import {getEmojisData} from "../fetch/Data";
 
 const GameList = ({games, users}) => {
     const showMax = 20
+
+    const [emojis, setEmojis] = useState({})
+
+    const getEmojis = () => {
+        getEmojisData().then((response) => {
+            setEmojis(response)
+        })
+    }
+
+    useEffect(() => {
+        getEmojis()
+    }, [])
 
     return (
         <div
@@ -25,7 +38,7 @@ const GameList = ({games, users}) => {
                             key={game.uid}
                             className="grid grid-flow-col auto-cols-fr text-xs lg:text-base"
                         >
-                            <Game game={game} users={users}/>
+                            <Game game={game} users={users} emojis={emojis}/>
                         </div>
                     ))}
             </div>

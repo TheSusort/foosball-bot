@@ -9,6 +9,7 @@ const {syncHandler, handleCommands} = require("./foosball/foosball");
 const {handleResult} = require("./foosball/commands/result");
 const {timeLeft, documentation} = require("./foosball/services/helpers");
 const {updateUserName} = require("./foosball/services/users");
+const {getEmojis} = require("./foosball/services/slack");
 
 const app = express();
 
@@ -167,5 +168,9 @@ app.post("/scorered", (req, res) => {
     });
 });
 
+app.get("/getemojis", async (req, res) => {
+    console.log(getEmojis());
+    res.json(await getEmojis());
+});
 
 exports.app = functions.https.onRequest(app);
