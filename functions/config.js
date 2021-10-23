@@ -14,13 +14,13 @@ const parsedResult = Object.keys(result.parsed).reduce((object, key) => {
                 const strIndex = key.indexOf("_TEST");
                 const newKey = key.substr(0, strIndex);
                 object[newKey] = result.parsed[key];
-            } else {
-                object[key] = result.parsed[key];
+                return object;
             }
         }
     }
-
+    object[key] = result.parsed[key];
     return object;
 }, {});
+
 
 module.exports = parsedResult;

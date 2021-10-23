@@ -16,7 +16,6 @@ const {
 const {timeLeft, documentation} = require("./services/helpers");
 const {getUser} = require("./services/users");
 const {handleStatus} = require("./commands/status");
-const {getEmojis} = require("./services/slack");
 
 
 const handleCommands = async (text, user) => {
