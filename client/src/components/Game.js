@@ -10,21 +10,25 @@ const Game = ({game, users, emojis}) => {
         <>
             <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
             {game.teams.map((team, index) =>
-                <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3"} key={index}>
+                <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex items-center"}
+                   key={index}>
                     {team.map((player, index) =>
+                        <>
                         <span key={player + Math.random()} className={'name'}>
                             {users[player] &&
                             <Link to={`/profile/${users[player].userId}`}>
-                                <UserName user={users[player]} emojis={emojis} size={"h-3.5"}/>
+                                <UserName user={users[player]} emojis={emojis} size={"h-3.5 lg:h-5"}/>
                             </Link>
                             }
                             {!users[player] &&
                             player
                             }
-                            {index < team.length - 1 &&
-                            <> / </>
-                            }
+
                         </span>
+                            {index < team.length - 1 &&
+                            <span className={"px-1"}> / </span>
+                            }
+                        </>
                     )}
                 </p>
             )}
