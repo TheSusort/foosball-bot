@@ -5,6 +5,9 @@ const serverUrl = {
     'development': process.env.REACT_APP_API_URL_TEST
 };
 
+console.log(process.env)
+console.log(serverUrl)
+
 export const getUserData = async (userId) => {
     if (userId) {
         return await axios.get(serverUrl[process.env.NODE_ENV] + "getusers/?userid=" + userId).then((response) => {

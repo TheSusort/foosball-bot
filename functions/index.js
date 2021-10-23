@@ -169,7 +169,6 @@ app.post("/scorered", (req, res) => {
 });
 
 app.get("/getemojis", async (req, res) => {
-    console.log(getEmojis());
     res.json(await getEmojis());
 });
 
