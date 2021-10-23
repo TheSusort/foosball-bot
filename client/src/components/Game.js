@@ -13,22 +13,22 @@ const Game = ({game, users, emojis}) => {
                 <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex items-center flex-wrap"}
                    key={index}>
                     {team.map((player, index) =>
-                        <>
-                        <span key={player + Math.random()} className={'name'}>
-                            {users[player] &&
-                            <Link to={`/profile/${users[player].userId}`}>
-                                <UserName user={users[player]} emojis={emojis} size={"h-3.5 lg:h-5"}/>
-                            </Link>
-                            }
-                            {!users[player] &&
-                            player
-                            }
+                        <span key={player + Math.random()} className={"flex items-center flex-wrap"}>
+                            <span className={'name'}>
+                                {users[player] &&
+                                <Link to={`/profile/${users[player].userId}`}>
+                                    <UserName user={users[player]} emojis={emojis} size={"h-3.5 lg:h-5"}/>
+                                </Link>
+                                }
+                                {!users[player] &&
+                                player
+                                }
 
-                        </span>
+                            </span>
                             {index < team.length - 1 &&
                             <span className={"px-1"}> / </span>
                             }
-                        </>
+                        </span>
                     )}
                 </p>
             )}

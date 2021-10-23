@@ -5,9 +5,6 @@ const serverUrl = {
     'development': process.env.REACT_APP_API_URL_TEST
 };
 
-console.log(process.env)
-console.log(serverUrl)
-
 export const getUserData = async (userId) => {
     if (userId) {
         return await axios.get(serverUrl[process.env.NODE_ENV] + "getusers/?userid=" + userId).then((response) => {
@@ -32,7 +29,10 @@ export const getCurrentScoreData = async () => {
 
 export const getEmojisData = async () => {
     return await axios.get(serverUrl[process.env.NODE_ENV] + "getemojis").then((response) => {
-        console.log(response.data)
-        return response.data.emoji
+        try {
+            return response.data.emoji
+        } catch (e) {
+            console.error(e)
+        }
     })
 }

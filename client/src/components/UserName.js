@@ -16,10 +16,8 @@ const UserName = ({user, emojis, size}) => {
                 let index = indices[i]
                 if (!i) {
                     index = 0
-                    console.log("first round before emoji ", user.name.substring(index, indices[i]))
                     newName.push(user.name.substring(index, indices[i]));
                 } else {
-                    console.log((i / 2) + 1 + " round before emoji ", user.name.substring(indices[i - 1] + 1, indices[i]))
                     newName.push(user.name.substring(indices[i - 1] + 1, indices[i]))
                 }
 
@@ -27,7 +25,10 @@ const UserName = ({user, emojis, size}) => {
                 let emojiKey = user.name.substring(indices[i] + 1, indices[i + 1]);
                 if (emojis[emojiKey]) {
                     emoji = emojis[emojiKey];
-                    newName.push(<img src={emoji} alt={emojiKey} className={size + " inline"}/>)
+                    newName.push(<img src={emoji}
+                                      alt={emojiKey}
+                                      className={size + " inline"}
+                                      key={emojiKey + Math.random()}/>)
                 } else {
                     newName.push(user.name.substring(indices[i], indices[i + 1] + 1))
                 }
