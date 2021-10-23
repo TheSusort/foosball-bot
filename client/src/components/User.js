@@ -5,13 +5,11 @@ import UserName from "./UserName";
 const User = ({user, emojis, ranking}) => {
     let size;
     if (ranking === 0) {
-        size = "h-6 md:h-8"
+        size = "h-5 md:h-6"
     } else if (ranking === 1) {
-        size = "h-5 md:h-7"
-    } else if (ranking === 2) {
-        size = "h-4 md:h-6"
+        size = "h-4 md:h-5"
     } else if (ranking) {
-        size = "h-3 md:h-5"
+        size = "h-3.5 md:h-5"
     }
     return (
         <>

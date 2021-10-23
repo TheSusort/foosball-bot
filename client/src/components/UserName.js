@@ -1,23 +1,43 @@
 const UserName = ({user, emojis, size}) => {
     if (user.name) {
-        let emoji, userNameAfterEmoji, userNameBeforeEmoji;
+        let emoji, newName = [];
 
-        if (user.name.indexOf(":") !== -1 && user.name.indexOf(":") !== user.name.lastIndexOf(":")) {
+        let element = ":"
+        let idx = user.name.indexOf(element);
+        let indices = [];
+        while (idx !== -1) {
+            indices.push(idx);
+            idx = user.name.indexOf(element, idx + 1);
+        }
 
-            const emojiIndex = user.name.indexOf(":") + 1;
-            const lastEmojiIndex = user.name.lastIndexOf(":") - 1;
+        if (indices.length && !(indices.length % 2)) {
+            for (let i = 0; i < indices.length; i += 2) {
+                // first loop start from 0, else start from user.name[i]
+                let index = indices[i]
+                if (!i) {
+                    index = 0
+                    console.log("first round before emoji ", user.name.substring(index, indices[i]))
+                    newName.push(user.name.substring(index, indices[i]));
+                } else {
+                    console.log((i / 2) + 1 + " round before emoji ", user.name.substring(indices[i - 1] + 1, indices[i]))
+                    newName.push(user.name.substring(indices[i - 1] + 1, indices[i]))
+                }
 
-            if (emojis[user.name.substr(emojiIndex, lastEmojiIndex)]) {
-                emoji = emojis[user.name.substr(emojiIndex, lastEmojiIndex)];
-                userNameBeforeEmoji = user.name.substr(0, user.name.indexOf(":")) ?? "";
-                userNameAfterEmoji = user.name.substr(user.name.lastIndexOf(":") + 1, user.name.length) ?? "";
+                // get content for first to second index
+                let emojiKey = user.name.substring(indices[i] + 1, indices[i + 1]);
+                if (emojis[emojiKey]) {
+                    emoji = emojis[emojiKey];
+                    newName.push(<img src={emoji} alt={emojiKey} className={size + " inline"}/>)
+                } else {
+                    newName.push(user.name.substring(indices[i], indices[i + 1] + 1))
+                }
             }
         }
         if (emoji) {
             return (
                 <>
-            <span className={"whitespace-nowrap"}>
-                {userNameBeforeEmoji}<img className={size + " inline"} src={emoji} alt={"emoji"}/>{userNameAfterEmoji}
+            <span className={"whitespace-nowrap flex items-start"}>
+                {newName}
             </span>
                 </>
             )

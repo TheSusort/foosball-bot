@@ -12,10 +12,10 @@ const Game = ({game, users, emojis}) => {
             {game.teams.map((team, index) =>
                 <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3"} key={index}>
                     {team.map((player, index) =>
-                        <span key={player + Math.random()} className={'name block'}>
+                        <span key={player + Math.random()} className={'name'}>
                             {users[player] &&
                             <Link to={`/profile/${users[player].userId}`}>
-                                <UserName user={users[player]} emojis={emojis} size={"h-3 md:h-5"}/>
+                                <UserName user={users[player]} emojis={emojis} size={"h-3.5"}/>
                             </Link>
                             }
                             {!users[player] &&
