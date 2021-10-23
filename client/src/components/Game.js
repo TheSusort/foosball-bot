@@ -10,7 +10,7 @@ const Game = ({game, users, emojis}) => {
         <>
             <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
             {game.teams.map((team, index) =>
-                <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex items-center"}
+                <p className={"compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex items-center flex-wrap"}
                    key={index}>
                     {team.map((player, index) =>
                         <>
