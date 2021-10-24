@@ -1,5 +1,20 @@
-const UserName = ({user, emojis, size}) => {
-    if (user.name) {
+import {useDispatch, useSelector} from "react-redux";
+import {fetchEmojis, selectAllEmojis} from "../reducers/emojis";
+import {useEffect} from "react";
+
+const UserName = ({user, size}) => {
+    const emojis = useSelector(selectAllEmojis);
+    const dispatch = useDispatch()
+    const emojiStatus = useSelector(state => state.emojis.status)
+    const emojiError = useSelector(state => state.emojis.error)
+
+    useEffect(() => {
+        if (emojiStatus === "idle") {
+            dispatch(fetchEmojis())
+        }
+    }, [dispatch, emojiStatus])
+
+    if (user.name && emojiStatus === "succeeded" && !emojiError) {
         let emoji, newName = [];
 
         let element = ":"

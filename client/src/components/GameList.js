@@ -1,21 +1,63 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import Game from "./Game";
-import {getEmojisData} from "../fetch/Data";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchGames, selectAllGames} from "../reducers/games";
+import LoadingIndicator from "./LoadingIndicator";
+import {fetchUsers, selectAllUsers} from "../reducers/users";
 
-const GameList = ({games, users}) => {
+const GameList = ({filter}) => {
+
     const showMax = 20
+    const games = Object.values(useSelector(selectAllGames));
+    const users = useSelector(selectAllUsers);
+    const dispatch = useDispatch()
+    const gamesStatus = useSelector(state => state.games.status)
+    const gamesError = useSelector(state => state.games.error)
+    const usersStatus = useSelector(state => state.users.status)
+    const usersError = useSelector(state => state.users.error)
 
-    const [emojis, setEmojis] = useState({})
+    let filteredGames = games;
 
-    const getEmojis = () => {
-        getEmojisData().then((response) => {
-            setEmojis(response)
+    if (filter) {
+        filteredGames = games.filter(game => {
+            let incl = game.teams.map(team => {
+                return team.includes(filter)
+            })
+
+            if (incl.includes(true)) {
+                return game
+            } else {
+                return false
+            }
         })
     }
 
     useEffect(() => {
-        getEmojis()
-    }, [])
+        if (gamesStatus === "idle") {
+            dispatch(fetchGames())
+            dispatch(fetchUsers())
+        }
+    }, [dispatch, gamesStatus])
+
+    let content;
+
+    if (gamesStatus === "loading" || usersStatus === "loading") {
+        content = <LoadingIndicator loading={gamesStatus === "loading" || usersStatus === "loading"}/>
+    } else if (gamesStatus === "succeeded" || usersStatus === "succeeded") {
+        content = filteredGames
+            .sort((a, b) => b.uid - a.uid)
+            .slice(0, showMax)
+            .map(game => (
+                <div
+                    key={game.uid}
+                    className="grid grid-flow-col auto-cols-fr text-xs lg:text-base"
+                >
+                    <Game game={game} users={users}/>
+                </div>
+            ))
+    } else if (gamesStatus === "error" || usersStatus === "error") {
+        content = <div>{gamesError || usersError}</div>
+    }
 
     return (
         <div
@@ -30,17 +72,7 @@ const GameList = ({games, users}) => {
                 <span className={"compact-grid-cell text-right hidden md:inline"}>delta</span>
             </div>
             <div className="flex flex-col mb-5 text-gray-700 divide-y divide-black divide-solid min-w-min">
-                {games
-                    .sort((a, b) => b.uid - a.uid)
-                    .slice(0, showMax)
-                    .map(game => (
-                        <div
-                            key={game.uid}
-                            className="grid grid-flow-col auto-cols-fr text-xs lg:text-base"
-                        >
-                            <Game game={game} users={users} emojis={emojis}/>
-                        </div>
-                    ))}
+                {content}
             </div>
         </div>
     )

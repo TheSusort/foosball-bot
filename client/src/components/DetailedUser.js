@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import UserName from "./UserName";
-import {getEmojisData} from "../fetch/Data";
 
 const UserList = (props) => {
     const [user, setUser] = useState(props);
@@ -11,24 +10,12 @@ const UserList = (props) => {
         setUser(props)
     }, [props])
 
-    const [emojis, setEmojis] = useState({})
-
-    const getEmojis = () => {
-        getEmojisData().then((response) => {
-            setEmojis(response)
-        })
-    }
-
-    useEffect(() => {
-        getEmojis()
-    }, [])
-
     if (user) {
         return (
             <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 rounded rounded-lg shadow-lg relative"}>
                 <Link className={"absolute left-4 text-xs md:text-base"} to={"/"}>Back</Link>
                 <h2 className={"text-center text-sm md:text-2xl name pt-5 w-full flex justify-center"}>
-                    <UserName user={user} emojis={emojis} size={"h-4 md:h-7"}/>
+                    <UserName user={user} size={"h-4 md:h-7"}/>
                 </h2>
 
                 <div className="flex border-t border-gray-600 text-xs md:text-base overflow-x-auto">
@@ -42,7 +29,7 @@ const UserList = (props) => {
                     </div>
                     <div className="flex flex-col flex-1 text-gray-700 divide-y divide-black divide-solid">
                         <p className={"compact-grid-cell name"}>
-                            <UserName user={user} emojis={emojis} size={"h-3.5 md:h-5"}/>
+                            <UserName user={user} size={"h-3.5 md:h-5"}/>
                         </p>
                         <p className={"compact-grid-cell"}>{user.userId}</p>
                         <p className={"compact-grid-cell"}>{user.rating}</p>

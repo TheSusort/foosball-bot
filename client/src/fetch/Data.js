@@ -5,12 +5,7 @@ const serverUrl = {
     'development': process.env.REACT_APP_API_URL_TEST
 };
 
-export const getUserData = async (userId) => {
-    if (userId) {
-        return await axios.get(serverUrl[process.env.NODE_ENV] + "getusers/?userid=" + userId).then((response) => {
-            return response.data
-        })
-    }
+export const getUserData = async () => {
     return await axios.get(serverUrl[process.env.NODE_ENV] + "getusers").then((response) => {
         return response.data
     })
@@ -29,10 +24,6 @@ export const getCurrentScoreData = async () => {
 
 export const getEmojisData = async () => {
     return await axios.get(serverUrl[process.env.NODE_ENV] + "getemojis").then((response) => {
-        try {
-            return response.data.emoji
-        } catch (e) {
-            console.error(e)
-        }
+        return response.data.emoji
     })
 }

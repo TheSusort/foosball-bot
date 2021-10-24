@@ -4,7 +4,7 @@ import GameList from "./GameList";
 import LoadingIndicator from "./LoadingIndicator";
 import {CSSTransition} from "react-transition-group";
 
-const Home = ({users, games}) => {
+const Home = () => {
 
     const [loading, setLoading] = useState(true);
 
@@ -26,8 +26,8 @@ const Home = ({users, games}) => {
                     <div className="text-center my-5">
                         <h1 className="text-4xl">Slæckball 3000</h1>
                     </div>
-                    <UserList users={Object.values(users)} ranking={true}/>
-                    <GameList games={games} users={users}/>
+                    <UserList ranking={true}/>
+                    <GameList/>
                 </div>
             </CSSTransition>
         </>

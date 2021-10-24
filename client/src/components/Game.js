@@ -2,7 +2,9 @@ import React from "react";
 import {Link} from "react-router-dom";
 import UserName from "./UserName";
 
-const Game = ({game, users, emojis}) => {
+const Game = ({game, users}) => {
+
+
     const date = new Date(Number(game.uid))
     const dateString = [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("/")
 
@@ -17,7 +19,7 @@ const Game = ({game, users, emojis}) => {
                             <span className={'name'}>
                                 {users[player] &&
                                 <Link to={`/profile/${users[player].userId}`}>
-                                    <UserName user={users[player]} emojis={emojis} size={"h-3.5 lg:h-5"}/>
+                                    <UserName user={users[player]} size={"h-3.5 lg:h-5"}/>
                                 </Link>
                                 }
                                 {!users[player] &&
