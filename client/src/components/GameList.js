@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import Game from "./Game";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchGames, selectAllGames} from "../reducers/games";
-import LoadingIndicator from "./LoadingIndicator";
 import {fetchUsers, selectAllUsers} from "../reducers/users";
 
 const GameList = ({filter}) => {
@@ -42,7 +41,6 @@ const GameList = ({filter}) => {
     let content;
 
     if (gamesStatus === "loading" || usersStatus === "loading") {
-        content = <LoadingIndicator loading={gamesStatus === "loading" || usersStatus === "loading"}/>
     } else if (gamesStatus === "succeeded" || usersStatus === "succeeded") {
         content = filteredGames
             .sort((a, b) => b.uid - a.uid)

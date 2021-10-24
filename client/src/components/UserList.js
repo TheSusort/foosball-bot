@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import User from "./User";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUsers, selectAllUsers} from "../reducers/users";
-import LoadingIndicator from "./LoadingIndicator";
 
 const UserList = ({ranking}) => {
     const users = Object.values(useSelector(selectAllUsers))
@@ -19,7 +18,6 @@ const UserList = ({ranking}) => {
     let content;
 
     if (usersStatus === "loading") {
-        content = <LoadingIndicator loading={usersStatus === "loading"}/>
     } else if (usersStatus === "succeeded") {
         content = users
             .sort((a, b) => b.rating - a.rating)
