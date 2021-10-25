@@ -1,6 +1,6 @@
 const {
     prepareUserIdForMessage,
-    sendSlackMessage,
+    sendSlackMessage, generateHelpMessage,
 } = require("./services/helpers");
 
 const {db} = require("../firebase");
@@ -14,7 +14,7 @@ const {
     getUsers,
     getJoined,
 } = require("./services/shared");
-const {timeLeft, documentation} = require("./services/helpers");
+const {timeLeft} = require("./services/helpers");
 const {getUser} = require("./services/users");
 const {buildScoringBlocks} = require("./commands/scoring");
 
@@ -43,8 +43,9 @@ const handleCommands = async (text, user) => {
 
     case "help":
         sendSlackMessage(
-            "<@" + user + "> requested help :smirk: \n" + documentation,
+            "<@" + user + "> requested help :lulw: \n",
         );
+        generateHelpMessage();
         break;
 
     case "user":

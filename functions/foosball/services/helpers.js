@@ -2,29 +2,229 @@ const {sendSlackMessageViaAPI} = require("./slack");
 let time;
 
 /* eslint-disable max-len */
-const documentation =
-
-    "```" +
-    "**Fussball bot commands** \n" +
-    "------------------------------------------------------------------------------\n" +
-    "   start                     start game \n" +
-    "   start single              start game as single\n" +
-    "   join                      join game \n" +
-    "   join single               join game as single \n" +
-    "   /result [int] [int]       end game and log result \n" +
-    "   /time                     timers have been disabled \n" +
-    "   help|/help                show commands \n" +
-    "   /username [string]        set new username \n" +
-    "   /add 2v1|single|[]        test command for testing modes \n" +
-    "   force start               experimental feature to start game with currently\n" +
-    "                             joined players \n" +
-    "   stop                      force stops the game \n" +
-    "   status                    gets current status \n" +
-    "   test [int] [int] [bool]   test rating system. input your score, opponents \n" +
-    "                             score and win(true/false)" +
-    "```"
-
-;
+const documentation = [
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "*Game related commands*",
+        },
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*start*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "start a new game",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*start single*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "start a new game as solo player",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*join*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "join existing game, or starts a new if none exists",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*join single*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "join existing game as solo player, or starts a new game as a solo player, if none exists",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*stop*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "stops game and resets all current games/scores",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*/result [int] [int]*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "manually report result",
+            },
+        ],
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "*User related commands*",
+        },
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*user*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "displays currently apllied username mapping",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*/username [string]*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "sets a new username",
+            },
+        ],
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "*helper commands*",
+        },
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*help*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "prints this for all to see",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*status*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "get current status",
+            },
+        ],
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "*Testing and experimental commands*",
+        },
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*force start*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "forces game start, split current participants if there's 2 or more joined. not tested.",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*test [int] [int] [bool]*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "Test rating calculations. rating, oppo rating, win/lose",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*/add 2v1|single|[]*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "start different types of games with test users",
+            },
+        ],
+    },
+    {
+        "type": "divider",
+    },
+];
 /* eslint-enable max-len */
 
 /**
@@ -141,6 +341,12 @@ const escapeHtml = (unsafe) => {
         .replace(/'/g, "&#039;");
 };
 
+const generateHelpMessage = () => {
+    sendSlackMessage(
+        documentation,
+    );
+};
+
 module.exports = {
     documentation,
     shuffle,
@@ -149,4 +355,5 @@ module.exports = {
     Timer,
     timeLeft,
     escapeHtml,
+    generateHelpMessage,
 };
