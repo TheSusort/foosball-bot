@@ -22,5 +22,4 @@ const parsedResult = Object.keys(result.parsed).reduce((object, key) => {
     return object;
 }, {});
 
-
 module.exports = parsedResult;

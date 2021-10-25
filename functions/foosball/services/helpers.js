@@ -61,7 +61,7 @@ const prepareUserIdForMessage = (userId) => {
 
 /**
  * sends slack message
- * @param {string} message
+ * @param {string|array|object} message
  */
 const sendSlackMessage = (message) => {
     console.log("should display message: " + message);

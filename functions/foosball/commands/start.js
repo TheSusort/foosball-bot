@@ -13,6 +13,7 @@ const {
     getSingles,
 } = require("../services/shared");
 const {addPlayerToGame} = require("./addPlayer");
+const {buildScoringBlocks} = require("./scoring");
 
 
 /**

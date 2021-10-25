@@ -3,13 +3,16 @@
 const functions = require("firebase-functions");
 const express = require("express");
 const bodyParser = require("body-parser");
-const {db, firebase} = require("./firebase");
+const {db} = require("./firebase");
 const cors = require("cors");
 const {syncHandler, handleCommands} = require("./foosball/foosball");
 const {handleResult} = require("./foosball/commands/result");
 const {timeLeft, documentation} = require("./foosball/services/helpers");
 const {updateUserName} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
+const request = require("request");
+const {getCurrentScore, scoreBlue, scoreRed} = require("./foosball/commands/scoring");
+const {response} = require("express");
 
 const app = express();
 
@@ -134,42 +137,54 @@ app.get("/getcurrentgame", (req, res) => {
     }
 });
 
-app.get("/getcurrentscore", (req, res) => {
-    try {
-        const ref = db.ref("current_score");
-        ref.once("value")
-            .then((snapshot) => {
-                if (snapshot.val()) {
-                    res.json(snapshot.val());
-                } else {
-                    res.json([0, 0]);
-                }
-            });
-    } catch (error) {
-        res.status(500).send(error);
-    }
+app.get("/getcurrentscore", async (req, res) => {
+    const result = await getCurrentScore();
+    res.json(result);
 });
 
 app.post("/scoreblue", (req, res) => {
-    const updates = {
-        "current_score/0": firebase.database.ServerValue.increment(1),
-    };
-    db.ref().update(updates).then(() => {
-        res.json("Go blue");
-    });
+    res.json(scoreBlue());
 });
 
 app.post("/scorered", (req, res) => {
-    const updates = {
-        "current_score/1": firebase.database.ServerValue.increment(1),
-    };
-    db.ref().update(updates).then(() => {
-        res.json("Go red");
-    });
+    res.json(scoreRed());
 });
 
 app.get("/getemojis", async (req, res) => {
     res.json(await getEmojis());
+});
+
+app.post("/interactivity", async (req, res) => {
+    const parsedBody = JSON.parse(req.body.payload);
+    const payload = parsedBody.message.blocks;
+    let updatedScore;
+    let buttonsIndex;
+
+    if (parsedBody.actions[0].action_id === "actionId-0") {
+        updatedScore = await scoreBlue().then(() => getCurrentScore());
+    } else {
+        updatedScore = await scoreRed().then(() => getCurrentScore());
+    }
+    if (updatedScore.indexOf("WON") !== -1) {
+        buttonsIndex = payload.findIndex((block) => block.type === "actions");
+        if (buttonsIndex !== -1) {
+            console.log("remove buttons");
+            payload.splice(buttonsIndex, 1);
+        }
+    }
+    const scoreIndex = payload.findIndex((block) => block.type === "header");
+    payload[scoreIndex].text.text = updatedScore;
+    request({
+        uri: parsedBody.response_url,
+        method: "POST",
+        body: JSON.stringify({
+            replace_original: true,
+            blocks: payload,
+        }),
+    }, (error, response) => {
+        console.log(error, response.body);
+    });
+    res.json("ok");
 });
 
 exports.app = functions.https.onRequest(app);

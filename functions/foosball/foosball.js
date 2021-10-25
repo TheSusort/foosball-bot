@@ -3,11 +3,12 @@ const {
     sendSlackMessage,
 } = require("./services/helpers");
 
-const {db} = require("../firebase");
+const {db, firebase} = require("../firebase");
 const {handleStart, handleForceStart} = require("./commands/start");
 const {handleJoin} = require("./commands/join");
 const {stopGame} = require("./commands/stop");
 const {calculateNewRating, finishGame} = require("./commands/result");
+const {handleStatus} = require("./commands/status");
 
 const {
     getUsers,
@@ -15,7 +16,7 @@ const {
 } = require("./services/shared");
 const {timeLeft, documentation} = require("./services/helpers");
 const {getUser} = require("./services/users");
-const {handleStatus} = require("./commands/status");
+const {buildScoringBlocks} = require("./commands/scoring");
 
 
 const handleCommands = async (text, user) => {
@@ -71,6 +72,10 @@ const handleCommands = async (text, user) => {
     case "status":
         await handleStatus();
         break;
+
+    case "test scoring":
+        await buildScoringBlocks();
+        break;
     }
 
     let score;
@@ -78,20 +83,22 @@ const handleCommands = async (text, user) => {
     case /^test.*/.test(text):
         console.log(text);
         score = text.split("test ")[1];
-        sendSlackMessage(
-            "new rating for : " + Number(score.split(" ")[0]) + ": " +
-                calculateNewRating(
-                    Number(score.split(" ")[0]),
-                    Number(score.split(" ")[1]),
-                    Number(score.split(" ")[2]),
-                ) +
-                ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
-                calculateNewRating(
-                    Number(score.split(" ")[1]),
-                    Number(score.split(" ")[0]),
-                    Number(!score.split(" ")[2]),
-                ),
-        );
+        if (parseInt(score[0] && score[1] && score[2])) {
+            sendSlackMessage(
+                "new rating for : " + Number(score.split(" ")[0]) + ": " +
+                    calculateNewRating(
+                        Number(score.split(" ")[0]),
+                        Number(score.split(" ")[1]),
+                        Number(score.split(" ")[2]),
+                    ) +
+                    ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
+                    calculateNewRating(
+                        Number(score.split(" ")[1]),
+                        Number(score.split(" ")[0]),
+                        Number(!score.split(" ")[2]),
+                    ),
+            );
+        }
         break;
     }
 

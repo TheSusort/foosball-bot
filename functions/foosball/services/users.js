@@ -9,8 +9,7 @@ const {escapeHtml} = require("./helpers");
  */
 const getUser = async (userId) => {
     const users = await getUsers();
-    // console.log(users);
-    // console.log(userId + ": " + users[userId]);
+
     if (users && users[userId]) {
         return users[userId];
     } else {
