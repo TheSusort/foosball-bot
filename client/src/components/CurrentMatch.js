@@ -15,6 +15,7 @@ const CurrentMatch = () => {
 
         getCurrentScoreData().then((response) => {
             if (response && JSON.stringify(currentScore) !== JSON.stringify(response)) {
+
                 setCurrentScore(response)
                 setCelebrate(celebrate + 1)
             }
@@ -43,14 +44,10 @@ const CurrentMatch = () => {
             {showCelebration &&
             <Confetti width={width} height={height}/>
             }
-            <div
-                className={"text-9xl font-extrabold text-center flex-1 whitespace-nowrap flex justify-evenly text-white"}>
-                {currentScore.map((score, index) =>
-                    <span key={index} className={""}>
-                        {score ?? 0}
-                    </span>
-                )}
-            </div>
+            <p
+                className={"text-9xl font-extrabold text-center flex-1 flex justify-evenly text-white whitespace-pre-line"}>
+                {currentScore}
+            </p>
         </div>
     )
 }

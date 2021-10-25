@@ -54,7 +54,6 @@ const UserList = ({ranking}) => {
             </div>
         </div>
     )
-
 }
 
 
