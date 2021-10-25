@@ -20,15 +20,20 @@ const UserName = ({user, size}) => {
         let element = ":"
         let idx = user.name.indexOf(element);
         let indices = [];
+        // find indexes for all : chars in name
         while (idx !== -1) {
             indices.push(idx);
             idx = user.name.indexOf(element, idx + 1);
         }
-
-        if (indices.length && !(indices.length % 2)) {
-            for (let i = 0; i < indices.length; i += 2) {
+        if (user.name.includes("test")) {
+            console.log(user.name)
+        }
+        // if : chars found, search for emojis
+        if (indices.length) {
+            for (let i = 0; i < indices.length; i++) {
                 // first loop start from 0, else start from user.name[i]
                 let index = indices[i]
+
                 if (!i) {
                     index = 0
                     newName.push(user.name.substring(index, indices[i]));
@@ -36,16 +41,27 @@ const UserName = ({user, size}) => {
                     newName.push(user.name.substring(indices[i - 1] + 1, indices[i]))
                 }
 
-                // get content for first to second index
+                // get content from current index to next, the emoji key to test
                 let emojiKey = user.name.substring(indices[i] + 1, indices[i + 1]);
+
                 if (emojis[emojiKey]) {
+                    // if found, add to name
                     emoji = emojis[emojiKey];
                     newName.push(<img src={emoji}
                                       alt={emojiKey}
                                       className={size + " inline"}
                                       key={emojiKey + Math.random()}/>)
+
+                    // if last round, add remaining text
+                    if (i === indices.length - 2) {
+                        newName.push(user.name.substring(indices[i + 1] + 1, user.name.length))
+                    }
+
+                    // found emoji, skip next index
+                    i++;
                 } else {
-                    newName.push(user.name.substring(indices[i], indices[i + 1] + 1))
+                    // if not found, add :
+                    newName.push(":")
                 }
             }
         }
