@@ -11,8 +11,11 @@ const {timeLeft, documentation} = require("./foosball/services/helpers");
 const {updateUserName} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
 const request = require("request");
-const {getCurrentScore, scoreBlue, scoreRed} = require("./foosball/commands/scoring");
-const {response} = require("express");
+const {
+    getCurrentScore,
+    scoreBlue,
+    scoreRed,
+} = require("./foosball/commands/scoring");
 
 const app = express();
 

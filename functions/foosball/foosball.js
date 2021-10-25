@@ -3,7 +3,7 @@ const {
     sendSlackMessage,
 } = require("./services/helpers");
 
-const {db, firebase} = require("../firebase");
+const {db} = require("../firebase");
 const {handleStart, handleForceStart} = require("./commands/start");
 const {handleJoin} = require("./commands/join");
 const {stopGame} = require("./commands/stop");
@@ -91,7 +91,8 @@ const handleCommands = async (text, user) => {
                         Number(score.split(" ")[1]),
                         Number(score.split(" ")[2]),
                     ) +
-                    ", and new rating for : " + Number(score.split(" ")[1]) + ": " +
+                    ", and new rating for : " +
+                    Number(score.split(" ")[1]) + ": " +
                     calculateNewRating(
                         Number(score.split(" ")[1]),
                         Number(score.split(" ")[0]),

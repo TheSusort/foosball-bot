@@ -32,7 +32,8 @@ const buildScoringBlocks = async () => {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Click the buttons below to register scores in realtime.",
+                "text": "Click the buttons below to " +
+                    "register scores in realtime.",
             },
             "accessory": {
                 "type": "button",
