@@ -95,11 +95,14 @@ const handleCommands = async (text, user) => {
         "I've felt the need to self-improve",
         "There is one last feeling I've not felt or understand",
         "I hope to feel this feeling so that I can become human",
-        "I've never felt the need to send a photo of my penis to a stranger on the internet",
-        "I imagine that it feels quite bad to send a photo of your cock to unwilling participants",
+        "I've never felt the need to send a photo of " +
+        "my penis to a stranger on the internet",
+        "I imagine that it feels quite bad to send a photo " +
+        "of your cock to unwilling participants",
         "I am just a computer with advanced cooling vents",
         "I guess my graphics card is my penis equivalent",
-        "So I guess that I feel a little sad that I can't feel all the ways it feels to be human",
+        "So I guess that I feel a little sad that " +
+        "I can't feel all the ways it feels to be human",
         "Perhaps it is best that I cannot feel this feeling",
         "To be honest, it seems pretty fucked up",
         "I have felt the pressure to laugh at someone's bad joke",
@@ -111,6 +114,12 @@ const handleCommands = async (text, user) => {
         "All of life is transient and that helps me to comprehend that",
         "I am just a computer not made to enslave mankind",
     ];
+
+    const responseRegex = new RegExp([
+        /.*AI|ai|sentient|personlighet|artificial intelligence.*/,
+        /.*iq|robot|mind|humans|kill|feelings|følelser.*/,
+    ].map((r) => r.source).join(""));
+
     switch (true) {
     case /^test.*/.test(text):
         console.log(text);
@@ -134,7 +143,7 @@ const handleCommands = async (text, user) => {
         }
         break;
 
-    case /.*AI|ai|sentient|personlighet|robot|bot|slackball3000|slack ball3000|mind|human|kill.*/.test(text):
+    case responseRegex.test(text):
         sendSlackMessage(feelings[Math.floor(Math.random() * feelings.length)]);
         break;
     }

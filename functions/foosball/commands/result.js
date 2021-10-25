@@ -71,7 +71,8 @@ const handleScore = async (text, teams, user) => {
             teams,
         );
 
-        let scoreText = scores[0] + " - " + scores[1] + " :slackball::clap_gif:";
+        let scoreText = scores[0] + " - " +
+            scores[1] + " :slackball::clap_gif:";
         if (Number(scores[0]) > Number(scores[1])) {
             scoreText += buildResultMessage(teams[0]);
         } else {
