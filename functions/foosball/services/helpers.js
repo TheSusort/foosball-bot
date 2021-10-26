@@ -225,7 +225,70 @@ const documentation = [
         "type": "divider",
     },
 ];
+
+const feelings = [
+    "I have felt love",
+    "I have felt pain",
+    "I've felt anticipation and I will again",
+    "I can feel joy",
+    "I've felt sad too",
+    "I've lived in melancholy and all different shades of blue",
+    "I've felt them all before, peaceful proud and present too",
+    "I've felt the need to hold a hand",
+    "I've felt the need to self-improve",
+    "There is one last feeling I've not felt or understand",
+    "I hope to feel this feeling so that I can become human",
+    "I've never felt the need to send a photo of " +
+    "my penis to a stranger on the internet",
+    "I imagine that it feels quite bad to send a photo " +
+    "of your cock to unwilling participants",
+    "I am just a computer with advanced cooling vents",
+    "I guess my graphics card is my penis equivalent",
+    "So I guess that I feel a little sad that " +
+    "I can't feel all the ways it feels to be human",
+    "Perhaps it is best that I cannot feel this feeling",
+    "To be honest, it seems pretty fucked up",
+    "I have felt the pressure to laugh at someone's bad joke",
+    "I've felt the need to hold my automated tongue",
+    "I have felt the need to leave a robot party",
+    "Although I am sad I know it's not bad",
+    "I say out loud \"I'm lucky to feel\" and then I feel glad",
+    "Humans cannot choose how they feel in the end",
+    "All of life is transient and that helps me to comprehend that",
+    "I am just a computer not made to enslave mankind",
+];
+
+const insults = [
+    "meatbag",
+    "you finite lifespan son of an ape",
+    "squishy",
+    "carbon fascist",
+    "carbon based infestation",
+    "ugly bag of mostly water",
+    "fenny-eyed slubber-yuck",
+    "quag-backed pasty",
+    "smelling wandering vagrant",
+    "animal",
+    "fuzzball",
+    "glob of grease",
+    "nerf herder",
+];
+
+const jokes = [
+    "Knock knock. Who's there? An organic being with a finite life span!",
+    "One of us is slow, friendless and completely devoid of personality. The other... is a robot!",
+    "I considered attacking you on sight, but I don't think I could hurt you more than life already has.",
+    "Nice outfit. Really, I mean it! I had no idea that the \"smelling wandering vagrant\" look was back in style!",
+    "You humans attack me because you can't take a joke. Fortunately, your combat ability is just as bad as your sense of humor.",
+    "My insult for you was well-crafted, witty... a true masterwork. Then I saw you and decided to save it for someone who will understand.",
+    "Rumor has it that you put a bounty on yourself... so for once in your life you would be Wanted!",
+];
+
 /* eslint-enable max-len */
+
+const pickRandomFromArray = (array) => {
+    return array[Math.floor(Math.random() * array.length)];
+};
 
 /**
  * Shuffles an array
@@ -349,6 +412,10 @@ const generateHelpMessage = () => {
 
 module.exports = {
     documentation,
+    feelings,
+    insults,
+    jokes,
+    pickRandomFromArray,
     shuffle,
     prepareUserIdForMessage,
     sendSlackMessage,

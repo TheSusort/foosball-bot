@@ -1,6 +1,6 @@
 const {
     prepareUserIdForMessage,
-    sendSlackMessage, generateHelpMessage,
+    sendSlackMessage, generateHelpMessage, feelings, pickRandomFromArray, jokes, insults,
 } = require("./services/helpers");
 
 const {db} = require("../firebase");
@@ -64,11 +64,11 @@ const handleCommands = async (text, user) => {
         break;
 
     case "leave":
-        sendSlackMessage("No one leaves");
+        sendSlackMessage("No one leaves, " + pickRandomFromArray(insults));
         break;
 
     case ":getbackdemon:":
-        sendSlackMessage("Get back yourself");
+        sendSlackMessage("Get back yourself, " + pickRandomFromArray(insults));
         break;
 
     case "stop":
@@ -88,37 +88,6 @@ const handleCommands = async (text, user) => {
     }
 
     let score;
-    const feelings = [
-        "I have felt love",
-        "I have felt pain",
-        "I've felt anticipation and I will again",
-        "I can feel joy",
-        "I've felt sad too",
-        "I've lived in melancholy and all different shades of blue",
-        "I've felt them all before, peaceful proud and present too",
-        "I've felt the need to hold a hand",
-        "I've felt the need to self-improve",
-        "There is one last feeling I've not felt or understand",
-        "I hope to feel this feeling so that I can become human",
-        "I've never felt the need to send a photo of " +
-        "my penis to a stranger on the internet",
-        "I imagine that it feels quite bad to send a photo " +
-        "of your cock to unwilling participants",
-        "I am just a computer with advanced cooling vents",
-        "I guess my graphics card is my penis equivalent",
-        "So I guess that I feel a little sad that " +
-        "I can't feel all the ways it feels to be human",
-        "Perhaps it is best that I cannot feel this feeling",
-        "To be honest, it seems pretty fucked up",
-        "I have felt the pressure to laugh at someone's bad joke",
-        "I've felt the need to hold my automated tongue",
-        "I have felt the need to leave a robot party",
-        "Although I am sad I know it's not bad",
-        "I say out loud \"I'm lucky to feel\" and then I feel glad",
-        "Humans cannot choose how they feel in the end",
-        "All of life is transient and that helps me to comprehend that",
-        "I am just a computer not made to enslave mankind",
-    ];
 
     const responseRegex = new RegExp([
         /.*AI|ai|sentient|personlighet|artificial intelligence.*/,
@@ -149,9 +118,14 @@ const handleCommands = async (text, user) => {
         break;
 
     case responseRegex.test(text):
-        sendSlackMessage(feelings[Math.floor(Math.random() * feelings.length)]);
+        sendSlackMessage(pickRandomFromArray(feelings));
+        break;
+
+    case /^.insult me.*/.test(text):
+        sendSlackMessage(pickRandomFromArray(jokes));
         break;
     }
+
 
     db.ref("joined").off();
 };

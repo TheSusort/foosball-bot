@@ -5,8 +5,12 @@ const gf = new GiphyFetch(GIPHY_API_KEY);
 
 const gifSearch = async (term) => {
     try {
-        const limit = 25;
-        const result = await gf.search(term, {sort: "relevant", limit: limit});
+        const limit = 50;
+        const result = await gf.search(term, {
+            sort: "relevant",
+            limit: limit,
+            offset: Math.floor(Math.random() * 4999),
+        });
         const randomGif = result.data[Math.floor(Math.random() * limit)];
         return randomGif.images.downsized.url;
     } catch (error) {
