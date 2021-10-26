@@ -1,6 +1,11 @@
 const {
     prepareUserIdForMessage,
-    sendSlackMessage, generateHelpMessage, feelings, pickRandomFromArray, jokes, insults,
+    sendSlackMessage,
+    generateHelpMessage,
+    feelings,
+    pickRandomFromArray,
+    jokes,
+    insults,
 } = require("./services/helpers");
 
 const {db} = require("../firebase");
