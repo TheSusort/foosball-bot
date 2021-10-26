@@ -13,6 +13,7 @@ const {
     getSingles,
 } = require("../services/shared");
 const {addPlayerToGame} = require("./addPlayer");
+const {gifSearch} = require("../services/giphy");
 
 /**
  * Handles start command
@@ -135,7 +136,7 @@ const lockInGame = (teams) => {
         });
         return message;
     });
-
+    sendSlackMessage(gifSearch("showdown"));
     sendSlackMessage(
         "GAME FILLED by " +
         joinedForMessage.join(", ") +

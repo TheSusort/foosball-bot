@@ -7,7 +7,7 @@ const {db} = require("./firebase");
 const cors = require("cors");
 const {syncHandler, handleCommands} = require("./foosball/foosball");
 const {handleResult} = require("./foosball/commands/result");
-const {timeLeft, documentation} = require("./foosball/services/helpers");
+const {timeLeft} = require("./foosball/services/helpers");
 const {updateUserName} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
 const request = require("request");
@@ -52,8 +52,8 @@ app.post("/time", (req, res) => {
 });
 
 app.post("/help", (req, res) => {
-    console.log("help request");
-    res.send(documentation);
+    handleCommands("help", req.body.user_id);
+    res.json("ok");
 });
 
 app.post("/username", (req, res) => {

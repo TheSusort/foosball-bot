@@ -17,6 +17,7 @@ const {
 const {timeLeft} = require("./services/helpers");
 const {getUser} = require("./services/users");
 const {buildScoringBlocks} = require("./commands/scoring");
+const {gifSearch} = require("./services/giphy");
 
 
 const handleCommands = async (text, user) => {
@@ -81,6 +82,9 @@ const handleCommands = async (text, user) => {
     case "test scoring":
         await buildScoringBlocks();
         break;
+
+    case "gif":
+        sendSlackMessage(await gifSearch("robot"));
     }
 
     let score;
@@ -145,6 +149,7 @@ const handleCommands = async (text, user) => {
         break;
 
     case responseRegex.test(text):
+        sendSlackMessage(await gifSearch("robot"));
         sendSlackMessage(feelings[Math.floor(Math.random() * feelings.length)]);
         break;
     }
