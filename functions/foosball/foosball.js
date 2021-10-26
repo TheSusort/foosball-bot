@@ -149,7 +149,6 @@ const handleCommands = async (text, user) => {
         break;
 
     case responseRegex.test(text):
-        sendSlackMessage(await gifSearch("robot"));
         sendSlackMessage(feelings[Math.floor(Math.random() * feelings.length)]);
         break;
     }
