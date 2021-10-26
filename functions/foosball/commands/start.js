@@ -14,6 +14,7 @@ const {
 } = require("../services/shared");
 const {addPlayerToGame} = require("./addPlayer");
 const {gifSearch} = require("../services/giphy");
+const {buildScoringBlocks} = require("./scoring");
 
 /**
  * Handles start command
@@ -142,6 +143,7 @@ const lockInGame = (teams) => {
         joinedForMessage.join(", ") +
         ". Post result to start new game.",
     );
+    buildScoringBlocks();
 };
 
 module.exports = {
