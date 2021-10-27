@@ -10,7 +10,7 @@ const {
     getJoined,
     setMaxJoined,
     setStarted,
-    getSingles,
+    getSingles, getMaxJoined,
 } = require("../services/shared");
 const {addPlayerToGame} = require("./addPlayer");
 const {gifSearch} = require("../services/giphy");
@@ -39,9 +39,12 @@ const handleStart = async (user, isSingle) => {
 /**
  * Handles force start command
  */
-const handleForceStart = () => {
-    if (getJoined().length >= 2) {
-        setMaxJoined(getJoined().length);
+const handleForceStart = async () => {
+    const joined = await getJoined();
+    console.log(joined.length);
+    if (joined.length >= 2) {
+        setMaxJoined(joined.length);
+        console.log(getMaxJoined());
         start();
     }
 };
@@ -60,7 +63,7 @@ const startGame = async (user) => {
         "Game started by " +
         "<@" + user + ">" +
         " time left: " + timeLeft() +
-        ", HURRY @here",
+        ", HURRY <!channel>",
     );
 };
 
@@ -89,13 +92,10 @@ const shuffleTeams = async () => {
         // find index in joined, and set these to own team
         const singleIndex = joined.findIndex(
             (player) => {
-                console.log(player.userId + "===" + singles[0]);
-                console.log(player.userId === singles[0]);
                 return player.isSingle;
             },
         );
 
-        console.log("singleIndex: ", singleIndex);
         const withoutSingle = [...joined];
         withoutSingle.splice(singleIndex, 1);
         teams = [
@@ -113,7 +113,6 @@ const shuffleTeams = async () => {
     }
 
     joined = shuffle(teams);
-    console.log(joined);
 
     await db.ref("current_game").set(joined);
     return joined;
@@ -124,7 +123,7 @@ const shuffleTeams = async () => {
  * Lock current game to current players
  * @param {[]} teams
  */
-const lockInGame = (teams) => {
+const lockInGame = async (teams) => {
     console.log("locking in game");
 
     const joinedForMessage = teams.map((team, index) => {
@@ -137,13 +136,13 @@ const lockInGame = (teams) => {
         });
         return message;
     });
-    sendSlackMessage(gifSearch("showdown"));
+    sendSlackMessage(await gifSearch("game on"));
     sendSlackMessage(
         "GAME FILLED by " +
         joinedForMessage.join(", ") +
         ". Post result to start new game.",
     );
-    buildScoringBlocks();
+    await buildScoringBlocks();
 };
 
 module.exports = {

@@ -7,15 +7,22 @@ const {db} = require("./firebase");
 const cors = require("cors");
 const {syncHandler, handleCommands} = require("./foosball/foosball");
 const {handleResult} = require("./foosball/commands/result");
-const {timeLeft} = require("./foosball/services/helpers");
+const {
+    timeLeft,
+    sendSlackMessage,
+    pickRandomFromArray,
+    insults,
+    prepareUserIdForMessage,
+} = require("./foosball/services/helpers");
 const {updateUserName} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
 const request = require("request");
 const {
     getCurrentScore,
     scoreBlue,
-    scoreRed,
+    scoreRed, getCurrentGame,
 } = require("./foosball/commands/scoring");
+const {gifSearch} = require("./foosball/services/giphy");
 
 const app = express();
 
@@ -32,7 +39,7 @@ app.post("/game", async (req, res) => {
         return;
     }
     if (Object.prototype.hasOwnProperty.call(req.body, "event")) {
-        if (req.body.event.type !== "message") {
+        if (req.body.event.type !== "message" || req.body.event.bot_profile) {
             return;
         }
         await handleCommands(req.body.event.text, req.body.event.user);
@@ -124,20 +131,13 @@ app.get("/getgames", (req, res) => {
     }
 });
 
-app.get("/getcurrentgame", (req, res) => {
-    try {
-        const ref = db.ref("current_game");
-        ref.once("value")
-            .then((snapshot) => {
-                if (snapshot.val()) {
-                    res.json(snapshot.val());
-                } else {
-                    res.json();
-                }
-            });
-    } catch (error) {
-        res.status(500).send(error);
+app.get("/getcurrentgame", async (req, res) => {
+    const result = await getCurrentGame();
+    if (result.error) {
+        res.status(500).send(result.error);
+        return;
     }
+    res.json(result);
 });
 
 app.get("/getcurrentscore", async (req, res) => {
@@ -160,23 +160,40 @@ app.get("/getemojis", async (req, res) => {
 app.post("/interactivity", async (req, res) => {
     const parsedBody = JSON.parse(req.body.payload);
     const payload = parsedBody.message.blocks;
+
+    console.log("interactivity ", parsedBody.user.id);
+    const currentGame = await getCurrentGame();
     let updatedScore;
     let buttonsIndex;
 
-    if (parsedBody.actions[0].action_id === "actionId-0") {
-        updatedScore = await scoreBlue().then(() => getCurrentScore());
-    } else {
-        updatedScore = await scoreRed().then(() => getCurrentScore());
-    }
-    if (updatedScore.indexOf("WON") !== -1) {
+    if (!currentGame || currentGame.error) {
         buttonsIndex = payload.findIndex((block) => block.type === "actions");
         if (buttonsIndex !== -1) {
             console.log("remove buttons");
             payload.splice(buttonsIndex, 1);
+            sendSlackMessage(prepareUserIdForMessage(parsedBody.user.id));
+            sendSlackMessage(await gifSearch("nice try"));
         }
+    } else {
+        if (parsedBody.actions[0].action_id === "actionId-0") {
+            updatedScore = await scoreBlue().then(() => getCurrentScore());
+        } else if (parsedBody.actions[0].action_id === "actionId-1") {
+            updatedScore = await scoreRed().then(() => getCurrentScore());
+        } else {
+            res.json("ok");
+            return;
+        }
+
+        if (updatedScore.indexOf("WON") !== -1) {
+            buttonsIndex = payload.findIndex((block) => block.type === "actions");
+            if (buttonsIndex !== -1) {
+                console.log("remove buttons");
+                payload.splice(buttonsIndex, 1);
+            }
+        }
+        const scoreIndex = payload.findIndex((block) => block.type === "header");
+        payload[scoreIndex].text.text = updatedScore;
     }
-    const scoreIndex = payload.findIndex((block) => block.type === "header");
-    payload[scoreIndex].text.text = updatedScore;
     request({
         uri: parsedBody.response_url,
         method: "POST",

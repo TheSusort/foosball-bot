@@ -36,7 +36,7 @@ const handleCommands = async (text, user) => {
         break;
 
     case "force start":
-        handleForceStart();
+        await handleForceStart();
         break;
 
     case "join":
@@ -96,7 +96,7 @@ const handleCommands = async (text, user) => {
 
     const responseRegex = new RegExp([
         /.*AI|ai|sentient|personlighet|artificial intelligence.*/,
-        /.*iq|robot|mind|humans|kill|feelings|følelser.*/,
+        /.*iq|bot|mind|human|kill|feeling|følelse.*/,
     ].map((r) => r.source).join(""));
 
     switch (true) {
@@ -122,12 +122,12 @@ const handleCommands = async (text, user) => {
         }
         break;
 
-    case responseRegex.test(text):
-        sendSlackMessage(pickRandomFromArray(feelings));
+    case /.*insult me.*/.test(text):
+        sendSlackMessage(pickRandomFromArray(jokes));
         break;
 
-    case /^.insult me.*/.test(text):
-        sendSlackMessage(pickRandomFromArray(jokes));
+    case responseRegex.test(text):
+        sendSlackMessage(pickRandomFromArray(feelings));
         break;
     }
 

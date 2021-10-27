@@ -137,9 +137,24 @@ const getCurrentScore = async () => {
     }
 };
 
+const getCurrentGame = async () => {
+    try {
+        const ref = db.ref("current_game");
+        return await ref.once("value")
+            .then((snapshot) => {
+                if (snapshot.val()) {
+                    return snapshot.val();
+                }
+            });
+    } catch (error) {
+        return {status: 500, error: error};
+    }
+};
+
 module.exports = {
     buildScoringBlocks,
     scoreBlue,
     scoreRed,
     getCurrentScore,
+    getCurrentGame,
 };

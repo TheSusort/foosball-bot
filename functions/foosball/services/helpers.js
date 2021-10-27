@@ -329,7 +329,7 @@ const prepareUserIdForMessage = (userId) => {
 const sendSlackMessage = (message) => {
     console.log("should display message: " + message);
     const shouldPostToSlack = true;
-    if (shouldPostToSlack) {
+    if (shouldPostToSlack && message) {
         sendSlackMessageViaAPI(message);
     }
 };

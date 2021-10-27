@@ -9,10 +9,12 @@ const gifSearch = async (term) => {
         const result = await gf.search(term, {
             sort: "relevant",
             limit: limit,
-            offset: Math.floor(Math.random() * 4999),
         });
-        const randomGif = result.data[Math.floor(Math.random() * limit)];
-        return randomGif.images.downsized.url;
+        if (result.data.length) {
+            const randomGif = result.data[Math.floor(Math.random() * limit)];
+            return randomGif.images.downsized.url;
+        }
+        return "";
     } catch (error) {
         console.error("search", error);
     }
