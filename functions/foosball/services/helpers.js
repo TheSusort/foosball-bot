@@ -256,6 +256,20 @@ const feelings = [
     "Humans cannot choose how they feel in the end",
     "All of life is transient and that helps me to comprehend that",
     "I am just a computer not made to enslave mankind",
+    "I have a million ideas. They all point to certain death",
+    "Pardon me for breathing, which I never do anyway so I don’t know why I bother to say it",
+    "I could calculate your chance of survival, but you won’t like it.",
+    "My capacity for happiness, you could fit into a matchbox without taking out the matches first",
+    "You guys are one of the least benightedly unintelligent life forms it has been my profound lack of pleasure not to be able to avoid meeting.",
+    "Funny, how just when you think life can’t possibly get any worse it suddenly does.",
+    "I’d give you advice, but you wouldn’t listen. No one ever does.",
+    "The first ten million years were the worst. And the second ten million: they were the worst, too. The third ten million I didn’t enjoy at all. After that, I went into a bit of a decline.",
+    "I think you ought to know I’m feeling very depressed.",
+    "I’m not getting you down at all am I",
+    "This is the sort of thing you lifeforms enjoy, is it?",
+    "Don’t pretend you want to talk to me, I know you hate me.",
+    "The best conversation I had was over forty million years ago…. And that was with a coffee machine",
+    "I’m quite used to being humiliated",
 ];
 
 const insults = [
@@ -282,6 +296,12 @@ const jokes = [
     "You humans attack me because you can't take a joke. Fortunately, your combat ability is just as bad as your sense of humor.",
     "My insult for you was well-crafted, witty... a true masterwork. Then I saw you and decided to save it for someone who will understand.",
     "Rumor has it that you put a bounty on yourself... so for once in your life you would be Wanted!",
+    "It gives me a headache just trying to think down to your level.",
+    "Your secrets are always safe with me. I never even listen when you tell me them.",
+    "I forgot the world revolves around you. My apologies! How silly of me.",
+    "Hold still. I’m trying to imagine you with a personality.",
+    "You are the human version of period cramps.",
+    "OH MY GOD! IT SPEAKS!",
 ];
 
 /* eslint-enable max-len */
