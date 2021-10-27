@@ -26,35 +26,42 @@ const {gifSearch} = require("./services/giphy");
 
 
 const handleCommands = async (text, user) => {
-    switch (text) {
-    case "start":
+    let score;
+
+    const botRegex = new RegExp([
+        /.*ai|sentient|personlighet|artificial intelligence.*/i,
+        /.*iq|bot|mind|human|kill|feeling|følelse.*/i,
+    ].map((r) => r.source).join(""));
+
+    switch (true) {
+    case /.start./i.test(text):
         await handleStart(user, false);
         break;
 
-    case "start single":
+    case /.start single./i.test(text):
         await handleStart(user, true);
         break;
 
-    case "force start":
+    case /.force start./i.test(text):
         await handleForceStart();
         break;
 
-    case "join":
+    case /.join./i.test(text):
         await handleJoin(user, false);
         break;
 
-    case "join single":
+    case /.join single./i.test(text):
         await handleJoin(user, true);
         break;
 
-    case "help":
+    case /.help./i.test(text):
         sendSlackMessage(
             "<@" + user + "> requested help :lulw: \n",
         );
         generateHelpMessage();
         break;
 
-    case "user":
+    case /.user./i.test(text):
         getUser(user).then((currentUser) => {
             sendSlackMessage(
                 prepareUserIdForMessage(user) +
@@ -64,42 +71,34 @@ const handleCommands = async (text, user) => {
         });
         break;
 
-    case "timeleft":
+    case /.timeleft./i.test(text):
         sendSlackMessage(timeLeft());
         break;
 
-    case "leave":
+    case /.leave./i.test(text):
         sendSlackMessage("No one leaves, " + pickRandomFromArray(insults));
         break;
 
-    case ":getbackdemon:":
+    case /.:getbackdemon:./i.test(text):
         sendSlackMessage("Get back yourself, " + pickRandomFromArray(insults));
         break;
 
-    case "stop":
+    case /.stop./i.test(text):
         stopGame(true);
         break;
 
-    case "status":
+    case /.status./i.test(text):
         await handleStatus();
         break;
 
-    case "test scoring":
+    case /.test scoring./i.test(text):
         await buildScoringBlocks();
         break;
 
-    case "gif":
+    case /.gif./i.test(text):
         sendSlackMessage(await gifSearch("robot"));
-    }
+        break;
 
-    let score;
-
-    const responseRegex = new RegExp([
-        /.*AI|ai|sentient|personlighet|artificial intelligence.*/,
-        /.*iq|bot|mind|human|kill|feeling|følelse.*/,
-    ].map((r) => r.source).join(""));
-
-    switch (true) {
     case /^test.*/.test(text):
         console.log(text);
         score = text.split("test ")[1];
@@ -122,11 +121,12 @@ const handleCommands = async (text, user) => {
         }
         break;
 
-    case /.*insult me.*/.test(text):
+    case /.*rekt.*/.test(text):
         sendSlackMessage(pickRandomFromArray(jokes));
+        sendSlackMessage("boom, roasted." + prepareUserIdForMessage(user));
         break;
 
-    case responseRegex.test(text):
+    case botRegex.test(text):
         sendSlackMessage(pickRandomFromArray(feelings));
         break;
     }
@@ -143,14 +143,15 @@ const handleCommands = async (text, user) => {
 const syncHandler = async () => {
     await getUsers();
     await getJoined();
-
+    let finished = false;
     db.ref("current_score").on("child_changed", (r) => {
         console.log("SCORE");
         if (r.val()) {
             console.log(
                 r.val() + " for team " + (Number(r.key) ? "red" : "blue"),
             );
-            if (r.val() === 10) {
+            if (r.val() === 10 && !finished) {
+                finished = true;
                 finishGame();
                 db.ref("current_score").off();
             }

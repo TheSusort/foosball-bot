@@ -10,12 +10,11 @@ const {
 const {stopGame} = require("./stop");
 
 const finishGame = async () => {
-    const result = await db.ref("current_score")
+    await db.ref("current_score")
         .once("value")
         .then((scores) => {
-            return scores.val();
+            handleResult(scores.val().join(" "));
         });
-    await handleResult(result.join(" "));
 };
 
 /**
