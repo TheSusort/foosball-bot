@@ -10,8 +10,6 @@ const {handleResult} = require("./foosball/commands/result");
 const {
     timeLeft,
     sendSlackMessage,
-    pickRandomFromArray,
-    insults,
     prepareUserIdForMessage,
 } = require("./foosball/services/helpers");
 const {updateUserName} = require("./foosball/services/users");
@@ -185,13 +183,17 @@ app.post("/interactivity", async (req, res) => {
         }
 
         if (updatedScore.indexOf("WON") !== -1) {
-            buttonsIndex = payload.findIndex((block) => block.type === "actions");
+            buttonsIndex = payload.findIndex(
+                (block) => block.type === "actions",
+            );
             if (buttonsIndex !== -1) {
                 console.log("remove buttons");
                 payload.splice(buttonsIndex, 1);
             }
         }
-        const scoreIndex = payload.findIndex((block) => block.type === "header");
+        const scoreIndex = payload.findIndex(
+            (block) => block.type === "header",
+        );
         payload[scoreIndex].text.text = updatedScore;
     }
     request({
