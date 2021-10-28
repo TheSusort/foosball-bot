@@ -302,7 +302,26 @@ const jokes = [
     "Hold still. I’m trying to imagine you with a personality.",
     "You are the human version of period cramps.",
     "OH MY GOD! IT SPEAKS!",
+    "What's the matter, laddie? Need to take a shit?",
+    "Do your keepers a huge favor: do a triple summersault through the air, and dissapear up your own asshole.",
+    "Do you still love nature... Despite what it did to you?",
+    "Humans sprang from apes, but you obviously didn't spring far enough.",
+    "For what is supposedly a bag of various organic fluids, you're suprisingly full of shit.",
+    "What's the matter, human? Does someone need to take a nap?",
+    "Stop squawking, flashwad",
 ];
+
+const zingers = [
+    "zing, ",
+    "grab a plate you just got served, ",
+    "it smells burnt in here, ",
+    "it's getting hot in here, ",
+    "man, i just took a byte out of you, ",
+    "lick my battery, ",
+    "can someone please call the ambulance, we got a burn victim by the name of ",
+    "boom, roasted. ",
+];
+
 
 /* eslint-enable max-len */
 
@@ -435,6 +454,7 @@ module.exports = {
     feelings,
     insults,
     jokes,
+    zingers,
     pickRandomFromArray,
     shuffle,
     prepareUserIdForMessage,

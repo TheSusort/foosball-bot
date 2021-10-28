@@ -5,7 +5,7 @@ const {
     feelings,
     pickRandomFromArray,
     jokes,
-    insults,
+    insults, zingers,
 } = require("./services/helpers");
 
 const {db} = require("../firebase");
@@ -48,6 +48,10 @@ const handleCommands = async (text, user) => {
         break;
 
     case /^join/i.test(text):
+        await handleJoin(user, false);
+        break;
+    case /^j o i n/i.test(text):
+        sendSlackMessage(await gifSearch("nice try"));
         await handleJoin(user, false);
         break;
 
@@ -128,7 +132,7 @@ const handleCommands = async (text, user) => {
 
     case /.*rekt.*/.test(text):
         sendSlackMessage(pickRandomFromArray(jokes));
-        sendSlackMessage("boom, roasted." + prepareUserIdForMessage(user));
+        sendSlackMessage(pickRandomFromArray(zingers) + prepareUserIdForMessage(user));
         break;
 
     case botRegex.test(text):
