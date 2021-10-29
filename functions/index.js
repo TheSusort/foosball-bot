@@ -29,13 +29,16 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/game", async (req, res) => {
+    console.log(req.body.event);
     if (Object.prototype.hasOwnProperty.call(req.body, "challenge")) {
         res.json(req.body);
         return;
     }
     if (Object.prototype.hasOwnProperty.call(req.body, "event")) {
         if (req.body.event.type !== "message" ||
-            req.body.authorizations[0].is_bot) {
+            req.body.event.text === "undefined" ||
+            req.body.event.bot_profile ||
+            req.body.event.message) {
             res.send("ok");
             return;
         }
