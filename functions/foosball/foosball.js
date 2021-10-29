@@ -132,7 +132,9 @@ const handleCommands = async (text, user) => {
 
     case /.*rekt.*/.test(text):
         sendSlackMessage(pickRandomFromArray(jokes));
-        sendSlackMessage(pickRandomFromArray(zingers) + prepareUserIdForMessage(user));
+        sendSlackMessage(
+            pickRandomFromArray(zingers) + prepareUserIdForMessage(user),
+        );
         break;
 
     case botRegex.test(text):
