@@ -63,7 +63,6 @@ const createUser = async (userId) => {
  */
 const updateUser = async (userId, win, newRating) => {
     await getUsers().then(async (users) => {
-        console.log("users from updateuser: ", users);
         if (!users[userId]) {
             userId = await createUser(userId);
         }

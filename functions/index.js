@@ -5,8 +5,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const {db} = require("./firebase");
 const cors = require("cors");
-const {syncHandler, handleCommands} = require("./foosball/foosball");
-const {handleResult} = require("./foosball/commands/result");
+const {handleCommands} = require("./foosball/foosball");
+const {handleResult, finishGame} = require("./foosball/commands/result");
 const {
     timeLeft,
     sendSlackMessage,
@@ -27,9 +27,6 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
-
-syncHandler();
-
 
 app.post("/game", async (req, res) => {
     if (Object.prototype.hasOwnProperty.call(req.body, "challenge")) {
@@ -191,6 +188,7 @@ app.post("/interactivity", async (req, res) => {
                 console.log("remove buttons");
                 payload.splice(buttonsIndex, 1);
             }
+            await finishGame();
         }
         const scoreIndex = payload.findIndex(
             (block) => block.type === "header",

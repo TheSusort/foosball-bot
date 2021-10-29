@@ -26,12 +26,13 @@ const finishGame = async () => {
 const handleResult = async (text, user = "Slæckball") => {
     try {
         const ref = db.ref("current_game");
-        ref.once("value")
+        const currentGame = await ref.once("value")
             .then((snapshot) => {
                 if (snapshot.val()) {
-                    handleScore(text, snapshot.val(), user);
+                    return snapshot.val();
                 }
             });
+        await handleScore(text, currentGame, user);
     } catch (error) {
         console.error(error);
     }
@@ -40,7 +41,7 @@ const handleResult = async (text, user = "Slæckball") => {
 /**
  * Handle result post and update db
  * @param {string} text
- * @param {[]} teams
+ * @param {[]|DataSnapshot} teams
  * @param {string} user
  * @return {Promise<string>}
  */

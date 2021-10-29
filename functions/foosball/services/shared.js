@@ -93,8 +93,6 @@ const setSinglesFromJoined = (joined) => {
             maxJoined--;
             return player.userId;
         });
-
-    console.log(getSingles());
 };
 
 const pushToSingles = (user) => {
