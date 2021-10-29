@@ -11,7 +11,7 @@ const Game = ({game, users}) => {
     const perfectGameWinner = perfectGame ? (
         game.result === "10-0" ? 0 : 1
     ) : undefined
-    console.log(game)
+
     return (
         <div
             key={game.uid}
