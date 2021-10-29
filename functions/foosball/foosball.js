@@ -35,27 +35,27 @@ const handleCommands = async (text, user) => {
     ].map((r) => r.source).join(""));
 
     switch (true) {
-    case /^start/i.test(text):
+    case /^start$/i.test(text):
         await handleStart(user, false);
         break;
 
-    case /^start single/i.test(text):
+    case /^start single$/i.test(text):
         await handleStart(user, true);
         break;
 
-    case /^force start/i.test(text):
+    case /^force start$/i.test(text):
         await handleForceStart();
         break;
 
-    case /^join/i.test(text):
+    case /^join$/i.test(text):
         await handleJoin(user, false);
         break;
-    case /^j o i n/i.test(text):
+    case /^j o i n$/i.test(text):
         sendSlackMessage(await gifSearch("nice try"));
         await handleJoin(user, false);
         break;
 
-    case /^join single/i.test(text):
+    case /^join single$/i.test(text):
         await handleJoin(user, true);
         break;
 
@@ -66,7 +66,7 @@ const handleCommands = async (text, user) => {
         generateHelpMessage();
         break;
 
-    case /^user/i.test(text):
+    case /^user$/i.test(text):
         getUser(user).then((currentUser) => {
             sendSlackMessage(
                 prepareUserIdForMessage(user) +
@@ -76,11 +76,11 @@ const handleCommands = async (text, user) => {
         });
         break;
 
-    case /^timeleft/i.test(text):
+    case /^timeleft$/i.test(text):
         sendSlackMessage(timeLeft());
         break;
 
-    case /^leave/i.test(text):
+    case /^leave$/i.test(text):
         sendSlackMessage("No one leaves, " + pickRandomFromArray(insults));
         break;
 
@@ -88,15 +88,15 @@ const handleCommands = async (text, user) => {
         sendSlackMessage("Get back yourself, " + pickRandomFromArray(insults));
         break;
 
-    case /^stop/i.test(text):
+    case /^stop$/i.test(text):
         stopGame(true);
         break;
 
-    case /^status/i.test(text):
+    case /^status$/i.test(text):
         await handleStatus();
         break;
 
-    case /^test scoring/i.test(text):
+    case /^test scoring$/i.test(text):
         await buildScoringBlocks();
         break;
 
