@@ -38,4 +38,8 @@
     .custom-team-gradient {
         background-image: linear-gradient(130deg, #1E40AF 0%, #3B82F6 49.999%, #EF4444 50%, #B91C1C 100%);
     }
+
+    .legend {
+        @apply bg-gradient-to-r from-blue-400 to-red-500 via-yellow-300 animate-gradient-xy
+    }
 }

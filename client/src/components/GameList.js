@@ -42,16 +42,16 @@ const GameList = ({filter}) => {
 
     if (gamesStatus === "loading" || usersStatus === "loading") {
     } else if (gamesStatus === "succeeded" || usersStatus === "succeeded") {
+
         content = filteredGames
             .sort((a, b) => b.uid - a.uid)
             .slice(0, showMax)
-            .map(game => (
-                <div
-                    key={game.uid}
-                    className="grid grid-flow-col auto-cols-fr text-xs lg:text-base"
-                >
-                    <Game game={game} users={users}/>
-                </div>
+            .map((game, index) => (
+                <Game
+                    key={index}
+                    game={game}
+                    users={users}
+                />
             ))
     } else if (gamesStatus === "error" || usersStatus === "error") {
         content = <div>{gamesError || usersError}</div>
