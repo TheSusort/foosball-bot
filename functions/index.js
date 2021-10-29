@@ -34,7 +34,8 @@ app.post("/game", async (req, res) => {
         return;
     }
     if (Object.prototype.hasOwnProperty.call(req.body, "event")) {
-        if (req.body.event.type !== "message" || req.body.event.bot_profile) {
+        if (req.body.event.type !== "message" ||
+            req.body.authorizations[0].is_bot) {
             res.send("ok");
             return;
         }

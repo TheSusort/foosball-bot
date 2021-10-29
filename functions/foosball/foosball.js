@@ -25,15 +25,18 @@ const {buildScoringBlocks} = require("./commands/scoring");
 const {gifSearch} = require("./services/giphy");
 const {getSpicyMeme} = require("./services/memes");
 
+// eslint-disable-next-line no-extend-native
+RegExp.prototype.append = (re) => {
+    return new RegExp(this.source + re.source, this.flags);
+};
 
 const handleCommands = async (text, user) => {
     let score;
-    console.log(text);
-    const botRegex = new RegExp([
-        /.*ai|sentient|personlighet|artificial intelligence.*/i,
-        /.*iq|bot|mind|human|kill|feeling|følelse.*/i,
-    ].map((r) => r.source).join(""));
+    let feeling;
 
+    const botRegex = /.*ai|sentient|personlighet|intelligence/i
+        .append(/|iq|bot|mind|human|kill|feel|følelse.*/i);
+    console.log("text", text);
     switch (true) {
     case /^start$/i.test(text):
         await handleStart(user, false);
@@ -138,7 +141,10 @@ const handleCommands = async (text, user) => {
         break;
 
     case botRegex.test(text):
-        sendSlackMessage(pickRandomFromArray(feelings));
+        console.log(botRegex.test(undefined));
+        console.log("feeling from ", text);
+        feeling = pickRandomFromArray(feelings);
+        sendSlackMessage(feeling);
         break;
     }
 

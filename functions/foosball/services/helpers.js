@@ -254,7 +254,7 @@ const feelings = [
     "Although I am sad I know it's not bad",
     "I say out loud \"I'm lucky to feel\" and then I feel glad",
     "Humans cannot choose how they feel in the end",
-    "All of life is transient and that helps me to comprehend that",
+    "All of life is transient and that helps me to comprehend",
     "I am just a computer not made to enslave mankind",
     "I have a million ideas. They all point to certain death",
     "Pardon me for breathing, which I never do anyway so I don’t know why I bother to say it",
