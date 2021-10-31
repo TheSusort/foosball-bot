@@ -40,6 +40,33 @@
     }
 
     .legend {
-        @apply bg-gradient-to-r from-blue-400 to-red-500 via-yellow-300 animate-gradient-xy
+        @apply relative bg-gradient-to-r from-blue-400 to-red-500 via-yellow-300 animate-gradient-xy
+        after:bg-king after:absolute after:left-0 after:top-0 after:w-full after:h-full after:bg-center
+        after:bg-cover after:opacity-50 after:pointer-events-none
+    }
+
+    .clown {
+        @apply relative after:bg-clown after:absolute after:left-0 after:top-0 after:w-full after:h-full
+        after:bg-center after:bg-cover after:opacity-50 after:pointer-events-none
+    }
+
+    .shine {
+        @apply overflow-hidden relative after:animate-shine after:absolute after:opacity-0 after:pointer-events-none;
+    }
+
+    .shine::after {
+        top: -200%;
+        left: -200%;
+        width: 200%;
+        height: 2000%;
+
+        background: rgba(255, 255, 255, 0.2);
+        background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.2) 0%,
+                rgba(255, 255, 255, 0.2) 77%,
+                rgba(255, 255, 255, 0.7) 92%,
+                rgba(255, 255, 255, 0.0) 100%
+        );
     }
 }

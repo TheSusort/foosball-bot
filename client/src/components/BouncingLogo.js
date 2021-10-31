@@ -1,4 +1,4 @@
-import loadingImage from "../slackball.png"
+import loadingImage from "../media/slackball.png"
 import {useEffect, useState} from "react";
 import useWindowDimensions from "../hooks/window";
 

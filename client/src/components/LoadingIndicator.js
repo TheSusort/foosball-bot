@@ -1,4 +1,4 @@
-import loadingImage from "../slackball.png";
+import loadingImage from "../media/slackball.png";
 import {CSSTransition} from "react-transition-group";
 
 const LoadingIndicator = props => {

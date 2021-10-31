@@ -136,12 +136,12 @@ const lockInGame = async (teams) => {
         });
         return message;
     });
-    sendSlackMessage(await gifSearch("game on"));
     sendSlackMessage(
         "GAME FILLED by " +
         joinedForMessage.join(", ") +
         ". Post result to start new game.",
     );
+    sendSlackMessage(await gifSearch("game on"));
     await buildScoringBlocks();
 };
 

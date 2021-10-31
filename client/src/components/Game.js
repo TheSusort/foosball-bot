@@ -20,8 +20,9 @@ const Game = ({game, users}) => {
             <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
             {game.teams.map((team, index) =>
                 <p className={
-                    "compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex " +
-                    "items-center flex-wrap " + (index === perfectGameWinner ? "legend text-white" : "")
+                    "compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex" +
+                    "items-center flex-wrap " + (index === perfectGameWinner ? " legend text-white" : "") +
+                    (perfectGameWinner !== undefined && index !== perfectGameWinner ? " clown" : "")
                 }
                    key={index}>
                     {team.map((player, index) =>
@@ -37,15 +38,18 @@ const Game = ({game, users}) => {
                                 player
                                 }
 
+                                {index < team.length - 1 &&
+                                <span className={"px-1"}> / </span>
+                                }
                             </span>
-                            {index < team.length - 1 &&
-                            <span className={"px-1"}> / </span>
-                            }
+
                         </span>
                     )}
                 </p>
             )}
-            <p className={"compact-grid-cell text-right md:text-left whitespace-nowrap"}>{game.result}</p>
+            <p className={"compact-grid-cell text-right md:text-left whitespace-nowrap" + (perfectGame ? " font-extrabold animate-zoom text-gold" : "")}>
+                {game.result}
+            </p>
             <p className={"compact-grid-cell text-right hidden md:block"}>{Math.round(Number(game.delta)) ?? ""}</p>
         </div>
     )

@@ -29,7 +29,7 @@ const handleCommands = async (text, user) => {
     let score;
     let feeling;
     // eslint-disable-next-line max-len
-    const botRegex = new RegExp(/.*ai|sentient|personlighet|intelligence|iq|bot|mind|human|kill|feel|følelse.*/i);
+    const botRegex = new RegExp(/.*ai|sentient|personlighet|intelligence|iq|bot|mind|human|kill|feel|følelse|slackball.*/i);
 
     switch (true) {
     case /^start$/i.test(text):

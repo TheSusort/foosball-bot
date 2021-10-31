@@ -1,4 +1,5 @@
 module.exports = {
+    mode: 'jit',
     purge: {
         content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
         safelist: [
@@ -7,7 +8,9 @@ module.exports = {
             'fade-enter-done',
             'fade-exit',
             'fade-exit-active',
-            'face-exit-done'
+            'face-exit-done',
+            'shine',
+            'shine::after'
         ],
     },
     darkMode: false, // or 'media' or 'class'
@@ -22,6 +25,8 @@ module.exports = {
                 'gradient-x': 'gradient-x 300ms ease infinite',
                 'gradient-y': 'gradient-y 300ms ease infinite',
                 'gradient-xy': 'gradient-xy 500ms ease infinite',
+                'shine': 'shine 5s ease-in-out infinite',
+                'zoom': 'zoom 3s ease-in-out infinite'
             },
             keyframes: {
                 'reverse-spin': {
@@ -58,12 +63,45 @@ module.exports = {
                         'background-size': '200% 200%',
                         'background-position': 'right center'
                     }
+                },
+                'shine': {
+                    '10%': {
+                        'opacity': '1',
+                        'top': '-30%',
+                        'left': '-30%',
+                        'transition-property': 'left, top, opacity',
+                        'transition-duration': '0.7s, 0.7s, 0.15s',
+                        'transition-timing-function': 'ease',
+                        'animation-fill-mode': 'fill'
+                    },
+                    '100%': {
+                        'opacity': '0',
+                        'top': '-30%',
+                        'left': '-30%',
+                        'transition-property': 'left, top, opacity',
+                        'animation-fill-mode': 'fill'
+                    }
+                },
+                'zoom': {
+                    '0%, 100%': {
+                        'transform': 'scale(1)'
+                    },
+                    '50%': {
+                        'transform': 'scale(1.5)'
+                    }
                 }
             },
 
             transitionDuration: {
                 '5000': '5000ms'
             },
+            colors: {
+                gold: '#d4af37'
+            },
+            backgroundImage: {
+                king: 'url(media/king.png)',
+                clown: 'url(media/clown.png)'
+            }
         }
     },
     variants: {

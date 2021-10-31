@@ -26,9 +26,9 @@ const UserList = ({ranking}) => {
                     key={user.userId}
                     className={
                         "grid grid-cols-5 items-center bg-opacity-70 text-xs md:text-base" +
-                        (index === 0 && ranking ? ' text-base md:text-xl bg-yellow-300' : '') +
-                        (index === 1 && ranking ? ' text-sm md:text-lg bg-gray-300' : '') +
-                        (index === 2 && ranking ? ' bg-yellow-600' : '')
+                        (index === 0 && ranking ? ' text-base md:text-xl bg-gold shine' : '') +
+                        (index === 1 && ranking ? ' text-sm md:text-lg bg-gray-300 shine after:delay-500' : '') +
+                        (index === 2 && ranking ? ' bg-yellow-600 shine after:delay-1000' : '')
                     }
                 >
                     <User user={user} ranking={index}/>
