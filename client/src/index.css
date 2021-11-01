@@ -42,12 +42,12 @@
     .legend {
         @apply relative bg-gradient-to-r from-blue-400 to-red-500 via-yellow-300 animate-gradient-xy;
         @apply after:bg-king after:absolute after:left-0 after:top-0 after:w-full after:h-full after:bg-center;
-        @apply after:bg-cover after:opacity-50 after:pointer-events-none;
+        @apply after:bg-cover after:opacity-50 after:pointer-events-none after:bg-right;
     }
 
     .clown {
         @apply relative after:bg-clown after:absolute after:left-0 after:top-0 after:w-full after:h-full;
-        @apply after:bg-center after:bg-cover after:opacity-50 after:pointer-events-none;
+        @apply after:bg-center after:bg-cover after:opacity-50 after:pointer-events-none after:bg-right;
     }
 
     .shine {
@@ -68,5 +68,9 @@
                 rgba(255, 255, 255, 0.7) 92%,
                 rgba(255, 255, 255, 0.0) 100%
         );
+    }
+
+    .badge-icon {
+        @apply flex items-center rounded mr-2 text-white p-2 shine min-w-min
     }
 }

@@ -51,35 +51,31 @@ const FunFacts = ({users, games}) => {
 
     const getMostPlayedPlayer = () => {
         const mostGamesPlayed = Object.values(users).sort((a, b) => a.totalGames - b.totalGames).pop()
-        return (
-            <>
-                <div
-                    className={"flex items-center rounded bg-gradient-to-r from-purple-600 via-violet-900 to-purple-700 mr-2 text-white p-2 shine"}>
-                    <SparklesIcon className={"h-5 w-5 mr-1"}/>
-                    {"Tryhard"}
-                </div>
-                <span>
-                    <UserName user={mostGamesPlayed}/>
-                    {" has played a total of " + mostGamesPlayed.totalGames + " matches."}
-                </span>
-            </>
+        return buildFunFact(
+            <div
+                className={"badge-icon bg-gradient-to-r from-purple-600 via-violet-900 to-purple-700"}>
+                <SparklesIcon className={"h-5 w-5 mr-1"}/>
+                {"Tryhard"}
+            </div>,
+            <span>
+                <UserName user={mostGamesPlayed}/>
+                {" has played a total of " + mostGamesPlayed.totalGames + " matches."}
+            </span>
         )
     }
 
     function getLeastPlayedPlayer() {
         const leastGamesPlayed = Object.values(users).sort((a, b) => b.totalGames - a.totalGames).pop()
-        return (
-            <>
-                <div
-                    className={"flex items-center rounded bg-gradient-to-r from-green-300 to-green-600 mr-2 text-white p-2 shine"}>
-                    <MoonIcon className={"h-5 w-5 mr-1"}/>
-                    {"Casual"}
-                </div>
-                <span>
-                    <UserName user={leastGamesPlayed}/>
-                    {" has played a total of " + leastGamesPlayed.totalGames + " matches."}
-                </span>
-            </>
+        return buildFunFact(
+            <div
+                className={"badge-icon bg-gradient-to-r from-green-300 to-green-600"}>
+                <MoonIcon className={"h-5 w-5 mr-1"}/>
+                {"Casual"}
+            </div>,
+            <span>
+                <UserName user={leastGamesPlayed}/>
+                {" has played a total of " + leastGamesPlayed.totalGames + " matches."}
+            </span>
         )
     }
 
@@ -132,20 +128,15 @@ const FunFacts = ({users, games}) => {
             }
         }
 
-        return (
-            <>
-                <div
-                    className={"flex items-center rounded bg-gradient-to-r from-gray-600 via-gray-900 to-black mr-2 text-white p-2 shine min-w-min"}
-                >
-                    <FireIcon className={"h-5 w-5 mr-1 min-w-min"}/>
-                    {"Rivalry"}
-                </div>
-                <span className={"block whitespace-pre-line"}>
-                        {result}
-                    </span>
-            </>
+        return buildFunFact(
+            <div
+                className={"badge-icon bg-gradient-to-r from-gray-600 via-gray-900 to-black"}
+            >
+                <FireIcon className={"h-5 w-5 mr-1 min-w-min"}/>
+                {"Rivalry"}
+            </div>,
+            result
         )
-
     }
 
     const getDreamTeams = () => {
@@ -196,18 +187,14 @@ const FunFacts = ({users, games}) => {
             }
         }
 
-        return (
-            <>
-                <div
-                    className={"flex items-center rounded bg-gradient-to-b from-gray-900 via-purple-900 to-violet-600 mr-2 text-white p-2 shine min-w-min"}
-                >
-                    <LightningBoltIcon className={"h-5 w-5 mr-1 min-w-min"}/>
-                    {"Dream team"}
-                </div>
-                <span className={"block whitespace-pre-line"}>
-                    {result}
-                </span>
-            </>
+        return buildFunFact(
+            <div
+                className={"badge-icon bg-gradient-to-b from-gray-900 via-purple-900 to-violet-600"}
+            >
+                <LightningBoltIcon className={"h-5 w-5 mr-1 min-w-min"}/>
+                {"Dream team"}
+            </div>,
+            result
         )
     }
 
@@ -228,23 +215,26 @@ const FunFacts = ({users, games}) => {
             }
         }
 
-        result.push(resultString + "Reds beat blues " + Math.round(((coloring.red / (coloring.blue + coloring.red)) * 100)) + "% of the time.")
-        result.push(resultString + "Blues beat reds " + Math.round(((coloring.blue / (coloring.blue + coloring.red)) * 100)) + "% of the time.")
-
-
-        return (
-            <>
-                <div
-                    className={"flex items-center rounded bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 mr-2 text-white p-2 shine min-w-min"}
-                >
-                    <ScaleIcon className={"h-5 w-5 mr-1 min-w-min"}/>
-                    {"Racism"}
-                </div>
-                <span className={"block whitespace-pre-line"}>
-                    {result[Math.floor(Math.random() * result.length)]}
-                </span>
-            </>
+        result.push(
+            resultString + "Reds beat blues " +
+            Math.round(((coloring.red / (coloring.blue + coloring.red)) * 100)) + "% of the time."
         )
+        result.push(
+            resultString + "Blues beat reds " +
+            Math.round(((coloring.blue / (coloring.blue + coloring.red)) * 100)) + "% of the time."
+        )
+
+
+        return buildFunFact(
+            <div
+                className={"badge-icon bg-gradient-to-r from-green-300 via-blue-500 to-purple-600"}
+            >
+                <ScaleIcon className={"h-5 w-5 mr-1 min-w-min"}/>
+                {"Racism"}
+            </div>,
+            result[Math.floor(Math.random() * result.length)]
+        )
+
     }
 
     const pickRandomObject = (arrayofObjectsKey) => {
@@ -257,6 +247,17 @@ const FunFacts = ({users, games}) => {
         const randomInteractedPlayerKey = Object.keys(randomPlayer[arrayofObjectsKey])[randomInteractedPlayerIndex];
         const randomInteractedPlayer = randomPlayer[arrayofObjectsKey][randomInteractedPlayerKey];
         return {randomPlayer, randomInteractedPlayerKey, randomInteractedPlayer}
+    }
+
+    const buildFunFact = (icon, result) => {
+        return (
+            <>
+                {icon}
+                <span className={"block whitespace-pre-line"}>
+                    {result}
+                </span>
+            </>
+        )
     }
 
     return (
