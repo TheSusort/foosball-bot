@@ -29,7 +29,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/game", async (req, res) => {
-    console.log(req.body.event);
     if (Object.prototype.hasOwnProperty.call(req.body, "challenge")) {
         res.json(req.body);
         return;

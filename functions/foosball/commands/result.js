@@ -67,7 +67,7 @@ const handleScore = async (text, teams, user) => {
         }
 
         if (
-            !parseInt(score) ||
+            parseInt(score) < 0 ||
             parseInt(score) > 10
         ) {
             sendSlackMessage(
@@ -141,7 +141,11 @@ const buildTeams = async (players, result) => {
 const submitGame = async (result, teams) => {
     const winningScore = 10;
 
-    buildTeams(teams, result).then((teams) => {
+    const time = teams.time;
+    delete teams.time;
+    const timeEnd = Date.now();
+    const elapsed = ((timeEnd - time) / 1000);
+    buildTeams(Object.values(teams), result).then((teams) => {
         // calculate combined ratings
         teams.map((team) => {
             team.combinedRating = 0;
@@ -196,6 +200,7 @@ const submitGame = async (result, teams) => {
             ],
             result: result[0] + "-" + result[1],
             delta: teams[0].newDeltaRating,
+            time: elapsed,
         };
 
         // update db

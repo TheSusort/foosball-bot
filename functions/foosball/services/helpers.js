@@ -424,6 +424,10 @@ const jokes = [
     "For what is supposedly a bag of various organic fluids, you're suprisingly full of shit.",
     "What's the matter, human? Does someone need to take a nap?",
     "Stop squawking, flashwad",
+    "You're as useless as the 'ueue' in queue.",
+    "You're the reason the gene pool needs a life guard.",
+    "I'm glad to see you're  not letting your education get in the way of your ignorance.",
+    "So a thought crossed your mind? Must have been a long and lonely journey.",
 ];
 
 const zingers = [
@@ -435,6 +439,7 @@ const zingers = [
     "lick my battery, ",
     "can someone please call the ambulance, we got a burn victim by the name of ",
     "boom, roasted. ",
+    "shots fired, ",
 ];
 
 

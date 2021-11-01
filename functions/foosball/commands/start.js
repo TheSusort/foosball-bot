@@ -113,7 +113,7 @@ const shuffleTeams = async () => {
     }
 
     joined = shuffle(teams);
-
+    joined.time = Date.now();
     await db.ref("current_game").set(joined);
     return joined;
 };
@@ -141,6 +141,7 @@ const lockInGame = async (teams) => {
         joinedForMessage.join(", ") +
         ". Post result to start new game.",
     );
+
     sendSlackMessage(await gifSearch("game on"));
     await buildScoringBlocks();
 };

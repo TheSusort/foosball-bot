@@ -23,7 +23,7 @@ const handleJoin = async (user, isSingle) => {
             (joined.length < getMaxJoined());
 
         if (canJoin) {
-            if (joined.filter((u) => u.userId === user).length === 0) {
+            if (process.env.DEVELOPMENT_MODE) {
                 await addPlayerToGame(user, isSingle).then(
                     (shouldStart) => {
                         console.log("shouldStart", shouldStart);
@@ -33,7 +33,18 @@ const handleJoin = async (user, isSingle) => {
                     },
                 );
             } else {
-                sendSlackMessage("Already joined");
+                if (joined.filter((u) => u.userId === user).length === 0) {
+                    await addPlayerToGame(user, isSingle).then(
+                        (shouldStart) => {
+                            console.log("shouldStart", shouldStart);
+                            if (shouldStart) {
+                                start();
+                            }
+                        },
+                    );
+                } else {
+                    sendSlackMessage("Already joined");
+                }
             }
         } else {
             sendSlackMessage("No more room");

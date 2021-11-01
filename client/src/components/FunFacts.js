@@ -4,6 +4,7 @@ import {getLeastPlayedPlayer} from "./FunFacts/getLeastPlayedPlayer";
 import {getRivals} from "./FunFacts/getRivals";
 import {getDreamTeams} from "./FunFacts/getDreamTeam";
 import {getColoring} from "./FunFacts/getColoring";
+import {getAverageTimeSpent} from "./FunFacts/getAverageTimeSpent";
 
 const FunFacts = ({users, games}) => {
 
@@ -18,7 +19,15 @@ const FunFacts = ({users, games}) => {
     }
 
     const generateFunFact = () => {
-        const factType = ["most", "least", "rival", "dreamteam", "coloring"]
+        const factType = [
+            "most",
+            "least",
+            "rival",
+            "dreamteam",
+            "coloring",
+            "timespent"
+        ]
+
         let funFact;
         switch (factType[Math.floor(Math.random() * factType.length)]) {
             // most games
@@ -44,6 +53,10 @@ const FunFacts = ({users, games}) => {
                 funFact = getColoring(games)
                 break;
 
+            case "timespent":
+                funFact = getAverageTimeSpent(games)
+                break;
+
             default:
                 funFact = "no fun facts found"
                 break
@@ -51,7 +64,6 @@ const FunFacts = ({users, games}) => {
 
         return funFact
     }
-
 
     return (
         <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 relative"}>
