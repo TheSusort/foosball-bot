@@ -5,13 +5,15 @@ foosball bot for slack integration
 You need some env variables to get it up and running.
 
 For the client: 
+```
 // These are urls for requests to backend (eg: https://us-centralx-app-name.cloudfunctions.net/app/)
 REACT_APP_API_URL_LIVE=
 REACT_APP_API_URL_TEST=
-
+```
 
 
 For the backend:
+```
 // used for switching between dev and prod mode 0/1
 DEVELOPMENT_MODE=
 
@@ -31,7 +33,7 @@ FIREBASE_DB_URL_TEST=
 
 // api key for giphy
 GIPHY_API_KEY=
-
+```
 
 ## Running it
 
