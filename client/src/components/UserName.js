@@ -2,7 +2,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchEmojis, selectAllEmojis} from "../reducers/emojis";
 import {useEffect} from "react";
 
-const UserName = ({user, size}) => {
+const UserName = ({user, size = "h-3.5 lg:h-5"}) => {
     const emojis = useSelector(selectAllEmojis);
     const dispatch = useDispatch()
     const emojiStatus = useSelector(state => state.emojis.status)
