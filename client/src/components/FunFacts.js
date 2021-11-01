@@ -1,5 +1,5 @@
 import React from "react";
-import {FireIcon, LightningBoltIcon, MoonIcon, SparklesIcon} from "@heroicons/react/outline";
+import {FireIcon, LightningBoltIcon, MoonIcon, ScaleIcon, SparklesIcon} from "@heroicons/react/outline";
 import UserName from "./UserName";
 
 const FunFacts = ({users, games}) => {
@@ -15,7 +15,7 @@ const FunFacts = ({users, games}) => {
     }
 
     const generateFunFact = () => {
-        const factType = ["most", "least", "rival", "dreamteam"]
+        const factType = ["most", "least", "rival", "dreamteam", "coloring"]
         let funFact;
         switch (factType[Math.floor(Math.random() * factType.length)]) {
             // most games
@@ -36,6 +36,11 @@ const FunFacts = ({users, games}) => {
                 // dream team
                 funFact = getDreamTeams()
                 break;
+
+            case "coloring":
+                funFact = getColoring()
+                break;
+
             default:
                 funFact = "no fun facts found"
                 break
@@ -49,9 +54,9 @@ const FunFacts = ({users, games}) => {
         return (
             <>
                 <div
-                    className={"flex items-center rounded bg-gradient-to-r from-purple-800 via-violet-900 to-purple-800 mr-2 text-white p-2 shine"}>
+                    className={"flex items-center rounded bg-gradient-to-r from-purple-600 via-violet-900 to-purple-700 mr-2 text-white p-2 shine"}>
                     <SparklesIcon className={"h-5 w-5 mr-1"}/>
-                    {"Most played"}
+                    {"Tryhard"}
                 </div>
                 <span>
                     {mostGamesPlayed.name + " has played a total of " + mostGamesPlayed.totalGames + " matches."}
@@ -65,9 +70,9 @@ const FunFacts = ({users, games}) => {
         return (
             <>
                 <div
-                    className={"flex items-center rounded bg-gradient-to-r from-green-500 to-green-600 mr-2 text-white p-2 shine"}>
+                    className={"flex items-center rounded bg-gradient-to-r from-green-300 to-green-600 mr-2 text-white p-2 shine"}>
                     <MoonIcon className={"h-5 w-5 mr-1"}/>
-                    {"Least played"}
+                    {"Casual"}
                 </div>
                 <span>
                     {leastGamesPlayed.name + " has played a total of " + leastGamesPlayed.totalGames + " matches."}
@@ -128,7 +133,7 @@ const FunFacts = ({users, games}) => {
         return (
             <>
                 <div
-                    className={"flex items-center rounded bg-gradient-to-r from-gray-700 via-gray-900 to-black mr-2 text-white p-2 shine min-w-min"}
+                    className={"flex items-center rounded bg-gradient-to-r from-gray-600 via-gray-900 to-black mr-2 text-white p-2 shine min-w-min"}
                 >
                     <FireIcon className={"h-5 w-5 mr-1 min-w-min"}/>
                     {"Rivalry"}
@@ -199,6 +204,42 @@ const FunFacts = ({users, games}) => {
                 </div>
                 <span className={"block whitespace-pre-line"}>
                     {result}
+                </span>
+            </>
+        )
+    }
+
+    const getColoring = () => {
+
+        let result = [];
+        let resultString = "Does color matter? ";
+        const coloring = {
+            "blue": 0,
+            "red": 0
+        }
+
+        for (const game of games) {
+            if (game.delta > 0) {
+                coloring.blue++
+            } else {
+                coloring.red++
+            }
+        }
+
+        result.push(resultString + "Reds beat blues " + Math.round(((coloring.red / (coloring.blue + coloring.red)) * 100)) + "% of the time.")
+        result.push(resultString + "Blues beat reds " + Math.round(((coloring.blue / (coloring.blue + coloring.red)) * 100)) + "% of the time.")
+
+
+        return (
+            <>
+                <div
+                    className={"flex items-center rounded bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 mr-2 text-white p-2 shine min-w-min"}
+                >
+                    <ScaleIcon className={"h-5 w-5 mr-1 min-w-min"}/>
+                    {"Racism"}
+                </div>
+                <span className={"block whitespace-pre-line"}>
+                    {result[Math.floor(Math.random() * result.length)]}
                 </span>
             </>
         )
