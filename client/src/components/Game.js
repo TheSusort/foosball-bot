@@ -20,14 +20,15 @@ const Game = ({game, users}) => {
             <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
             {game.teams.map((team, index) =>
                 <p className={
-                    "compact-grid-cell overflow-ellipsis overflow-hidden col-span-3 flex" +
+                    "compact-grid-cell col-span-3 flex " +
                     "items-center flex-wrap " + (index === perfectGameWinner ? " legend text-white" : "") +
                     (perfectGameWinner !== undefined && index !== perfectGameWinner ? " clown" : "")
                 }
                    key={index}>
                     {team.map((player, index) =>
 
-                        <span key={player + Math.random()} className={"flex items-center flex-wrap"}>
+                        <span key={player + Math.random()}
+                              className={"inline max-w-full overflow-hidden overflow-ellipsis"}>
                             <span className={'name'}>
                                 {users[player] &&
                                 <Link to={`/profile/${users[player].userId}`}>
