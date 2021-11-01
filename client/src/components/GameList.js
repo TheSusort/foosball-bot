@@ -39,7 +39,7 @@ const GameList = ({filter}) => {
         }
     }, [dispatch, gamesStatus])
 
-    let content;
+    let content, funfacts;
 
     if (gamesStatus === "loading" || usersStatus === "loading") {
     } else if (gamesStatus === "succeeded" || usersStatus === "succeeded") {
@@ -54,15 +54,18 @@ const GameList = ({filter}) => {
                     users={users}
                 />
             ))
+
+        funfacts = <FunFacts users={users} games={games}/>
     } else if (gamesStatus === "error" || usersStatus === "error") {
         content = <div>{gamesError || usersError}</div>
+        funfacts = <div>{gamesError || usersError}</div>
     }
 
     return (
         <div
             className={"max-w-7xl mx-auto mb-8 bg-white p-4 rounded rounded-lg shadow-lg overflow-hidden overflow-x-auto"}>
             <h2 className={"text-center text-2xl"}>History</h2>
-            <FunFacts users={users} games={games}/>
+            {funfacts}
             <div
                 className="grid grid-flow-col auto-cols-fr text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
                 <span className={"compact-grid-cell hidden md:inline col-span-2"}>date</span>

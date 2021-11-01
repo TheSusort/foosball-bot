@@ -20,11 +20,11 @@ const FunFacts = ({users, games}) => {
         switch (factType[Math.floor(Math.random() * factType.length)]) {
             // most games
             case "most":
-                funFact = getMostPlayedPlayer(users)
+                funFact = getMostPlayedPlayer()
                 break;
 
             case "least":
-                funFact = getLeastPlayedPlayer(users)
+                funFact = getLeastPlayedPlayer()
                 break;
 
             case "rival":
@@ -49,7 +49,7 @@ const FunFacts = ({users, games}) => {
         return funFact
     }
 
-    const getMostPlayedPlayer = (users) => {
+    const getMostPlayedPlayer = () => {
         const mostGamesPlayed = Object.values(users).sort((a, b) => a.totalGames - b.totalGames).pop()
         return (
             <>
@@ -59,13 +59,14 @@ const FunFacts = ({users, games}) => {
                     {"Tryhard"}
                 </div>
                 <span>
-                    {mostGamesPlayed.name + " has played a total of " + mostGamesPlayed.totalGames + " matches."}
+                    <UserName user={mostGamesPlayed}/>
+                    {" has played a total of " + mostGamesPlayed.totalGames + " matches."}
                 </span>
             </>
         )
     }
 
-    function getLeastPlayedPlayer(users) {
+    function getLeastPlayedPlayer() {
         const leastGamesPlayed = Object.values(users).sort((a, b) => b.totalGames - a.totalGames).pop()
         return (
             <>
@@ -75,7 +76,8 @@ const FunFacts = ({users, games}) => {
                     {"Casual"}
                 </div>
                 <span>
-                    {leastGamesPlayed.name + " has played a total of " + leastGamesPlayed.totalGames + " matches."}
+                    <UserName user={leastGamesPlayed}/>
+                    {" has played a total of " + leastGamesPlayed.totalGames + " matches."}
                 </span>
             </>
         )

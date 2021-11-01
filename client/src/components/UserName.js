@@ -25,9 +25,7 @@ const UserName = ({user, size = "h-3.5 lg:h-5"}) => {
             indices.push(idx);
             idx = user.name.indexOf(element, idx + 1);
         }
-        if (user.name.includes("test")) {
-            console.log(user.name)
-        }
+
         // if : chars found, search for emojis
         if (indices.length) {
             for (let i = 0; i < indices.length; i++) {
@@ -68,7 +66,7 @@ const UserName = ({user, size = "h-3.5 lg:h-5"}) => {
         if (emoji) {
             return (
                 <>
-            <span className={"whitespace-nowrap flex items-start"}>
+            <span className={"whitespace-nowrap inline-flex items-start"}>
                 {newName}
             </span>
                 </>
