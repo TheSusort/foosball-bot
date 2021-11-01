@@ -5,8 +5,6 @@ const serverUrl = {
     'development': process.env.REACT_APP_API_URL_TEST
 };
 
-console.log(process.env.NODE_ENV)
-
 export const getUserData = async () => {
     return await axios.get(serverUrl[process.env.NODE_ENV] + "getusers").then((response) => {
         return response.data
