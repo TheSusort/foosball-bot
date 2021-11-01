@@ -66,7 +66,7 @@ const UserName = ({user, size = "h-3.5 lg:h-5"}) => {
         if (emoji) {
             return (
                 <>
-            <span className={"whitespace-nowrap inline-flex items-start"}>
+            <span className={"whitespace-nowrap inline items-start"}>
                 {newName}
             </span>
                 </>
