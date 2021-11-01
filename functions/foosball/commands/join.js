@@ -21,8 +21,9 @@ const handleJoin = async (user, isSingle) => {
         const canJoin = isSingle ?
             (joined.length <= getMaxJoined() - 2) :
             (joined.length < getMaxJoined());
+
         if (canJoin) {
-            if (!joined.includes(user)) {
+            if (joined.filter((u) => u.userId === user).length === 0) {
                 await addPlayerToGame(user, isSingle).then(
                     (shouldStart) => {
                         console.log("shouldStart", shouldStart);

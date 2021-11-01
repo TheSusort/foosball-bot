@@ -43,29 +43,41 @@ const handleResult = async (text, user = "Slæckball") => {
  * @param {string} text
  * @param {[]|DataSnapshot} teams
  * @param {string} user
- * @return {Promise<string>}
+ * @return {Promise<string>|null}
  */
 const handleScore = async (text, teams, user) => {
     const scores = text.split(" ");
+    let finished = false;
     console.log("scores: ", scores);
     const errorString = prepareUserIdForMessage(user) +
         " is a great QA worker: ";
-    for (const score in scores) {
+
+    if (scores.length !== 2) {
+        sendSlackMessage(errorString + text + "has to be two scores");
+        return;
+    }
+    if (scores[0] === scores[1]) {
+        sendSlackMessage(errorString + text + " can't be a tie");
+        return;
+    }
+
+    for (const score of scores) {
+        if (parseInt(score) === 10) {
+            finished = true;
+        }
+
         if (
-            !Number.isInteger(Number(score)) &&
-            Number(score) >= 10
+            !parseInt(score) ||
+            parseInt(score) > 10
         ) {
             sendSlackMessage(
                 errorString + text + " has to be numbers equal or below 10",
             );
+            return;
         }
     }
 
-    if (scores.length !== 2 || scores[0] === scores[1]) {
-        sendSlackMessage(errorString + text + " can't be a tie");
-    }
-
-    if (scores.length === 2) {
+    if (finished) {
         await submitGame(
             scores,
             teams,
@@ -73,7 +85,7 @@ const handleScore = async (text, teams, user) => {
 
         let scoreText = scores[0] + " - " +
             scores[1] + " :slackball::clap_gif:";
-        if (Number(scores[0]) > Number(scores[1])) {
+        if (parseInt(scores[0]) > parseInt(scores[1])) {
             scoreText += buildResultMessage(teams[0]);
         } else {
             scoreText += buildResultMessage(teams[1]);
@@ -84,7 +96,7 @@ const handleScore = async (text, teams, user) => {
         sendSlackMessage(scoreText);
         stopGame();
     } else {
-        sendSlackMessage(errorString + text + " both teams needs a score");
+        sendSlackMessage(errorString + text + " you're not finished");
     }
 };
 
