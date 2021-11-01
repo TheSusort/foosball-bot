@@ -5,6 +5,8 @@ import {getRivals} from "./FunFacts/getRivals";
 import {getDreamTeams} from "./FunFacts/getDreamTeam";
 import {getColoring} from "./FunFacts/getColoring";
 import {getAverageTimeSpent} from "./FunFacts/getAverageTimeSpent";
+import {getLongestGame} from "./FunFacts/getLongestGame";
+import {getShortestGame} from "./FunFacts/getShortestGame";
 
 const FunFacts = ({users, games}) => {
 
@@ -25,7 +27,9 @@ const FunFacts = ({users, games}) => {
             "rival",
             "dreamteam",
             "coloring",
-            "timespent"
+            "timespent",
+            "longestgame",
+            "shortestgame"
         ]
 
         let funFact;
@@ -55,6 +59,14 @@ const FunFacts = ({users, games}) => {
 
             case "timespent":
                 funFact = getAverageTimeSpent(games)
+                break;
+
+            case "longestgame":
+                funFact = getLongestGame(games, users)
+                break;
+
+            case "shortestgame":
+                funFact = getShortestGame(games, users)
                 break;
 
             default:

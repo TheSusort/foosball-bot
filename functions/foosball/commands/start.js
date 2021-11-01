@@ -125,13 +125,14 @@ const shuffleTeams = async () => {
  */
 const lockInGame = async (teams) => {
     console.log("locking in game");
-
+    let playerIndex = 0;
     const joinedForMessage = teams.map((team, index) => {
         let message = "team " +
             (index ? ":red_circle:" : ":large_blue_circle:") + ": ";
         message += team.map((player) => {
             if (player.userId) {
-                return prepareUserIdForMessage(player.userId);
+                return " " + ++playerIndex + " - " +
+                    prepareUserIdForMessage(player.userId);
             }
         });
         return message;
