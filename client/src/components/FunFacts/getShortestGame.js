@@ -12,6 +12,7 @@ export const getShortestGame = (games, users) => {
     for (const game of games) {
         if (game.time && timeData.time === 0) {
             timeData.time = game.time
+            timeData.match = game
         }
 
         if (game.time && game.time < timeData.time) {
@@ -19,7 +20,6 @@ export const getShortestGame = (games, users) => {
             timeData.match = game
         }
     }
-
 
     if (timeData.match.time) {
         const time = new Date((timeData.time) * 1000);
