@@ -20,13 +20,14 @@ export const getShortestGame = (games, users) => {
         }
     }
 
-    const time = new Date((timeData.time) * 1000);
-
-    const setupString = timeData.match.teams.map((team) => {
-        return team.map((playerId) => users[playerId]);
-    }).flat()
 
     if (timeData.match) {
+        const time = new Date((timeData.time) * 1000);
+
+        const setupString = timeData.match.teams.map((team) => {
+            return team.map((playerId) => users[playerId]);
+        }).flat()
+
         return buildFunFact(
             <div
                 className={"badge-icon bg-gradient-to-r from-red-600 to-gold"}
