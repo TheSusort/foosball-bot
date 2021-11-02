@@ -26,6 +26,7 @@ module.exports = {
                 'gradient-y': 'gradient-y 300ms ease infinite',
                 'gradient-xy': 'gradient-xy 500ms ease infinite',
                 'shine': 'shine 5s ease-in-out infinite',
+                'shine-fast': 'shine-fast 5s ease-in-out infinite',
                 'zoom': 'zoom 3s ease-in-out infinite'
             },
             keyframes: {
@@ -65,21 +66,25 @@ module.exports = {
                     }
                 },
                 'shine': {
+                    '0%': {
+                        'transform': 'skewX(20deg) translateX(-100%)'
+                    },
                     '10%': {
-                        'opacity': '1',
-                        'top': '-30%',
-                        'left': '-30%',
-                        'transition-property': 'left, top, opacity',
-                        'transition-duration': '0.7s, 0.7s, 0.15s',
-                        'transition-timing-function': 'ease',
-                        'animation-fill-mode': 'fill'
+                        'transform': 'skewX(20deg) translateX(100vw)'
                     },
                     '100%': {
-                        'opacity': '0',
-                        'top': '-30%',
-                        'left': '-30%',
-                        'transition-property': 'left, top, opacity',
-                        'animation-fill-mode': 'fill'
+                        'transform': 'skewX(20deg) translateX(100vw)'
+                    }
+                },
+                'shine-fast': {
+                    '0%': {
+                        'transform': 'skewX(20deg) translateX(-100%)'
+                    },
+                    '10%': {
+                        'transform': 'skewX(20deg) translateX(150%)'
+                    },
+                    '100%': {
+                        'transform': 'skewX(20deg) translateX(150%)'
                     }
                 },
                 'zoom': {
