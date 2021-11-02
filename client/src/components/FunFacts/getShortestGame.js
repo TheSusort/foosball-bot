@@ -21,7 +21,7 @@ export const getShortestGame = (games, users) => {
     }
 
 
-    if (timeData.match) {
+    if (timeData.match.time) {
         const time = new Date((timeData.time) * 1000);
 
         const setupString = timeData.match.teams.map((team) => {

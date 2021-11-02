@@ -16,7 +16,7 @@ export const getLongestGame = (games, users) => {
         }
     }
 
-    if (timeData.match) {
+    if (timeData.match.time) {
 
         const time = new Date((timeData.time) * 1000);
 
