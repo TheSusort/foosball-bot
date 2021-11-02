@@ -100,7 +100,7 @@ const handleCommands = async (text, user) => {
     case /^gif/i.test(text):
         sendSlackMessage(await gifSearch("robot"));
         break;
-    case /.*spicy meme.*/i.test(text):
+    case /.*laugh|meme.*/i.test(text):
         console.log("meme");
         sendSlackMessage(await getSpicyMeme());
         break;
