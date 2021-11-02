@@ -59,8 +59,6 @@ const setMaxJoined = (newMaxJoined) => {
 };
 
 const getUsers = async () => {
-    console.log("getting users");
-
     const ref = db.ref("users");
     return await ref.once("value")
         .then((snapshot) => {

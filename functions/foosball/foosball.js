@@ -92,6 +92,9 @@ const handleCommands = async (text, user) => {
     case /^status$/i.test(text):
         await handleStatus();
         break;
+    case /^users$/i.test(text):
+        console.log(await getUsers());
+        break;
 
     case /^test scoring$/i.test(text):
         await buildScoringBlocks();

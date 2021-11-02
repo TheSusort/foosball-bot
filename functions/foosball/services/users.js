@@ -62,15 +62,14 @@ const createUser = async (userId) => {
  * @param {number} newRating
  */
 const updateUser = async (userId, win, newRating) => {
-    await getUsers().then(async (users) => {
-        if (!users[userId]) {
-            userId = await createUser(userId);
-        }
-        users[userId].wins += win;
-        users[userId].rating = newRating;
-        users[userId].totalGames++;
-        setUsers(users);
-    });
+    const users = await getUsers();
+    if (!users[userId]) {
+        userId = await createUser(userId);
+    }
+    users[userId].wins += win;
+    users[userId].rating = newRating;
+    users[userId].totalGames++;
+    await setUsers(users);
 };
 
 /**

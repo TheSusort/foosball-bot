@@ -12,8 +12,8 @@ const {stopGame} = require("./stop");
 const finishGame = async () => {
     await db.ref("current_score")
         .once("value")
-        .then((scores) => {
-            handleResult(scores.val().join(" "));
+        .then(async (scores) => {
+            await handleResult(scores.val().join(" "));
         });
 };
 
@@ -179,8 +179,8 @@ const submitGame = async (result, teams) => {
 
         // set new stats for users
         teams.map((team) => {
-            team.players.map((player) => {
-                updateUser(
+            team.players.map(async (player) => {
+                await updateUser(
                     player.userId,
                     team.didWin,
                     player.rating + team.newDeltaRating,

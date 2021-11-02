@@ -37,18 +37,18 @@ export const getRivals = (games, extendedUsers) => {
                 <UserName user={randomPlayer}/>
             {" has gone toe to toe with "}
             <UserName user={extendedUsers[randomInteractedPlayerKey]}/>
-            {" " + randomPlayer.rivals[randomInteractedPlayerKey].matches + " times, and has "}
+            {" " + randomPlayer.rivals[randomInteractedPlayerKey].matches + " times, and "}
             </span>
     )]
 
     if (randomInteractedPlayer.matches) {
         const winPercent = Math.round((randomInteractedPlayer.result / randomInteractedPlayer.matches) * 100)
         if (winPercent) {
-            result.push(<span key={"winraterivals"}>{"a " + winPercent + "% winrate."}</span>)
+            result.push(<span key={"winraterivals"}>{"wins " + winPercent + "% of the time."}</span>)
         } else if (winPercent === 100) {
-            result.push(<span key={"lostrivals"}>{" never lost!"}</span>)
+            result.push(<span key={"lostrivals"}>{"has never lost!"}</span>)
         } else {
-            result.push(<span key={"wonrivals"}>{" never won!"}</span>)
+            result.push(<span key={"wonrivals"}>{"has never won!"}</span>)
         }
     }
 
