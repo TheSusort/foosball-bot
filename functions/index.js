@@ -49,7 +49,8 @@ app.post("/game", async (req, res) => {
 app.post("/result", (req, res) => {
     // register teams and result, and clear everything for new game.
     console.log("result request: ", req.body.text);
-    res.send(handleResult(req.body.text, req.body.user_id));
+    handleResult(req.body.text, req.body.user_id).then((r) => res.send(r));
+    res.send();
 });
 
 app.post("/time", (req, res) => {
@@ -57,8 +58,8 @@ app.post("/time", (req, res) => {
     res.send(timeLeft());
 });
 
-app.post("/help", (req, res) => {
-    handleCommands("help", req.body.user_id);
+app.post("/help", async (req, res) => {
+    await handleCommands("help", req.body.user_id);
     res.json("ok");
 });
 

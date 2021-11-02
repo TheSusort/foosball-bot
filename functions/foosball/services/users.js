@@ -63,13 +63,16 @@ const createUser = async (userId) => {
  */
 const updateUser = async (userId, win, newRating) => {
     const users = await getUsers();
+    console.log("update user");
     if (!users[userId]) {
+        console.log("create user");
         userId = await createUser(userId);
     }
     users[userId].wins += win;
     users[userId].rating = newRating;
     users[userId].totalGames++;
-    await setUsers(users);
+    setUsers(users);
+    return "ok";
 };
 
 /**

@@ -60,14 +60,13 @@ const setMaxJoined = (newMaxJoined) => {
 
 const getUsers = async () => {
     const ref = db.ref("users");
-    return await ref.once("value")
-        .then((snapshot) => {
-            if (snapshot.val()) {
-                users = snapshot.val();
-                console.log("all users retrieved");
-            }
-            return users;
-        });
+    return await ref.once("value").then((snapshot) => {
+        if (snapshot.val()) {
+            users = snapshot.val();
+            console.log("all users retrieved");
+        }
+        return users;
+    });
 };
 
 const setUsers = (newUsers) => {

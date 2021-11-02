@@ -145,7 +145,8 @@ const submitGame = async (result, teams) => {
     delete teams.time;
     const timeEnd = Date.now();
     const elapsed = ((timeEnd - time) / 1000);
-    buildTeams(Object.values(teams), result).then((teams) => {
+    await getUsers();
+    buildTeams(Object.values(teams), result).then(async (teams) => {
         // calculate combined ratings
         teams.map((team) => {
             team.combinedRating = 0;
@@ -180,12 +181,11 @@ const submitGame = async (result, teams) => {
         // set new stats for users
         teams.map((team) => {
             team.players.map(async (player) => {
-                await updateUser(
+                return await updateUser(
                     player.userId,
                     team.didWin,
                     player.rating + team.newDeltaRating,
                 );
-                return player;
             });
             return team;
         });
