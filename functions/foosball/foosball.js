@@ -20,7 +20,7 @@ const {
     getJoined,
 } = require("./services/shared");
 const {timeLeft} = require("./services/helpers");
-const {getUser} = require("./services/users");
+const {getUser, updateExp} = require("./services/users");
 const {buildScoringBlocks} = require("./commands/scoring");
 const {gifSearch} = require("./services/giphy");
 const {getSpicyMeme} = require("./services/memes");
@@ -34,10 +34,12 @@ const handleCommands = async (text, user) => {
     switch (true) {
     case /^start$/i.test(text):
         await handleStart(user, false);
+        await updateExp(user, "game");
         break;
 
     case /^start single$/i.test(text):
         await handleStart(user, true);
+        await updateExp(user, "game");
         break;
 
     case /^force start$/i.test(text):
@@ -46,14 +48,17 @@ const handleCommands = async (text, user) => {
 
     case /^join$/i.test(text):
         await handleJoin(user, false);
+        await updateExp(user, "game");
         break;
     case /^j o i n$/i.test(text):
         sendSlackMessage(await gifSearch("nice try"));
         await handleJoin(user, false);
+        await updateExp(user, "game");
         break;
 
     case /^join single$/i.test(text):
         await handleJoin(user, true);
+        await updateExp(user, "game");
         break;
 
     case /^help/i.test(text):
@@ -87,6 +92,7 @@ const handleCommands = async (text, user) => {
 
     case /^stop$/i.test(text):
         stopGame(true);
+        await updateExp(user, "game");
         break;
 
     case /^status$/i.test(text):
@@ -102,10 +108,12 @@ const handleCommands = async (text, user) => {
 
     case /^gif/i.test(text):
         sendSlackMessage(await gifSearch("robot"));
+        await updateExp(user, "meme");
         break;
     case /.*laugh|meme.*/i.test(text):
         console.log("meme");
         sendSlackMessage(await getSpicyMeme());
+        await updateExp(user, "meme");
         break;
 
     case /^test.*/.test(text):
@@ -135,14 +143,15 @@ const handleCommands = async (text, user) => {
         sendSlackMessage(
             pickRandomFromArray(zingers) + prepareUserIdForMessage(user),
         );
+        await updateExp(user, "rek");
         break;
 
     case botRegex.test(text):
         feeling = pickRandomFromArray(feelings);
         sendSlackMessage(feeling);
+        await updateExp(user, "bot");
         break;
     }
-
 
     db.ref("joined").off();
 };

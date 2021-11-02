@@ -12,7 +12,7 @@ const {
     sendSlackMessage,
     prepareUserIdForMessage,
 } = require("./foosball/services/helpers");
-const {updateUserName} = require("./foosball/services/users");
+const {updateUserName, updateExp} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
 const request = require("request");
 const {
@@ -42,7 +42,9 @@ app.post("/game", async (req, res) => {
             return;
         }
         await handleCommands(req.body.event.text, req.body.event.user);
+        await updateExp(req.body.event.user, "channel");
     }
+
     res.send("ok");
 });
 

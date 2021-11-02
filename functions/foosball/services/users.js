@@ -1,4 +1,4 @@
-const {db} = require("../../firebase");
+const {db, firebase} = require("../../firebase");
 const {getUsers, setUsers} = require("./shared");
 const {escapeHtml} = require("./helpers");
 
@@ -94,9 +94,19 @@ const updateUserName = async (userId, newUserName) => {
     setUsers(users);
 };
 
+const updateExp = async (userId, tag) => {
+    const usersRef = db.ref("users");
+    const userRef = usersRef.child(userId);
+    const expRef = userRef.child("exp");
+    await expRef.update({
+        [tag]: firebase.database.ServerValue.increment(1),
+    });
+};
+
 module.exports = {
     getUser,
     createUser,
     updateUser,
     updateUserName,
+    updateExp,
 };
