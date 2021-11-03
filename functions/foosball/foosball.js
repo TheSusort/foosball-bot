@@ -112,6 +112,51 @@ const handleCommands = async (text, user) => {
         await updateExp(user, "meme");
         break;
 
+
+        // eslint-disable-next-line max-len
+    case /^get history never ever use no matter what!!11111!asdasdas23213$/i.test("text"):
+
+        // eslint-disable-next-line no-case-declarations
+        const messages = await getChannelMessageList();
+        // eslint-disable-next-line no-case-declarations
+        const users = {};
+        for (const message of messages) {
+            if (message.user !== undefined && !message.bot_profile) {
+                if (!users[message.user + "/exp"]) {
+                    users[message.user + "/exp"] = {
+                        channel: 0,
+                        game: 0,
+                        meme: 0,
+                        rek: 0,
+                        bot: 0,
+                    };
+                }
+
+                users[message.user + "/exp"].channel++;
+
+                switch (true) {
+                case /.*start|join|stop.*/i.test(message.text):
+                    users[message.user + "/exp"].game++;
+                    break;
+                case /.*laugh|meme|gif.*/i.test(message.text):
+                    users[message.user + "/exp"].meme++;
+                    break;
+                case /.*rekt.*/i.test(message.text):
+                    users[message.user + "/exp"].rek++;
+                    break;
+                case botRegex.test(message.text):
+                    users[message.user + "/exp"].bot++;
+                }
+            }
+        }
+
+        // const usersRef = db.ref("users");
+        // await usersRef.update(users);
+
+        console.log(users);
+
+        break;
+
     case /.*laugh|meme.*/i.test(text):
         console.log("meme");
         sendSlackMessage(await getSpicyMeme());
