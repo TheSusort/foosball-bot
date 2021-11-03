@@ -24,6 +24,7 @@ const {getUser, updateExp} = require("./services/users");
 const {buildScoringBlocks} = require("./commands/scoring");
 const {gifSearch} = require("./services/giphy");
 const {getSpicyMeme} = require("./services/memes");
+const {getChannelMessageList} = require("./services/slack");
 
 const handleCommands = async (text, user) => {
     let score;
@@ -110,6 +111,7 @@ const handleCommands = async (text, user) => {
         sendSlackMessage(await gifSearch("robot"));
         await updateExp(user, "meme");
         break;
+
     case /.*laugh|meme.*/i.test(text):
         console.log("meme");
         sendSlackMessage(await getSpicyMeme());
