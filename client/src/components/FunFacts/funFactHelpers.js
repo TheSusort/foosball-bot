@@ -11,14 +11,14 @@ export const buildFunFact = (icon, result) => {
     )
 }
 
-export const pickRandomObject = (arrayofObjectsKey, extendedUsers) => {
-    let randomPlayer = Object.values(extendedUsers)[Math.floor(Math.random() * Object.keys(extendedUsers).length)];
+export const pickRandomObject = (arrayOfObjectsKey, parentObject) => {
+    let randomChildObject = Object.values(parentObject)[Math.floor(Math.random() * Object.keys(parentObject).length)];
 
-    while (!Object.keys(randomPlayer[arrayofObjectsKey]).length) {
-        randomPlayer = Object.values(extendedUsers)[Math.floor(Math.random() * Object.keys(extendedUsers).length)];
+    while (!Object.keys(randomChildObject[arrayOfObjectsKey]).length) {
+        randomChildObject = Object.values(parentObject)[Math.floor(Math.random() * Object.keys(parentObject).length)];
     }
-    const randomInteractedPlayerIndex = Math.floor(Math.random() * Object.keys(randomPlayer[arrayofObjectsKey]).length);
-    const randomInteractedPlayerKey = Object.keys(randomPlayer[arrayofObjectsKey])[randomInteractedPlayerIndex];
-    const randomInteractedPlayer = randomPlayer[arrayofObjectsKey][randomInteractedPlayerKey];
-    return {randomPlayer, randomInteractedPlayerKey, randomInteractedPlayer}
+    const randomChildObjectIndex = Math.floor(Math.random() * Object.keys(randomChildObject[arrayOfObjectsKey]).length);
+    const randomChildObjectArrayKey = Object.keys(randomChildObject[arrayOfObjectsKey])[randomChildObjectIndex];
+    const randomChildObjectArrayValue = randomChildObject[arrayOfObjectsKey][randomChildObjectArrayKey];
+    return {randomChildObject, randomChildObjectArrayKey, randomChildObjectArrayValue}
 }

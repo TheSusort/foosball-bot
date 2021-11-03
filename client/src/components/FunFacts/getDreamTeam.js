@@ -29,23 +29,23 @@ export const getDreamTeams = (games, extendedUsers) => {
     }
 
     const {
-        randomPlayer,
-        randomInteractedPlayerKey,
-        randomInteractedPlayer
+        randomChildObject,
+        randomChildObjectArrayKey,
+        randomChildObjectArrayValue
     } = pickRandomObject("teamMates", extendedUsers)
 
     let result = [(
         <span key={"teamstart"}>
                 {"When "}
-            <UserName user={randomPlayer}/>
+            <UserName user={randomChildObject}/>
             {" teams up with "}
-            <UserName user={extendedUsers[randomInteractedPlayerKey]}/>
+            <UserName user={extendedUsers[randomChildObjectArrayKey]}/>
             {", they have "}
             </span>
     )]
 
-    if (randomInteractedPlayer.matches) {
-        const winPercent = Math.round((randomInteractedPlayer.result / randomInteractedPlayer.matches) * 100)
+    if (randomChildObjectArrayValue.matches) {
+        const winPercent = Math.round((randomChildObjectArrayValue.result / randomChildObjectArrayValue.matches) * 100)
         if (winPercent) {
             result.push(<span key={"teamrate"}>{"a " + winPercent + "% winrate."}</span>)
         } else if (winPercent === 100) {

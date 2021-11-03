@@ -7,6 +7,7 @@ import {getColoring} from "./FunFacts/getColoring";
 import {getAverageTimeSpent} from "./FunFacts/getAverageTimeSpent";
 import {getLongestGame} from "./FunFacts/getLongestGame";
 import {getShortestGame} from "./FunFacts/getShortestGame";
+import {getInteractions} from "./FunFacts/getInteractions";
 
 const FunFacts = ({users, games}) => {
 
@@ -16,7 +17,8 @@ const FunFacts = ({users, games}) => {
             name: users[user].name,
             totalGames: users[user].totalGames,
             rivals: {},
-            teamMates: {}
+            teamMates: {},
+            exp: users[user].exp
         }
     }
 
@@ -29,7 +31,8 @@ const FunFacts = ({users, games}) => {
             "coloring",
             "timespent",
             "longestgame",
-            "shortestgame"
+            "shortestgame",
+            "interactions"
         ]
 
         let funFact;
@@ -67,6 +70,10 @@ const FunFacts = ({users, games}) => {
 
             case "shortestgame":
                 funFact = getShortestGame(games, users)
+                break;
+
+            case "interactions":
+                funFact = getInteractions(users)
                 break;
 
             default:

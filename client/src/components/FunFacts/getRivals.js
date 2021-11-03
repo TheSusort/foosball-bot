@@ -30,19 +30,23 @@ export const getRivals = (games, extendedUsers) => {
         }
     }
 
-    const {randomPlayer, randomInteractedPlayerKey, randomInteractedPlayer} = pickRandomObject("rivals", extendedUsers)
+    const {
+        randomChildObject,
+        randomChildObjectArrayKey,
+        randomChildObjectArrayValue
+    } = pickRandomObject("rivals", extendedUsers)
 
     let result = [(
         <span key={"startrivals"}>
-                <UserName user={randomPlayer}/>
+                <UserName user={randomChildObject}/>
             {" has gone toe to toe with "}
-            <UserName user={extendedUsers[randomInteractedPlayerKey]}/>
-            {" " + randomPlayer.rivals[randomInteractedPlayerKey].matches + " times, and "}
+            <UserName user={extendedUsers[randomChildObjectArrayKey]}/>
+            {" " + randomChildObject.rivals[randomChildObjectArrayKey].matches + " times, and "}
             </span>
     )]
 
-    if (randomInteractedPlayer.matches) {
-        const winPercent = Math.round((randomInteractedPlayer.result / randomInteractedPlayer.matches) * 100)
+    if (randomChildObjectArrayValue.matches) {
+        const winPercent = Math.round((randomChildObjectArrayValue.result / randomChildObjectArrayValue.matches) * 100)
         if (winPercent) {
             result.push(<span key={"winraterivals"}>{"wins " + winPercent + "% of the time."}</span>)
         } else if (winPercent === 100) {
