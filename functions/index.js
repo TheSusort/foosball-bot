@@ -21,6 +21,7 @@ const {
     scoreRed, getCurrentGame,
 } = require("./foosball/commands/scoring");
 const {gifSearch} = require("./foosball/services/giphy");
+const {getSpicyMeme} = require("./foosball/services/memes");
 
 const app = express();
 
@@ -70,6 +71,11 @@ app.post("/username", (req, res) => {
     updateUserName(req.body.user_id, req.body.text).then(
         (r) => res.send("updated to username to " + String(req.body.text)),
     );
+});
+
+app.post("/meme", async (req, res) => {
+    sendSlackMessage(await getSpicyMeme());
+    res.json("ok");
 });
 
 app.post("/add", (req, res) => {
