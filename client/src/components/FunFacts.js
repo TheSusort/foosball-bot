@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {getMostPlayedPlayer} from "./FunFacts/getMostPlayedPlayer";
 import {getLeastPlayedPlayer} from "./FunFacts/getLeastPlayedPlayer";
 import {getRivals} from "./FunFacts/getRivals";
@@ -84,11 +84,18 @@ const FunFacts = ({users, games}) => {
         return funFact
     }
 
+    const [funFact, setFunFact] = useState(generateFunFact());
+
+    useEffect(() => {
+        const interval = setInterval(() => setFunFact(generateFunFact()), 15000)
+        return () => clearInterval(interval)
+    })
+
     return (
         <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 relative"}>
             <div className={"text-center name pt-5 w-full flex justify-center"}>
                 <div className={"flex flex-wrap md:flex-nowrap items-center justify-center max-w-full"}>
-                    {generateFunFact()}
+                    {funFact}
                 </div>
             </div>
         </div>

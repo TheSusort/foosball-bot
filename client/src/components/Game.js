@@ -34,39 +34,37 @@ const Game = ({game, users}) => {
         >
             <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
             {game.teams.map((team, index) =>
-                <>
-                    <p className={
-                        "compact-grid-cell col-span-3 flex " +
-                        "items-center flex-wrap relative " +
-                        "after:pointer-events-none " +
-                        "after:top-0 after:absolute after:h-full after:block after:bg-opacity-20 " +
-                        "after:" + (index ? "left-0" : "right-0") +
-                        " after:bg-" + (index ? "red" : "blue") + "-500 after:" + resultClassMapping[result[index]] +
-                        (index === perfectGameWinner ? " legend text-white after:bg-transparent" : "") +
-                        (perfectGameWinner !== undefined && index !== perfectGameWinner ? " clown after:bg-transparent" : "")
-                    }
-                       key={index}>
-                        {team.map((player, index) =>
-                            <span key={player + Math.random()}
-                                  className={"inline max-w-full overflow-hidden overflow-ellipsis z-10"}>
-                                <span className={'name'}>
-                                    {users[player] &&
-                                    <Link to={`/profile/${users[player].userId}`}>
-                                        <UserName user={users[player]} size={"h-3.5 lg:h-5"}/>
-                                    </Link>
-                                    }
-                                    {!users[player] &&
-                                    player
-                                    }
+                <p className={
+                    "compact-grid-cell col-span-3 flex " +
+                    "items-center flex-wrap relative " +
+                    "after:pointer-events-none " +
+                    "after:top-0 after:absolute after:h-full after:block after:bg-opacity-20 " +
+                    "after:" + (index ? "left-0" : "right-0") +
+                    " after:bg-" + (index ? "red" : "blue") + "-500 after:" + resultClassMapping[result[index]] +
+                    (index === perfectGameWinner ? " legend text-white after:bg-transparent" : "") +
+                    (perfectGameWinner !== undefined && index !== perfectGameWinner ? " clown after:bg-transparent" : "")
+                }
+                   key={index}>
+                    {team.map((player, index) =>
+                        <span key={player + Math.random()}
+                              className={"inline max-w-full overflow-hidden overflow-ellipsis z-10"}>
+                            <span className={'name'}>
+                                {users[player] &&
+                                <Link to={`/profile/${users[player].userId}`}>
+                                    <UserName user={users[player]} size={"h-3.5 lg:h-5"}/>
+                                </Link>
+                                }
+                                {!users[player] &&
+                                player
+                                }
 
-                                    {index < team.length - 1 &&
-                                    <span className={"px-1"}> / </span>
-                                    }
-                                </span>
+                                {index < team.length - 1 &&
+                                <span className={"px-1"}> / </span>
+                                }
                             </span>
-                        )}
-                    </p>
-                </>
+                        </span>
+                    )}
+                </p>
             )}
             <p className={"compact-grid-cell text-right md:text-left whitespace-nowrap" + (perfectGame ? " font-extrabold animate-zoom text-gold" : "")}>
                 {game.result}
