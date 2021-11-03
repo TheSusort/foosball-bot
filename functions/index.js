@@ -10,7 +10,7 @@ const {handleResult, finishGame} = require("./foosball/commands/result");
 const {
     timeLeft,
     sendSlackMessage,
-    prepareUserIdForMessage,
+    prepareUserIdForMessage, pickRandomFromArray, insults,
 } = require("./foosball/services/helpers");
 const {updateUserName, updateExp} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
@@ -176,10 +176,17 @@ app.post("/interactivity", async (req, res) => {
 
     if (!currentGame || currentGame.error) {
         buttonsIndex = payload.findIndex((block) => block.type === "actions");
-        if (buttonsIndex !== -1) {
+        if (buttonsIndex !== -1 && (
+            parsedBody.actions[0].action_id === "actionId-0" ||
+            parsedBody.actions[0].action_id === "actionId-1")
+        ) {
             console.log("remove buttons");
             payload.splice(buttonsIndex, 1);
-            sendSlackMessage(prepareUserIdForMessage(parsedBody.user.id));
+            sendSlackMessage(
+                prepareUserIdForMessage(
+                    parsedBody.user.id) + " nice try, " +
+                pickRandomFromArray(insults),
+            );
             sendSlackMessage(await gifSearch("nice try"));
         }
     } else {
