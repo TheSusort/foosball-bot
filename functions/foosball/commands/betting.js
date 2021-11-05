@@ -12,8 +12,8 @@ const registerBet = async (text, userId) => {
     const user = await getUser(userId);
     const [command, team, bet] = text.split(" ");
     const score = await getCurrentScore();
-    console.log(command, team, bet);
-    if (Object.values(score).join("-") !== "0-0") {
+    console.log(command, team, bet, score);
+    if (score !== "0 - 0") {
         sendSlackMessage(
             prepareUserIdForMessage(userId) +
             " can't place bets on a game that is started.",
