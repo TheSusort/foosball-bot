@@ -63,7 +63,7 @@ const GameList = ({filter}) => {
 
     return (
         <div
-            className={"max-w-7xl mx-auto mb-8 bg-white p-4 rounded rounded-lg shadow-lg overflow-hidden overflow-x-auto"}>
+            className={"mx-4 mb-8 bg-white p-4 rounded rounded-lg shadow-lg overflow-hidden overflow-x-auto"}>
             <h2 className={"text-center text-2xl"}>History</h2>
             {funfacts}
             <div

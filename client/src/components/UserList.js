@@ -39,7 +39,7 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
     }
 
     return (
-        <div className={"flex-1 mb-8 bg-white p-4 rounded rounded-lg shadow-lg md:first:mr-8"}>
+        <div className={"flex-1 mb-8 bg-white p-4 rounded rounded-lg shadow-lg mx-4"}>
             {ranking &&
             <h2 className={"text-center text-2xl"}>{title}</h2>
             }
