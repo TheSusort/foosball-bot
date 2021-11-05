@@ -3,7 +3,7 @@ import User from "./User";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUsers, selectAllUsers} from "../reducers/users";
 
-const UserList = ({ranking}) => {
+const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
     const users = Object.values(useSelector(selectAllUsers))
     const dispatch = useDispatch();
     const usersStatus = useSelector(state => state.users.status)
@@ -20,7 +20,7 @@ const UserList = ({ranking}) => {
     if (usersStatus === "loading") {
     } else if (usersStatus === "succeeded") {
         content = users
-            .sort((a, b) => b.rating - a.rating)
+            .sort((a, b) => (b[sortBy] ?? 0) - (a[sortBy] ?? 0))
             .map((user, index) => (
                 <div
                     key={user.userId}
@@ -31,7 +31,7 @@ const UserList = ({ranking}) => {
                         (index === 2 && ranking ? ' bg-yellow-600 shine after:delay-1000' : '')
                     }
                 >
-                    <User user={user} ranking={index}/>
+                    <User user={user} ranking={index} sortBy={sortBy}/>
                 </div>
             ))
     } else if (usersStatus === "error") {
@@ -39,9 +39,9 @@ const UserList = ({ranking}) => {
     }
 
     return (
-        <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 rounded rounded-lg shadow-lg"}>
+        <div className={"flex-1 mb-8 bg-white p-4 rounded rounded-lg shadow-lg md:first:mr-8"}>
             {ranking &&
-            <h2 className={"text-center text-2xl"}>Leaderboard</h2>
+            <h2 className={"text-center text-2xl"}>{title}</h2>
             }
 
             <div

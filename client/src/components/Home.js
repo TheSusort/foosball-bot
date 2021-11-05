@@ -26,7 +26,10 @@ const Home = () => {
                     <div className="text-center my-5">
                         <h1 className="text-4xl">Slæckball 3000</h1>
                     </div>
-                    <UserList ranking={true}/>
+                    <div className="flex flex-wrap flex-col md:flex-row">
+                        <UserList ranking={true} title={"Fussball rankings"}/>
+                        <UserList ranking={true} title={"Biggest wallets"} sortBy={"coins"}/>
+                    </div>
                     <GameList/>
                 </div>
             </CSSTransition>
