@@ -92,6 +92,15 @@ const resolveBets = async (string) => {
                     if ({}.hasOwnProperty.call(bets[team].bets, bet)) {
                         const sBet = bets[team].bets[bet];
                         if (team === winner) {
+                            await db.ref("bet-history/")
+                                .push({
+                                    team: team,
+                                    userId: sBet.userId,
+                                    amount: sBet.amount,
+                                    result: sBet.amount * bets[team].odds,
+                                    odds: bets[team].odds,
+                                });
+
                             sendSlackMessage(
                                 prepareUserIdForMessage(sBet.userId) +
                                 " won bet! Dishing out " +
@@ -115,6 +124,15 @@ const resolveBets = async (string) => {
                                 " lost and the house gets their " +
                                 sBet.amount + " " + pickRandomFromArray(coins));
                             houseAmount += sBet.amount;
+
+                            await db.ref("bet-history/")
+                                .push({
+                                    team: team,
+                                    userId: sBet.userId,
+                                    amount: sBet.amount,
+                                    result: 0,
+                                    odds: bets[team].odds,
+                                });
                         }
                     }
                 }
@@ -126,6 +144,7 @@ const resolveBets = async (string) => {
         firebase.database.ServerValue.increment(houseAmount);
     console.log(betUpdates);
     await db.ref("/").update(betUpdates);
+
     await db.ref("bets/").remove();
 };
 
