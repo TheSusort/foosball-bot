@@ -25,6 +25,11 @@ const {buildScoringBlocks} = require("./commands/scoring");
 const {gifSearch} = require("./services/giphy");
 const {getSpicyMeme} = require("./services/memes");
 const {getChannelMessageList} = require("./services/slack");
+const {
+    registerBet,
+    calculateOdds,
+    handleWallet,
+} = require("./commands/betting");
 
 const handleCommands = async (text, user) => {
     let score;
@@ -99,12 +104,25 @@ const handleCommands = async (text, user) => {
     case /^status$/i.test(text):
         await handleStatus();
         break;
+
     case /^users$/i.test(text):
         console.log(await getUsers());
         break;
 
     case /^test scoring$/i.test(text):
         await buildScoringBlocks();
+        break;
+
+    case /^bet.*/i.test(text):
+        await registerBet(text, user);
+        break;
+
+    case /^odds.*/i.test(text):
+        await calculateOdds();
+        break;
+
+    case /^wallet$/i.test(text):
+        await handleWallet(user);
         break;
 
     case /^gif/i.test(text):

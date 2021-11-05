@@ -15,6 +15,7 @@ const {
 const {addPlayerToGame} = require("./addPlayer");
 const {gifSearch} = require("../services/giphy");
 const {buildScoringBlocks} = require("./scoring");
+const {calculateOdds} = require("./betting");
 
 /**
  * Handles start command
@@ -145,6 +146,7 @@ const lockInGame = async (teams) => {
 
     sendSlackMessage(await gifSearch("game on"));
     await buildScoringBlocks();
+    await calculateOdds();
 };
 
 module.exports = {

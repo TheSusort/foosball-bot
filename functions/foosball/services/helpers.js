@@ -442,6 +442,39 @@ const zingers = [
     "shots fired, ",
 ];
 
+const coins = [
+    "schmeckles",
+    "laks",
+    "gold coins",
+    "schpænn",
+    "laken",
+    "bucks",
+    "bread",
+    "cheddar",
+    "dough",
+    "riksdaler",
+    "spenn",
+    "smackeroonies",
+    "scrilla",
+    "big ones",
+    "cash",
+    "cha-ching",
+    "clams",
+    "dineros",
+    "ducats",
+    "fetti",
+    "frogskins",
+    "Gs",
+    "gouda",
+    "moola",
+    "shekels",
+    "simoleon",
+    "smackers",
+    "Spondulix",
+    "tender",
+    "wads",
+];
+
 
 /* eslint-enable max-len */
 
@@ -575,6 +608,7 @@ module.exports = {
     insults,
     jokes,
     zingers,
+    coins,
     pickRandomFromArray,
     shuffle,
     prepareUserIdForMessage,

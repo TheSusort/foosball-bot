@@ -8,6 +8,8 @@ const {
     getUsers,
 } = require("../services/shared");
 const {stopGame} = require("./stop");
+const {getCurrentGame} = require("./scoring");
+const {resolveBets} = require("./betting");
 
 const finishGame = async () => {
     await db.ref("current_score")
@@ -25,13 +27,7 @@ const finishGame = async () => {
  */
 const handleResult = async (text, user = "Slæckball") => {
     try {
-        const ref = db.ref("current_game");
-        const currentGame = await ref.once("value")
-            .then((snapshot) => {
-                if (snapshot.val()) {
-                    return snapshot.val();
-                }
-            });
+        const currentGame = await getCurrentGame();
         await handleScore(text, currentGame, user);
     } catch (error) {
         console.error(error);
@@ -206,6 +202,7 @@ const submitGame = async (result, teams) => {
         // update db
         db.ref("users").set(getUsers()).then(() => console.log("users saved"));
         db.ref("games").push(game).then(() => console.log("game saved"));
+        await resolveBets(teams[0].newDeltaRating);
 
         stopGame();
     });
