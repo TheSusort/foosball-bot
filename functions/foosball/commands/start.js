@@ -39,6 +39,8 @@ const handleStart = async (user, isSingle) => {
 
 /**
  * Handles force start command
+ * @param  {string}userId
+ * @return {Promise<void>}
  */
 const handleForceStart = async (userId) => {
     const joined = await getJoined();

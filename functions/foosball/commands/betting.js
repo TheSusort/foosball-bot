@@ -7,7 +7,6 @@ const {
     coins,
 } = require("../services/helpers");
 const {getCurrentGame, getCurrentScore} = require("./scoring");
-const {getUsers} = require("../services/shared");
 
 const registerBet = async (text, userId) => {
     const user = await getUser(userId);
