@@ -7,6 +7,7 @@ const {
     coins,
 } = require("../services/helpers");
 const {getCurrentGame, getCurrentScore} = require("./scoring");
+const {getUsers} = require("../services/shared");
 
 const registerBet = async (text, userId) => {
     const user = await getUser(userId);
@@ -252,10 +253,24 @@ const handleWallet = async (userId) => {
     }
 };
 
+const addCoinsForJoining = async (teams) => {
+    let updates = teams.map((team) => {
+        return team.players.map((user) => {
+            return {
+                [user.userId + "/coins"]:
+                    firebase.database.ServerValue.increment(100),
+            };
+        });
+    }).flat();
+    updates = Object.assign({}, ...updates);
+    await db.ref("users").update(updates);
+};
+
 module.exports = {
     registerBet,
     placeBet,
     resolveBets,
     calculateOdds,
     handleWallet,
+    addCoinsForJoining,
 };

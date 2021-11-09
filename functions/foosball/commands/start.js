@@ -10,7 +10,7 @@ const {
     getJoined,
     setMaxJoined,
     setStarted,
-    getSingles, getMaxJoined,
+    getSingles, getMaxJoined, setJoined,
 } = require("../services/shared");
 const {addPlayerToGame} = require("./addPlayer");
 const {gifSearch} = require("../services/giphy");
@@ -40,8 +40,15 @@ const handleStart = async (user, isSingle) => {
 /**
  * Handles force start command
  */
-const handleForceStart = async () => {
+const handleForceStart = async (userId) => {
     const joined = await getJoined();
+    joined.map((user) => {
+        if (user.userId === userId) {
+            user.isSingle = true;
+        }
+        return user;
+    });
+    await setJoined(joined);
     console.log(joined.length);
     if (joined.length >= 2) {
         setMaxJoined(joined.length);
@@ -145,6 +152,8 @@ const lockInGame = async (teams) => {
     );
 
     sendSlackMessage(await gifSearch("game on"));
+
+    await db.ref("current_score").set([0, 0]);
     await buildScoringBlocks();
     await calculateOdds();
 };

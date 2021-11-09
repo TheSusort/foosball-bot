@@ -46,6 +46,7 @@ const createUser = async (userId) => {
             wins: 0,
             totalGames: 0,
             rating: 1000,
+            coins: 1000,
         };
         users[userId] = newPlayer;
         db.ref("users")
@@ -95,6 +96,7 @@ const updateUserName = async (userId, newUserName) => {
 };
 
 const updateExp = async (userId, tag) => {
+    await getUser(userId);
     const usersRef = db.ref("users");
     const userRef = usersRef.child(userId);
     const expRef = userRef.child("exp");

@@ -49,7 +49,7 @@ const handleCommands = async (text, user) => {
         break;
 
     case /^force start$/i.test(text):
-        await handleForceStart();
+        await handleForceStart(user);
         break;
 
     case /^join$/i.test(text):

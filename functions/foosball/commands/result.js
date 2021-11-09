@@ -9,7 +9,7 @@ const {
 } = require("../services/shared");
 const {stopGame} = require("./stop");
 const {getCurrentGame} = require("./scoring");
-const {resolveBets} = require("./betting");
+const {resolveBets, addCoinsForJoining} = require("./betting");
 
 const finishGame = async () => {
     await db.ref("current_score")
@@ -201,8 +201,11 @@ const submitGame = async (result, teams) => {
 
         // update db
         db.ref("users").set(getUsers()).then(() => console.log("users saved"));
-        db.ref("games").push(game).then(() => console.log("game saved"));
+        if (!process.env.DEVELOPMENT_MODE) {
+            db.ref("games").push(game).then(() => console.log("game saved"));
+        }
         await resolveBets(teams[0].newDeltaRating);
+        await addCoinsForJoining(teams);
 
         stopGame();
     });
