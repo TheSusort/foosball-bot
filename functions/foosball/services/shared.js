@@ -107,6 +107,30 @@ const getAllGames = async () => {
         });
 };
 
+const getLastUsedPhrases = async (phraseType) => {
+    const ref = db.ref("last_used_phrases/" + phraseType);
+    return await ref.once("value").then((snapshot) => {
+        if (snapshot.val()) {
+            return Object.values(snapshot.val());
+        }
+        return [];
+    });
+};
+
+const pushToLastUsedPhrases = async (phraseType, phrase) => {
+    const ref = db.ref("last_used_phrases/" + phraseType);
+    const last = await ref.once("value").then((snapshot) => {
+        if (snapshot.val()) {
+            return snapshot.val();
+        }
+    });
+    if (last && Object.keys(last).length >= 5) {
+        delete last[Object.keys(last)[0]];
+        await ref.set(last);
+    }
+    await ref.push(phrase);
+};
+
 module.exports = {
     started,
     joined,
@@ -126,4 +150,6 @@ module.exports = {
     setSingles,
     pushToSingles,
     getAllGames,
+    getLastUsedPhrases,
+    pushToLastUsedPhrases,
 };

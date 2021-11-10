@@ -5,7 +5,7 @@ const {
     feelings,
     pickRandomFromArray,
     jokes,
-    insults, zingers,
+    insults, zingers, pickRandomFromArrayExcluding,
 } = require("./services/helpers");
 
 const {db} = require("../firebase");
@@ -17,7 +17,7 @@ const {handleStatus} = require("./commands/status");
 
 const {
     getUsers,
-    getJoined,
+    getJoined, getLastUsedPhrases, pushToLastUsedPhrases,
 } = require("./services/shared");
 const {timeLeft} = require("./services/helpers");
 const {getUser, updateExp} = require("./services/users");
@@ -35,6 +35,7 @@ const {getSoloWinChance, getBlueWinChance} = require("./stats/stats");
 const handleCommands = async (text, user) => {
     let score;
     let feeling;
+    let joke;
     // eslint-disable-next-line max-len
     const botRegex = new RegExp(/.*ai|sentient|personlighet|intelligence|iq|bot|mind|human|kill|feel|følelse|slackball.*/i);
 
@@ -212,16 +213,26 @@ const handleCommands = async (text, user) => {
         break;
 
     case /.*rekt.*/.test(text):
-        sendSlackMessage(pickRandomFromArray(jokes));
+        joke = pickRandomFromArrayExcluding(
+            jokes,
+            await getLastUsedPhrases("jokes"),
+        );
+        sendSlackMessage(joke);
         sendSlackMessage(
             pickRandomFromArray(zingers) + prepareUserIdForMessage(user),
         );
+        await pushToLastUsedPhrases("jokes", joke);
         await updateExp(user, "rek");
         break;
 
     case botRegex.test(text):
-        feeling = pickRandomFromArray(feelings);
+        feeling = pickRandomFromArrayExcluding(
+            feelings,
+            await getLastUsedPhrases("feelings"),
+        );
+
         sendSlackMessage(feeling);
+        await pushToLastUsedPhrases("feelings", feeling);
         await updateExp(user, "bot");
         break;
     }

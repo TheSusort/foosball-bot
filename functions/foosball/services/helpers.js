@@ -521,6 +521,10 @@ const pickRandomFromArray = (array) => {
     return array[Math.floor(Math.random() * array.length)];
 };
 
+const pickRandomFromArrayExcluding = (array, toRemove) => {
+    return pickRandomFromArray(array.filter((el) => !toRemove.includes(el)));
+};
+
 /**
  * Shuffles an array
  * @param {array} array
@@ -649,6 +653,7 @@ module.exports = {
     zingers,
     coins,
     pickRandomFromArray,
+    pickRandomFromArrayExcluding,
     shuffle,
     prepareUserIdForMessage,
     sendSlackMessage,

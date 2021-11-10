@@ -201,9 +201,7 @@ const submitGame = async (result, teams) => {
 
         // update db
         db.ref("users").set(getUsers()).then(() => console.log("users saved"));
-        if (!process.env.DEVELOPMENT_MODE) {
-            db.ref("games").push(game).then(() => console.log("game saved"));
-        }
+        db.ref("games").push(game).then(() => console.log("game saved"));
         await resolveBets(teams[0].newDeltaRating);
         await addCoinsForJoining(teams);
 
