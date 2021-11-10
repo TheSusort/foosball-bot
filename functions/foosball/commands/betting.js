@@ -43,7 +43,8 @@ const registerBet = async (text, userId) => {
             await placeBet(parseInt(bet), team, user);
         } else {
             sendSlackMessage(
-                "Betting is a sport for gentlemen, and ya poor, " +
+                "Betting is a sport for distinguished high-rollers, " +
+                "and ya poor, " +
                 prepareUserIdForMessage(userId),
             );
         }
