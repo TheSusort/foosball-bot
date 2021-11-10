@@ -97,6 +97,16 @@ const pushToSingles = (user) => {
     return singles;
 };
 
+const getAllGames = async () => {
+    const ref = db.ref("games");
+    return await ref.once("value")
+        .then((snapshot) => {
+            if (snapshot.val()) {
+                return snapshot.val();
+            }
+        });
+};
+
 module.exports = {
     started,
     joined,
@@ -115,4 +125,5 @@ module.exports = {
     getSingles,
     setSingles,
     pushToSingles,
+    getAllGames,
 };

@@ -83,6 +83,19 @@ const documentation = [
         "elements": [
             {
                 "type": "mrkdwn",
+                "text": "*force start*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "forces game start, split current participants if there's 2 or more joined. Will set user as single.",
+            },
+        ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
                 "text": "*/result [int] [int]*",
             },
             {
@@ -176,7 +189,7 @@ const documentation = [
         "type": "section",
         "text": {
             "type": "mrkdwn",
-            "text": "*Testing and experimental commands*",
+            "text": "*Betting related commands*",
         },
     },
     {
@@ -187,13 +200,39 @@ const documentation = [
         "elements": [
             {
                 "type": "mrkdwn",
-                "text": "*force start*",
+                "text": "*wallet*",
             },
             {
                 "type": "mrkdwn",
-                "text": "forces game start, split current participants if there's 2 or more joined. not tested.",
+                "text": "Check how much cash you have.",
             },
         ],
+    },
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "*bet [red|blue] [int]*",
+            },
+            {
+                "type": "mrkdwn",
+                "text": "Place a bet by adding team blue or red, and the amount as arguments.",
+            },
+        ],
+    },
+    {
+        "type": "divider",
+    },
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "*Testing and experimental commands*",
+        },
+    },
+    {
+        "type": "divider",
     },
     {
         "type": "context",

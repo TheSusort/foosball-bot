@@ -7,6 +7,7 @@ const {
     coins,
 } = require("../services/helpers");
 const {getCurrentGame, getCurrentScore} = require("./scoring");
+const {getSoloWinChance, getBlueWinChance} = require("../stats/stats");
 
 const registerBet = async (text, userId) => {
     const user = await getUser(userId);
@@ -151,10 +152,8 @@ const resolveBets = async (string) => {
 const calculateOdds = async () => {
     const currentGame = await getCurrentGame();
 
-    // starting win chances favor blue,
-    // who knows why but blue wins 60% of the matches
     const odds = {
-        blue: 0.07,
+        blue: await getBlueWinChance() - 0.5,
         red: 0,
     };
     const teamLengths = [];
@@ -183,18 +182,15 @@ const calculateOdds = async () => {
 
     console.log(expectedScores, odds);
 
-    // subtract 20% less chance of winning if single player
-    // @TODO: get stats on single player games to use instead of 20%
-    const handicap = 0.2;
-    if (Math.max(...teamLengths) !== 1) {
-        console.log("one team has 1 length");
+    // subtract chance of winning as solo from 50% and
+    // multiply by a set adjusting factor.
+    const handicap = (await getSoloWinChance() - 0.5) * 3;
+    if (Math.max(...teamLengths) === 2 && Math.min(...teamLengths) === 1) {
         if (teamLengths[0] === 1) {
-            console.log("blue team has 1 length");
-            odds.blue += expectedScores[0] - handicap - odds.red;
+            odds.blue += expectedScores[0] + handicap - odds.red;
             odds.red = 1 - odds.blue;
         } else {
-            console.log("red team has 1 length");
-            odds.red += 1 - expectedScores[0] - handicap - odds.blue;
+            odds.red += 1 - expectedScores[0] + handicap - odds.blue;
             odds.blue = 1 - odds.red;
         }
     } else {
@@ -210,21 +206,59 @@ const calculateOdds = async () => {
     }
 
     sendSlackMessage(
-        "*Winning chances* \n" +
-        "BLUE: " + (odds.blue * 100) + "%\n" +
-        "RED: " + (odds.red * 100) + "%",
+        [
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Placing bets :slackball:",
+                    "emoji": true,
+                },
+            },
+            {
+                "type": "divider",
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Place your bets by writing " +
+                        "`bet red/blue [amount]` in the chat.",
+                },
+            },
+            {
+                "type": "divider",
+            },
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Active odds :pepog:",
+                    "emoji": true,
+                },
+            },
+            {
+                "type": "divider",
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Red team* :red_circle: : " +
+                        roundProbablity(1 / odds.red),
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*Blue team* :large_blue_circle: : " +
+                        roundProbablity(1 / odds.blue),
+                },
+            },
+        ],
     );
 
-    sendSlackMessage(
-        "*Odds* \n" +
-        "BLUE:" + roundProbablity(1 / odds.blue) + "\n" +
-        "RED:" + roundProbablity(1 / odds.red),
-    );
-
-    sendSlackMessage(
-        "*Placing bets* \n" +
-        "bet [team] [amount]",
-    );
 
     await db.ref("bets").update({
         "blue/odds": roundProbablity(1 / odds.blue),

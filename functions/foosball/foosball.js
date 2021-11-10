@@ -30,6 +30,7 @@ const {
     calculateOdds,
     handleWallet,
 } = require("./commands/betting");
+const {getSoloWinChance, getBlueWinChance} = require("./stats/stats");
 
 const handleCommands = async (text, user) => {
     let score;
@@ -130,6 +131,13 @@ const handleCommands = async (text, user) => {
         await updateExp(user, "meme");
         break;
 
+    case /^solo/i.test(text):
+        console.log(await getSoloWinChance());
+        break;
+
+    case /^blue/i.test(text):
+        console.log(await getBlueWinChance());
+        break;
 
         // eslint-disable-next-line max-len
     case /^get history never ever use no matter what!!11111!asdasdas23213$/i.test("text"):

@@ -136,13 +136,21 @@ const shuffleTeams = async () => {
 const lockInGame = async (teams) => {
     console.log("locking in game");
     let playerIndex = 0;
+    let blueTeamSingle = false;
     const joinedForMessage = teams.map((team, index) => {
         let message = "team " +
             (index ? ":red_circle:" : ":large_blue_circle:") + ": ";
-        message += team.map((player) => {
+
+        if (!index) {
+            blueTeamSingle = team.length === 1;
+        }
+
+        message += team.map((player, pIndex) => {
+            console.log(blueTeamSingle, index, pIndex);
             if (player.userId) {
-                return " " + ++playerIndex + " - " +
-                    prepareUserIdForMessage(player.userId);
+                return " " + (blueTeamSingle && index && !pIndex ?
+                    playerIndex = playerIndex + 2 : ++playerIndex) +
+                    " - " + prepareUserIdForMessage(player.userId);
             }
         });
         return message;
