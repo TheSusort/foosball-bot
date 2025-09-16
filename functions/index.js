@@ -14,7 +14,7 @@ const {
 } = require("./foosball/services/helpers");
 const {updateUserName, updateExp} = require("./foosball/services/users");
 const {getEmojis} = require("./foosball/services/slack");
-const request = require("request");
+const axios = require("axios");
 const {
     getCurrentScore,
     scoreBlue,
@@ -214,15 +214,13 @@ app.post("/interactivity", async (req, res) => {
         );
         payload[scoreIndex].text.text = updatedScore;
     }
-    request({
-        uri: parsedBody.response_url,
-        method: "POST",
-        body: JSON.stringify({
-            replace_original: true,
-            blocks: payload,
-        }),
-    }, (error, response) => {
-        console.log(error, response.body);
+    axios.post(parsedBody.response_url, {
+        replace_original: true,
+        blocks: payload,
+    }).then((response) => {
+        console.log("Response sent successfully:", response.data);
+    }).catch((error) => {
+        console.log("Error sending response:", error);
     });
     res.json("ok");
 });
