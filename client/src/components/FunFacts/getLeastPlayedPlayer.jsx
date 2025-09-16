@@ -1,5 +1,5 @@
 import {buildFunFact} from "./funFactHelpers";
-import {MoonIcon} from "@heroicons/react/outline";
+import {MoonIcon} from "@heroicons/react/24/outline";
 import UserName from "../UserName";
 import React from "react";
 

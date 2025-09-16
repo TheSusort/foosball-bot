@@ -1,5 +1,5 @@
 import {buildFunFact} from "./funFactHelpers";
-import {ScaleIcon} from "@heroicons/react/outline";
+import {ScaleIcon} from "@heroicons/react/24/outline";
 import React from "react";
 
 export const getColoring = (games) => {

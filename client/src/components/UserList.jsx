@@ -23,7 +23,7 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
             .sort((a, b) => (b[sortBy] ?? 0) - (a[sortBy] ?? 0))
             .map((user, index) => (
                 <div
-                    key={user.userId}
+                    key={user.userId ?? index}
                     className={
                         "grid grid-cols-5 items-center bg-opacity-70 text-xs md:text-base" +
                         (index === 0 && ranking ? ' text-base md:text-xl bg-gold shine' : '') +

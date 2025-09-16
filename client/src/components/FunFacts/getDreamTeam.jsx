@@ -1,6 +1,6 @@
 import {buildFunFact, pickRandomObject} from "./funFactHelpers";
 import UserName from "../UserName";
-import {LightningBoltIcon} from "@heroicons/react/outline";
+import {BoltIcon} from "@heroicons/react/24/outline";
 import React from "react";
 
 export const getDreamTeams = (games, extendedUsers) => {
@@ -59,7 +59,7 @@ export const getDreamTeams = (games, extendedUsers) => {
         <div
             className={"badge-icon bg-gradient-to-b from-gray-900 via-purple-900 to-violet-600"}
         >
-            <LightningBoltIcon className={"h-5 w-5 mr-1 min-w-min"}/>
+            <BoltIcon className={"h-5 w-5 mr-1 min-w-min"}/>
             {"Dream team"}
         </div>,
         result
