@@ -100,8 +100,13 @@ const updateExp = async (userId, tag) => {
     const usersRef = db.ref("users");
     const userRef = usersRef.child(userId);
     const expRef = userRef.child("exp");
+    // Get current value and increment manually since ServerValue is not available in admin SDK
+    const snapshot = await expRef.once("value");
+    const currentExp = snapshot.val() || {};
+    const currentValue = currentExp[tag] || 0;
+    
     await expRef.update({
-        [tag]: firebase.database.ServerValue.increment(1),
+        [tag]: currentValue + 1,
     });
 };
 

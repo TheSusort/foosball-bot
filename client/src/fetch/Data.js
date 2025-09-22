@@ -5,16 +5,30 @@ const serverUrl = {
     'development': import.meta.env.VITE_API_URL_TEST
 };
 
-const getCurrentEnv = () => import.meta.env.VITE_DEV ? 'development' : 'production';
+const getCurrentEnv = () => import.meta.env.DEV ? 'development' : 'production';
 
 export const getUserData = async () => {
-    return await axios.get(serverUrl[getCurrentEnv()] + "getusers").then((response) => {
+    const env = getCurrentEnv();
+    const url = serverUrl[env] + "getusers";
+    console.log('Fetching users from:', url, 'Environment:', env);
+    return await axios.get(url).then((response) => {
+        console.log('Users response:', response.data);
         return response.data
+    }).catch((error) => {
+        console.error('Error fetching users:', error);
+        throw error;
     })
 }
 export const getGamesData = async () => {
-    return await axios.get(serverUrl[getCurrentEnv()] + "getgames").then((response) => {
+    const env = getCurrentEnv();
+    const url = serverUrl[env] + "getgames";
+    console.log('Fetching games from:', url, 'Environment:', env);
+    return await axios.get(url).then((response) => {
+        console.log('Games response:', response.data);
         return response.data
+    }).catch((error) => {
+        console.error('Error fetching games:', error);
+        throw error;
     })
 }
 

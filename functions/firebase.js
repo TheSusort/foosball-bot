@@ -1,17 +1,28 @@
 // Import the functions you need from the SDKs you need
 const firebase = require("firebase-admin");
 const functions = require("firebase-functions");
-const {FIREBASE_DB_URL} = require("./config");
+const {DATABASE_URL} = require("./config");
 
-firebase.initializeApp({
-    credential: firebase.credential.cert({
-        privateKey: functions.config().private.key.replace(/\\n/g, "\n"),
-        projectId: functions.config().project.id,
-        clientEmail: functions.config().client.email,
-    },
-    ),
-    databaseURL: FIREBASE_DB_URL,
-});
+// Initialize Firebase Admin SDK
+let firebaseConfig = {
+    databaseURL: DATABASE_URL,
+};
+
+// Only add credentials if not in emulator mode
+if (process.env.FUNCTIONS_EMULATOR !== "true") {
+    try {
+        const config = functions.config();
+        firebaseConfig.credential = firebase.credential.cert({
+            privateKey: config.private.key.replace(/\\n/g, "\n"),
+            projectId: config.project.id,
+            clientEmail: config.client.email,
+        });
+    } catch (error) {
+        console.warn("Could not load Firebase config, using default credentials:", error.message);
+    }
+}
+
+firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 module.exports = {

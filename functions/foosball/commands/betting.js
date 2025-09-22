@@ -109,17 +109,13 @@ const resolveBets = async (string) => {
                                 Math.round(sBet.amount * bets[team].odds) +
                                 " " + pickRandomFromArray(coins));
 
-                            if (betUpdates["users/" + [sBet.userId] + "/coins"]) {
-                                betUpdates["users/" + [sBet.userId] + "/coins"] =
-                                    firebase.database.ServerValue.increment(
-                                        betUpdates["users/" + [sBet.userId] + "/coins"][".sv"].increment + sBet.amount * bets[team].odds,
-                                    );
-                            } else {
-                                betUpdates["users/" + [sBet.userId] + "/coins"] =
-                                    firebase.database.ServerValue.increment(
-                                        sBet.amount * bets[team].odds,
-                                    );
-                            }
+                            // Get current coins and add winnings
+                            const userRef = db.ref("users/" + sBet.userId + "/coins");
+                            const snapshot = await userRef.once("value");
+                            const currentCoins = snapshot.val() || 0;
+                            const winnings = sBet.amount * bets[team].odds;
+                            
+                            betUpdates["users/" + [sBet.userId] + "/coins"] = currentCoins + winnings;
                         } else {
                             sendSlackMessage(
                                 prepareUserIdForMessage(sBet.userId) +
@@ -142,8 +138,12 @@ const resolveBets = async (string) => {
         }
     }
     /* eslint-enable max-len */
-    betUpdates["house/coins"] =
-        firebase.database.ServerValue.increment(houseAmount);
+    // Get current house coins and add house amount
+    const houseRef = db.ref("house/coins");
+    const houseSnapshot = await houseRef.once("value");
+    const currentHouseCoins = houseSnapshot.val() || 0;
+    
+    betUpdates["house/coins"] = currentHouseCoins + houseAmount;
     console.log(betUpdates);
     await db.ref("/").update(betUpdates);
 
@@ -288,15 +288,18 @@ const handleWallet = async (userId) => {
 };
 
 const addCoinsForJoining = async (teams) => {
-    let updates = teams.map((team) => {
-        return team.players.map((user) => {
-            return {
-                [user.userId + "/coins"]:
-                    firebase.database.ServerValue.increment(100),
-            };
-        });
-    }).flat();
-    updates = Object.assign({}, ...updates);
+    let updates = {};
+    
+    for (const team of teams) {
+        for (const user of team.players) {
+            // Get current coins and add 100
+            const userRef = db.ref("users/" + user.userId + "/coins");
+            const snapshot = await userRef.once("value");
+            const currentCoins = snapshot.val() || 0;
+            
+            updates[user.userId + "/coins"] = currentCoins + 100;
+        }
+    }
     await db.ref("users").update(updates);
 };
 

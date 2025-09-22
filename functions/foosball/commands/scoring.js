@@ -88,8 +88,13 @@ const buildScoringBlocks = async () => {
  * @return {Promise<string>}
  */
 const scoreBlue = async () => {
+    // Get current score and increment manually
+    const scoreRef = db.ref("current_score/0");
+    const snapshot = await scoreRef.once("value");
+    const currentScore = snapshot.val() || 0;
+    
     const updates = {
-        "current_score/0": firebase.database.ServerValue.increment(1),
+        "current_score/0": currentScore + 1,
     };
     return await db.ref().update(updates).then((r) => {
         console.log(r);
@@ -102,8 +107,13 @@ const scoreBlue = async () => {
  * @return {Promise<string>}
  */
 const scoreRed = async () => {
+    // Get current score and increment manually
+    const scoreRef = db.ref("current_score/1");
+    const snapshot = await scoreRef.once("value");
+    const currentScore = snapshot.val() || 0;
+    
     const updates = {
-        "current_score/1": firebase.database.ServerValue.increment(1),
+        "current_score/1": currentScore + 1,
     };
     return await db.ref().update(updates).then(() => {
         return "Go red";

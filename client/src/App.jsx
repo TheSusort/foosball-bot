@@ -1,10 +1,22 @@
 import {Route, Routes} from "react-router-dom";
 import Home from "./components/Home.jsx";
 import UserProfile from "./components/UserProfile.jsx";
-import React from "react";
+import React, {useEffect} from "react";
 import CurrentMatch from "./components/CurrentMatch.jsx";
+import {useDispatch} from "react-redux";
+import {fetchEmojis} from "./reducers/emojis";
+import {fetchUsers} from "./reducers/users";
+import {fetchGames} from "./reducers/games";
 
 function App() {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        // Fetch data once when the app loads
+        dispatch(fetchUsers());
+        dispatch(fetchGames());
+        dispatch(fetchEmojis());
+    }, [dispatch]);
 
     return (
         <main>

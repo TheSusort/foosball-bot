@@ -30,8 +30,16 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/game", async (req, res) => {
-    if (Object.prototype.hasOwnProperty.call(req.body, "challenge")) {
-        res.json(req.body);
+
+    // Handle Slack URL verification challenge
+    if (req.body.challenge) {
+        res.status(200).send(req.body.challenge);
+        return;
+    }
+
+    // Alternative challenge handling (in case it's nested differently)
+    if (req.body && req.body.challenge) {
+        res.status(200).send(req.body.challenge);
         return;
     }
     if (Object.prototype.hasOwnProperty.call(req.body, "event")) {
@@ -97,45 +105,43 @@ app.post("/add", (req, res) => {
     res.json("ok");
 });
 
-app.get("/getusers", (req, res) => {
-    if (req.query.userid) {
-        try {
+app.get("/getusers", async (req, res) => {
+    try {
+        if (req.query.userid) {
             const ref = db.ref("users/" + req.query.userid);
-            ref.once("value")
-                .then((snapshot) => {
-                    if (snapshot.val()) {
-                        res.json(snapshot.val());
-                    }
-                });
-        } catch (error) {
-            res.status(500).send(error);
-        }
-    } else {
-        try {
+            const snapshot = await ref.once("value");
+            if (snapshot.val()) {
+                res.json(snapshot.val());
+            } else {
+                res.json(null);
+            }
+        } else {
             const ref = db.ref("users");
-            ref.once("value")
-                .then((snapshot) => {
-                    if (snapshot.val()) {
-                        res.json(snapshot.val());
-                    }
-                });
-        } catch (error) {
-            res.status(500).send(error);
+            const snapshot = await ref.once("value");
+            if (snapshot.val()) {
+                res.json(snapshot.val());
+            } else {
+                res.json(null);
+            }
         }
+    } catch (error) {
+        console.error("Error in getusers:", error);
+        res.status(500).json({error: error.message});
     }
 });
 
-app.get("/getgames", (req, res) => {
+app.get("/getgames", async (req, res) => {
     try {
         const ref = db.ref("games");
-        ref.once("value")
-            .then((snapshot) => {
-                if (snapshot.val()) {
-                    res.json(snapshot.val());
-                }
-            });
+        const snapshot = await ref.once("value");
+        if (snapshot.val()) {
+            res.json(snapshot.val());
+        } else {
+            res.json(null);
+        }
     } catch (error) {
-        res.status(500).send(error);
+        console.error("Error in getgames:", error);
+        res.status(500).json({error: error.message});
     }
 });
 
@@ -163,6 +169,24 @@ app.post("/scorered", (req, res) => {
 
 app.get("/getemojis", async (req, res) => {
     res.json(await getEmojis());
+});
+
+app.get("/debug", (req, res) => {
+    res.json({
+        databaseUrl: process.env.DATABASE_URL,
+        hasEnv: !!process.env.DATABASE_URL,
+        nodeEnv: process.env.NODE_ENV,
+    });
+});
+
+app.get("/testdb", async (req, res) => {
+    try {
+        const {db} = require("./firebase");
+        const snapshot = await db.ref("test").once("value");
+        res.json({success: true, data: snapshot.val()});
+    } catch (error) {
+        res.json({success: false, error: error.message});
+    }
 });
 
 app.post("/interactivity", async (req, res) => {
