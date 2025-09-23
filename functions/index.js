@@ -30,7 +30,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/game", async (req, res) => {
-
     // Handle Slack URL verification challenge
     if (req.body.challenge) {
         res.status(200).send(req.body.challenge);

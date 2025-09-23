@@ -1,4 +1,4 @@
-const {firebase, db} = require("../../firebase");
+const {db} = require("../../firebase");
 const {sendSlackMessage} = require("../services/helpers");
 
 /**
@@ -92,7 +92,7 @@ const scoreBlue = async () => {
     const scoreRef = db.ref("current_score/0");
     const snapshot = await scoreRef.once("value");
     const currentScore = snapshot.val() || 0;
-    
+
     const updates = {
         "current_score/0": currentScore + 1,
     };
@@ -111,7 +111,7 @@ const scoreRed = async () => {
     const scoreRef = db.ref("current_score/1");
     const snapshot = await scoreRef.once("value");
     const currentScore = snapshot.val() || 0;
-    
+
     const updates = {
         "current_score/1": currentScore + 1,
     };

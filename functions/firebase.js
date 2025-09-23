@@ -4,7 +4,7 @@ const functions = require("firebase-functions");
 const {DATABASE_URL} = require("./config");
 
 // Initialize Firebase Admin SDK
-let firebaseConfig = {
+const firebaseConfig = {
     databaseURL: DATABASE_URL,
 };
 
@@ -18,7 +18,10 @@ if (process.env.FUNCTIONS_EMULATOR !== "true") {
             clientEmail: config.client.email,
         });
     } catch (error) {
-        console.warn("Could not load Firebase config, using default credentials:", error.message);
+        console.warn(
+            "Could not load Firebase config, using default credentials:",
+            error.message
+        );
     }
 }
 

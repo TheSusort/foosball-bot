@@ -1,5 +1,5 @@
 const {getUser} = require("../services/users");
-const {db, firebase} = require("../../firebase");
+const {db} = require("../../firebase");
 const {
     sendSlackMessage,
     prepareUserIdForMessage,
@@ -114,7 +114,7 @@ const resolveBets = async (string) => {
                             const snapshot = await userRef.once("value");
                             const currentCoins = snapshot.val() || 0;
                             const winnings = sBet.amount * bets[team].odds;
-                            
+
                             betUpdates["users/" + [sBet.userId] + "/coins"] = currentCoins + winnings;
                         } else {
                             sendSlackMessage(
@@ -142,7 +142,7 @@ const resolveBets = async (string) => {
     const houseRef = db.ref("house/coins");
     const houseSnapshot = await houseRef.once("value");
     const currentHouseCoins = houseSnapshot.val() || 0;
-    
+
     betUpdates["house/coins"] = currentHouseCoins + houseAmount;
     console.log(betUpdates);
     await db.ref("/").update(betUpdates);
@@ -288,15 +288,15 @@ const handleWallet = async (userId) => {
 };
 
 const addCoinsForJoining = async (teams) => {
-    let updates = {};
-    
+    const updates = {};
+
     for (const team of teams) {
         for (const user of team.players) {
             // Get current coins and add 100
             const userRef = db.ref("users/" + user.userId + "/coins");
             const snapshot = await userRef.once("value");
             const currentCoins = snapshot.val() || 0;
-            
+
             updates[user.userId + "/coins"] = currentCoins + 100;
         }
     }
