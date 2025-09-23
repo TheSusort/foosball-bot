@@ -8,7 +8,7 @@ import FunFacts from "./FunFacts";
 const GameList = ({filter}) => {
 
     const showMax = 20
-    const games = Object.values(useSelector(selectAllGames));
+    const games = Object.values(useSelector(selectAllGames) || []);
     const users = useSelector(selectAllUsers);
     const dispatch = useDispatch()
     const gamesStatus = useSelector(state => state.games.status)
