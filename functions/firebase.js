@@ -20,7 +20,7 @@ if (process.env.FUNCTIONS_EMULATOR !== "true") {
     } catch (error) {
         console.warn(
             "Could not load Firebase config, using default credentials:",
-            error.message
+            error.message,
         );
     }
 }
