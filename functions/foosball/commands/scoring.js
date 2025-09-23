@@ -1,5 +1,6 @@
 const {db} = require("../../firebase");
 const {sendSlackMessage} = require("../services/helpers");
+const {CLIENT_URL} = require("../../config");
 
 /**
  *
@@ -43,7 +44,7 @@ const buildScoringBlocks = async () => {
                     "emoji": true,
                 },
                 "value": "click_me_123",
-                "url": "https://xn--slckball3000-7cb.no/current-match",
+                "url": CLIENT_URL + "/current-match",
                 "action_id": "button-action",
             },
         },
