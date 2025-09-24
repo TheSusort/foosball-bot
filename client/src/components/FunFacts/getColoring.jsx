@@ -1,31 +1,32 @@
 import {buildFunFact} from "./funFactHelpers";
 import {ScaleIcon} from "@heroicons/react/24/outline";
 import React from "react";
+import {getTeamColors} from "../../utils/colors";
 
 export const getColoring = (games) => {
-
+    const colors = getTeamColors();
     let result = [];
     let resultString = "Does color matter? ";
     const coloring = {
-        "blue": 0,
-        "red": 0
+        [colors.team1.color]: 0,
+        [colors.team2.color]: 0
     }
 
     for (const game of games) {
         if (game.delta > 0) {
-            coloring.blue++
+            coloring[colors.team1.color]++
         } else {
-            coloring.red++
+            coloring[colors.team2.color]++
         }
     }
 
     result.push(
-        resultString + "Reds beat blues " +
-        Math.round(((coloring.red / (coloring.blue + coloring.red)) * 100)) + "% of the time."
+        resultString + `${colors.team2.name} beat ${colors.team1.name} ` +
+        Math.round(((coloring[colors.team2.color] / (coloring[colors.team1.color] + coloring[colors.team2.color])) * 100)) + "% of the time."
     )
     result.push(
-        resultString + "Blues beat reds " +
-        Math.round(((coloring.blue / (coloring.blue + coloring.red)) * 100)) + "% of the time."
+        resultString + `${colors.team1.name} beat ${colors.team2.name} ` +
+        Math.round(((coloring[colors.team1.color] / (coloring[colors.team1.color] + coloring[colors.team2.color])) * 100)) + "% of the time."
     )
 
 

@@ -1,6 +1,7 @@
 const {db} = require("../../firebase");
 const {sendSlackMessage} = require("../services/helpers");
 const {CLIENT_URL} = require("../../config");
+const {getTeamColors} = require("../services/colors");
 
 /**
  *
@@ -8,6 +9,7 @@ const {CLIENT_URL} = require("../../config");
  */
 const buildScoringBlocks = async () => {
     const currentScore = await getCurrentScore();
+    const colors = getTeamColors();
 
     const scoringBlocks = [
         {
@@ -59,23 +61,23 @@ const buildScoringBlocks = async () => {
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Score Blue",
+                        "text": `Score ${colors.team1.name}`,
                         "emoji": true,
                     },
                     "value": "score_blue",
                     "action_id": "actionId-0",
-                    "style": "primary",
+                    "style": colors.team1.slackColor,
                 },
                 {
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Score Red",
+                        "text": `Score ${colors.team2.name}`,
                         "emoji": true,
                     },
                     "value": "score_red",
                     "action_id": "actionId-1",
-                    "style": "danger",
+                    "style": colors.team2.slackColor,
                 },
             ],
         },
