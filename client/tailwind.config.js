@@ -1,3 +1,14 @@
+// Load environment variables
+const dotenv = require('dotenv');
+const path = require('path');
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
+// Get team colors from environment variables
+const team1Color = process.env.VITE_TEAM_1_COLOR || 'blue';
+const team2Color = process.env.VITE_TEAM_2_COLOR || 'red';
+
 module.exports = {
     content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
     safelist: [
@@ -9,8 +20,6 @@ module.exports = {
         'face-exit-done',
         'shine',
         'shine::after',
-        'after:bg-red-500',
-        'after:bg-blue-500',
         'after-w-0',
         'after:w-1/12',
         'after:w-3/12',
@@ -24,11 +33,9 @@ module.exports = {
         'after:w-full',
         'after:left-0',
         'after:right-0',
-        // Gradient colors for body background
-        'bg-gradient-to-r',
-        'from-purple-400',
-        'via-pink-500',
-        'to-red-500'
+        // Dynamic team colors
+        `after:bg-${team1Color}-500`,
+        `after:bg-${team2Color}-500`,
     ],
     darkMode: 'media', // or 'class'
     theme: {
