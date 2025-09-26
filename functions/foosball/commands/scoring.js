@@ -132,10 +132,12 @@ const getCurrentScore = async () => {
             .then((snapshot) => {
                 if (snapshot.val()) {
                     if (snapshot.val()[0] >= 10) {
-                        return "BLUE TEAM WON \n" +
+                        return getTeamColors().team1.name.toUpperCase() +
+                            " WON \n" +
                             snapshot.val().join(" - ");
                     } else if (snapshot.val()[1] >= 10) {
-                        return "RED TEAM WON \n" +
+                        return getTeamColors().team2.name.toUpperCase() +
+                            " WON \n" +
                             snapshot.val().join(" - ");
                     }
                     return snapshot.val().join(" - ");

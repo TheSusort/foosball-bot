@@ -41,6 +41,7 @@ const handleCommands = async (text, user) => {
 
     switch (true) {
     case /^start$/i.test(text):
+        console.log(`Processing start command for user ${user}`);
         await handleStart(user, false);
         await updateExp(user, "game");
         break;

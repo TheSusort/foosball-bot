@@ -25,17 +25,21 @@ const {getTeamColors} = require("../services/colors");
  * @return {Promise<void>}
  */
 const handleStart = async (user, isSingle) => {
+    console.log(`handleStart called for user ${user},
+         isSingle: ${isSingle}, getStarted(): ${getStarted()}`);
+
     if (getStarted()) {
         console.log(
             user + " is trying to start another game" +
-            isSingle ? " as single." : ".",
+            (isSingle ? " as single." : "."),
         );
         sendSlackMessage("Already another game.");
-    } else {
-        console.log("Starting game.");
-        await startGame(user);
-        await addPlayerToGame(user, isSingle);
+        return;
     }
+
+    console.log("Starting game.");
+    await startGame(user);
+    await addPlayerToGame(user, isSingle);
 };
 
 /**
