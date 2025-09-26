@@ -66,7 +66,6 @@ const buildScoringBlocks = async () => {
                     },
                     "value": "score_blue",
                     "action_id": "actionId-0",
-                    "style": colors.team1.slackColor,
                 },
                 {
                     "type": "button",
@@ -77,7 +76,6 @@ const buildScoringBlocks = async () => {
                     },
                     "value": "score_red",
                     "action_id": "actionId-1",
-                    "style": colors.team2.slackColor,
                 },
             ],
         },
