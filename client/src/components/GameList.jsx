@@ -43,6 +43,18 @@ const GameList = ({filter}) => {
     let content, funfacts;
 
     if (gamesStatus === "loading" || usersStatus === "loading") {
+        content = (
+            <div className="text-center py-8">
+                <div className="animate-spin-slow text-4xl">⚽</div>
+                <p className="mt-2 text-gray-600">Loading games...</p>
+            </div>
+        );
+        funfacts = (
+            <div className="text-center py-4">
+                <div className="animate-spin-slow text-2xl">📊</div>
+                <p className="mt-2 text-gray-600">Loading fun facts...</p>
+            </div>
+        );
     } else if (gamesStatus === "succeeded" || usersStatus === "succeeded") {
 
         content = filteredGames
@@ -63,22 +75,27 @@ const GameList = ({filter}) => {
     }
 
     return (
-        <div
-            className={"mx-4 mb-8 bg-white p-4 rounded rounded-lg shadow-lg overflow-hidden overflow-x-auto"}>
-            <h2 className={"text-center text-2xl"}>History</h2>
-            {funfacts}
+        <>
             <div
-                className="grid grid-flow-col auto-cols-fr text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
-                <span className={"compact-grid-cell hidden md:inline col-span-2"}>date</span>
-                <span className={"compact-grid-cell col-span-3"}>{colors.team1.name}</span>
-                <span className={"compact-grid-cell col-span-3"}>{colors.team2.name}</span>
-                <span dir="rtl" className={"compact-grid-cell text-right md:text-left"}>result</span>
-                <span className={"compact-grid-cell text-right hidden md:inline"}>delta</span>
+                className={"mx-4 mb-8 bg-white rounded-lg shadow-lg overflow-hidden overflow-x-auto"}>
+                {funfacts}
             </div>
-            <div className="flex flex-col mb-5 text-gray-700 divide-y divide-black divide-solid min-w-min">
-                {content}
+            <div
+                className={"mx-4 mb-8 bg-white p-4 rounded-lg shadow-lg overflow-hidden overflow-x-auto"}>
+                <h2 className={"text-center text-2xl"}>History</h2>
+                <div
+                    className="grid grid-flow-col auto-cols-fr text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
+                    <span className={"compact-grid-cell hidden md:inline col-span-2"}>date</span>
+                    <span className={"compact-grid-cell col-span-3"}>{colors.team1.name}</span>
+                    <span className={"compact-grid-cell col-span-3"}>{colors.team2.name}</span>
+                    <span dir="rtl" className={"compact-grid-cell text-right md:text-left"}>result</span>
+                    <span className={"compact-grid-cell text-right hidden md:inline"}>delta</span>
+                </div>
+                <div className="flex flex-col mb-5 text-gray-700 divide-y divide-black divide-solid min-w-min">
+                    {content}
+                </div>
             </div>
-        </div>
+        </>
     )
 
 }

@@ -97,8 +97,8 @@ const FunFacts = ({users, games}) => {
     }, [generateFunFact]) // Add dependency array to prevent infinite re-renders
 
     return (
-        <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 relative"}>
-            <div className={"text-center name pt-5 w-full flex justify-center"}>
+        <div className={"max-w-7xl mx-auto bg-white p-4 relative"}>
+            <div className={"text-center name w-full flex justify-center"}>
                 <div className={"flex flex-wrap md:flex-nowrap items-center justify-center max-w-full"}>
                     {funFact}
                 </div>

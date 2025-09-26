@@ -18,6 +18,12 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
     let content;
 
     if (usersStatus === "loading") {
+        content = (
+            <div className="text-center py-8">
+                <div className="animate-spin-slow text-4xl">⚽</div>
+                <p className="mt-2 text-gray-600">Loading users...</p>
+            </div>
+        );
     } else if (usersStatus === "succeeded") {
         content = users
             .sort((a, b) => (b[sortBy] ?? 0) - (a[sortBy] ?? 0))
@@ -39,7 +45,7 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
     }
 
     return (
-        <div className={"flex-1 mb-8 bg-white p-4 rounded rounded-lg shadow-lg mx-4"}>
+        <div className={"flex-1 mb-8 bg-white p-4 rounded-lg shadow-lg mx-4"}>
             {ranking &&
             <h2 className={"text-center text-2xl"}>{title}</h2>
             }
