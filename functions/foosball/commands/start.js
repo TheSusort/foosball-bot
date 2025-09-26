@@ -13,7 +13,7 @@ const {
     getSingles, getMaxJoined, setJoined,
 } = require("../services/shared");
 const {addPlayerToGame} = require("./addPlayer");
-const {gifSearch} = require("../services/giphy");
+const {gifSearchAsImage} = require("../services/giphy");
 const {buildScoringBlocks} = require("./scoring");
 const {calculateOdds} = require("./betting");
 const {getTeamColors} = require("../services/colors");
@@ -167,7 +167,7 @@ const lockInGame = async (teams) => {
         ". Post result to start new game.",
     );
 
-    sendSlackMessage(await gifSearch("game on"));
+    sendSlackMessage(await gifSearchAsImage("game on"));
 
     await db.ref("current_score").set([0, 0]);
     await buildScoringBlocks();

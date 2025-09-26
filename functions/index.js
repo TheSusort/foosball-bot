@@ -20,8 +20,8 @@ const {
     scoreBlue,
     scoreRed, getCurrentGame,
 } = require("./foosball/commands/scoring");
-const {gifSearch} = require("./foosball/services/giphy");
-const {getSpicyMeme} = require("./foosball/services/memes");
+const {gifSearchAsImage} = require("./foosball/services/giphy");
+const {getSpicyMemeAsImage} = require("./foosball/services/memes");
 
 const app = express();
 
@@ -81,7 +81,7 @@ app.post("/username", (req, res) => {
 });
 
 app.post("/meme", async (req, res) => {
-    sendSlackMessage(await getSpicyMeme());
+    sendSlackMessage(await getSpicyMemeAsImage());
     res.json("ok");
 });
 
@@ -210,7 +210,7 @@ app.post("/interactivity", async (req, res) => {
                     parsedBody.user.id) + " nice try, " +
                 pickRandomFromArray(insults),
             );
-            sendSlackMessage(await gifSearch("nice try"));
+            sendSlackMessage(await gifSearchAsImage("nice try"));
         }
     } else {
         if (parsedBody.actions[0].action_id === "actionId-0") {

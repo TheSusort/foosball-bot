@@ -22,8 +22,8 @@ const {
 const {timeLeft} = require("./services/helpers");
 const {getUser, updateExp} = require("./services/users");
 const {buildScoringBlocks} = require("./commands/scoring");
-const {gifSearch} = require("./services/giphy");
-const {getSpicyMeme} = require("./services/memes");
+const {gifSearchAsImage} = require("./services/giphy");
+const {getSpicyMemeAsImage} = require("./services/memes");
 const {getChannelMessageList} = require("./services/slack");
 const {
     registerBet,
@@ -60,7 +60,7 @@ const handleCommands = async (text, user) => {
         await updateExp(user, "game");
         break;
     case /^j o i n$/i.test(text):
-        sendSlackMessage(await gifSearch("nice try"));
+        sendSlackMessage(await gifSearchAsImage("nice try"));
         await handleJoin(user, false);
         await updateExp(user, "game");
         break;
@@ -129,7 +129,7 @@ const handleCommands = async (text, user) => {
         break;
 
     case /^gif/i.test(text):
-        sendSlackMessage(await gifSearch("robot"));
+        sendSlackMessage(await gifSearchAsImage("robot"));
         await updateExp(user, "meme");
         break;
 
@@ -187,7 +187,7 @@ const handleCommands = async (text, user) => {
 
     case /.*laugh|meme.*/i.test(text):
         console.log("meme");
-        sendSlackMessage(await getSpicyMeme());
+        sendSlackMessage(await getSpicyMemeAsImage());
         await updateExp(user, "meme");
         break;
 
