@@ -12,15 +12,6 @@ const team2Color = process.env.VITE_TEAM_2_COLOR || 'red';
 module.exports = {
     content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
     safelist: [
-        'fade-enter',
-        'fade-enter-active',
-        'fade-enter-done',
-        'fade-exit',
-        'fade-exit-active',
-        'face-exit-done',
-        'shine',
-        'shine::after',
-        'after-w-0',
         'after:w-1/12',
         'after:w-3/12',
         'after:w-4/12',

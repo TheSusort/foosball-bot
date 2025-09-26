@@ -11,30 +11,6 @@
         @apply whitespace-nowrap overflow-ellipsis overflow-hidden;
     }
 
-    .fade-enter {
-        @apply opacity-0 transition;
-    }
-
-    .fade-enter-active {
-        @apply opacity-0 transition;
-    }
-
-    .fade-enter-done {
-        @apply opacity-100 transition
-    }
-
-    .fade-exit {
-        @apply opacity-100 transition
-    }
-
-    .fade-exit-active {
-        @apply opacity-0 transition
-    }
-
-    .fade-exit-done {
-        @apply opacity-0 transition
-    }
-
     /* Custom team gradient is now handled dynamically in CurrentMatch component */
 
     .legend {
