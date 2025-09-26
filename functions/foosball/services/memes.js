@@ -14,8 +14,8 @@ const getSpicyMemeAsImage = async () => {
             {
                 "type": "image",
                 "image_url": meme.url,
-                "alt_text": meme.title || "Spicy meme"
-            }
+                "alt_text": meme.title || "Spicy meme",
+            },
         ];
     } catch (error) {
         console.error("Error fetching meme:", error);

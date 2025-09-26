@@ -33,8 +33,8 @@ const gifSearchAsImage = async (term) => {
                 {
                     "type": "image",
                     "image_url": randomGif.images.downsized.url,
-                    "alt_text": term
-                }
+                    "alt_text": term,
+                },
             ];
         }
         return [];
