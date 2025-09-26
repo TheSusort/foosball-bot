@@ -4,11 +4,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchGames, selectAllGames} from "../reducers/games";
 import {fetchUsers, selectAllUsers} from "../reducers/users";
 import FunFacts from "./FunFacts";
+import {getTeamColors} from "../utils/colors";
 
 const GameList = ({filter}) => {
-
+    const colors = getTeamColors();
     const showMax = 20
-    const games = Object.values(useSelector(selectAllGames));
+    const games = Object.values(useSelector(selectAllGames) || []);
     const users = useSelector(selectAllUsers);
     const dispatch = useDispatch()
     const gamesStatus = useSelector(state => state.games.status)
@@ -69,8 +70,8 @@ const GameList = ({filter}) => {
             <div
                 className="grid grid-flow-col auto-cols-fr text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
                 <span className={"compact-grid-cell hidden md:inline col-span-2"}>date</span>
-                <span className={"compact-grid-cell col-span-3"}>Blues</span>
-                <span className={"compact-grid-cell col-span-3"}>Reds</span>
+                <span className={"compact-grid-cell col-span-3"}>{colors.team1.name}</span>
+                <span className={"compact-grid-cell col-span-3"}>{colors.team2.name}</span>
                 <span dir="rtl" className={"compact-grid-cell text-right md:text-left"}>result</span>
                 <span className={"compact-grid-cell text-right hidden md:inline"}>delta</span>
             </div>

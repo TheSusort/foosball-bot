@@ -1,6 +1,6 @@
 import React from "react";
 import {buildFunFact} from "./funFactHelpers";
-import {LightningBoltIcon} from "@heroicons/react/outline";
+import {BoltIcon} from "@heroicons/react/24/outline";
 import UserName from "../UserName";
 
 export const getShortestGame = (games, users) => {
@@ -32,7 +32,7 @@ export const getShortestGame = (games, users) => {
             <div
                 className={"badge-icon bg-gradient-to-r from-red-600 to-gold"}
             >
-                <LightningBoltIcon className={"h-5 w-5 mr-1 min-w-min"}/>
+                <BoltIcon className={"h-5 w-5 mr-1 min-w-min"}/>
                 {"Speedy Gonzales"}
             </div>,
             <>

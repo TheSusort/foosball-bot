@@ -1,9 +1,10 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import UserName from "./UserName";
+import {getTeamColors} from "../utils/colors";
 
 const Game = ({game, users}) => {
-
+    const colors = getTeamColors();
     const result = game.result.split("-");
     const resultClassMapping = {
         '0': 'w-0',
@@ -40,7 +41,7 @@ const Game = ({game, users}) => {
                     "after:pointer-events-none " +
                     "after:top-0 after:absolute after:h-full after:block after:bg-opacity-20 " +
                     "after:" + (index ? "left-0" : "right-0") +
-                    " after:bg-" + (index ? "red" : "blue") + "-500 after:" + resultClassMapping[result[index]] +
+                    " after:bg-" + (index ? colors.team2.color : colors.team1.color) + "-500 after:" + resultClassMapping[result[index]] +
                     (index === perfectGameWinner ? " legend text-white after:bg-transparent" : "") +
                     (perfectGameWinner !== undefined && index !== perfectGameWinner ? " clown after:bg-transparent" : "")
                 }

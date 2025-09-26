@@ -1,34 +1,36 @@
 module.exports = {
-    mode: 'jit',
-    purge: {
-        content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html', './src/components/*.{js,jsx}'],
-        safelist: [
-            'fade-enter',
-            'fade-enter-active',
-            'fade-enter-done',
-            'fade-exit',
-            'fade-exit-active',
-            'face-exit-done',
-            'shine',
-            'shine::after',
-            'after:bg-red-500',
-            'after:bg-blue-500',
-            'after-w-0',
-            'after:w-1/12',
-            'after:w-3/12',
-            'after:w-4/12',
-            'after:w-5/12',
-            'after:w-6/12',
-            'after:w-7/12',
-            'after:w-8/12',
-            'after:w-10/12',
-            'after:w-11/12',
-            'after:w-full',
-            'after:left-0',
-            'after:right-0'
-        ],
-    },
-    darkMode: false, // or 'media' or 'class'
+    content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+    safelist: [
+        'fade-enter',
+        'fade-enter-active',
+        'fade-enter-done',
+        'fade-exit',
+        'fade-exit-active',
+        'face-exit-done',
+        'shine',
+        'shine::after',
+        'after:bg-red-500',
+        'after:bg-blue-500',
+        'after-w-0',
+        'after:w-1/12',
+        'after:w-3/12',
+        'after:w-4/12',
+        'after:w-5/12',
+        'after:w-6/12',
+        'after:w-7/12',
+        'after:w-8/12',
+        'after:w-10/12',
+        'after:w-11/12',
+        'after:w-full',
+        'after:left-0',
+        'after:right-0',
+        // Gradient colors for body background
+        'bg-gradient-to-r',
+        'from-purple-400',
+        'via-pink-500',
+        'to-red-500'
+    ],
+    darkMode: 'media', // or 'class'
     theme: {
         rotate: {
             '720': '720deg'
@@ -123,9 +125,6 @@ module.exports = {
                 clown: 'url(media/clown.png)'
             }
         }
-    },
-    variants: {
-        extend: {},
     },
     plugins: [],
 }

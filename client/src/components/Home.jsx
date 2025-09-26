@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import UserList from "./UserList";
 import GameList from "./GameList";
 import LoadingIndicator from "./LoadingIndicator";
@@ -7,6 +7,7 @@ import {CSSTransition} from "react-transition-group";
 const Home = () => {
 
     const [loading, setLoading] = useState(true);
+    const nodeRef = useRef(null);
 
     useEffect(() => {
         setTimeout(() => setLoading(false), 500)
@@ -21,8 +22,9 @@ const Home = () => {
                 timeout={500}
                 classNames="fade"
                 unmountOnExit
+                nodeRef={nodeRef}
             >
-                <div className="container mx-auto p-4 max-w-7xl">
+                <div ref={nodeRef} className="container mx-auto p-4 max-w-7xl">
                     <div className="text-center my-5">
                         <h1 className="text-4xl">Slæckball 3000</h1>
                     </div>

@@ -1,6 +1,6 @@
 import UserName from "../UserName";
 import {buildFunFact, pickRandomObject} from "./funFactHelpers";
-import {FireIcon} from "@heroicons/react/outline";
+import {FireIcon} from "@heroicons/react/24/outline";
 import React from "react";
 
 export const getRivals = (games, extendedUsers) => {

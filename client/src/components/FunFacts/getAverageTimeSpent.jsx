@@ -1,6 +1,6 @@
 import React from "react";
 import {buildFunFact} from "./funFactHelpers";
-import {ClockIcon} from "@heroicons/react/outline";
+import {ClockIcon} from "@heroicons/react/24/outline";
 
 export const getAverageTimeSpent = (games) => {
     const timeData = {

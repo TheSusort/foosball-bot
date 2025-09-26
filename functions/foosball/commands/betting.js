@@ -1,5 +1,5 @@
 const {getUser} = require("../services/users");
-const {db, firebase} = require("../../firebase");
+const {db} = require("../../firebase");
 const {
     sendSlackMessage,
     prepareUserIdForMessage,
@@ -8,11 +8,13 @@ const {
 } = require("../services/helpers");
 const {getCurrentGame, getCurrentScore} = require("./scoring");
 const {getSoloWinChance, getBlueWinChance} = require("../stats/stats");
+const {getTeamColors} = require("../services/colors");
 
 const registerBet = async (text, userId) => {
     const user = await getUser(userId);
     const [command, team, bet] = text.split(" ");
     const score = await getCurrentScore();
+    const colors = getTeamColors();
     console.log(command, team, bet, score);
     if (score !== "0 - 0") {
         sendSlackMessage(
@@ -22,7 +24,7 @@ const registerBet = async (text, userId) => {
         return;
     }
 
-    if (team === "red" || team === "blue") {
+    if (team === colors.team1.color || team === colors.team2.color) {
         if (!parseInt(bet)) {
             sendSlackMessage(
                 "Have to bet real " + pickRandomFromArray(coins) +
@@ -50,7 +52,8 @@ const registerBet = async (text, userId) => {
         }
     } else {
         sendSlackMessage(
-            "Have to bet on red or blue, " + prepareUserIdForMessage(userId),
+            `Have to bet on ${colors.team1.color} or ${colors.team2.color}, ` +
+            prepareUserIdForMessage(userId),
         );
     }
 };
@@ -70,7 +73,8 @@ const placeBet = async (bet, team, user) => {
 
 const resolveBets = async (string) => {
     const result = parseInt(string);
-    const winner = result > 0 ? "blue" : "red";
+    const colors = getTeamColors();
+    const winner = result > 0 ? colors.team1.color : colors.team2.color;
     console.log(result, winner);
     if (!result) {
         sendSlackMessage(result + " has to be a valid delta");
@@ -79,7 +83,8 @@ const resolveBets = async (string) => {
 
     const bets = await db.ref("bets").once("value").then((snapshot) => {
         // console.log(snapshot.val());
-        if (snapshot.val().red || snapshot.val().blue) {
+        if (snapshot.val()[colors.team1.color] ||
+            snapshot.val()[colors.team2.color]) {
             return snapshot.val();
         }
     });
@@ -109,17 +114,13 @@ const resolveBets = async (string) => {
                                 Math.round(sBet.amount * bets[team].odds) +
                                 " " + pickRandomFromArray(coins));
 
-                            if (betUpdates["users/" + [sBet.userId] + "/coins"]) {
-                                betUpdates["users/" + [sBet.userId] + "/coins"] =
-                                    firebase.database.ServerValue.increment(
-                                        betUpdates["users/" + [sBet.userId] + "/coins"][".sv"].increment + sBet.amount * bets[team].odds,
-                                    );
-                            } else {
-                                betUpdates["users/" + [sBet.userId] + "/coins"] =
-                                    firebase.database.ServerValue.increment(
-                                        sBet.amount * bets[team].odds,
-                                    );
-                            }
+                            // Get current coins and add winnings
+                            const userRef = db.ref("users/" + sBet.userId + "/coins");
+                            const snapshot = await userRef.once("value");
+                            const currentCoins = snapshot.val() || 0;
+                            const winnings = sBet.amount * bets[team].odds;
+
+                            betUpdates["users/" + [sBet.userId] + "/coins"] = currentCoins + winnings;
                         } else {
                             sendSlackMessage(
                                 prepareUserIdForMessage(sBet.userId) +
@@ -142,8 +143,12 @@ const resolveBets = async (string) => {
         }
     }
     /* eslint-enable max-len */
-    betUpdates["house/coins"] =
-        firebase.database.ServerValue.increment(houseAmount);
+    // Get current house coins and add house amount
+    const houseRef = db.ref("house/coins");
+    const houseSnapshot = await houseRef.once("value");
+    const currentHouseCoins = houseSnapshot.val() || 0;
+
+    betUpdates["house/coins"] = currentHouseCoins + houseAmount;
     console.log(betUpdates);
     await db.ref("/").update(betUpdates);
 
@@ -152,10 +157,11 @@ const resolveBets = async (string) => {
 
 const calculateOdds = async () => {
     const currentGame = await getCurrentGame();
+    const colors = getTeamColors();
 
     const odds = {
-        blue: await getBlueWinChance() - 0.5,
-        red: 0,
+        [colors.team1.color]: await getBlueWinChance() - 0.5,
+        [colors.team2.color]: 0,
     };
     const teamLengths = [];
     const ratings = [];
@@ -188,15 +194,17 @@ const calculateOdds = async () => {
     const handicap = (await getSoloWinChance() - 0.5) * 3;
     if (Math.max(...teamLengths) === 2 && Math.min(...teamLengths) === 1) {
         if (teamLengths[0] === 1) {
-            odds.blue += expectedScores[0] + handicap - odds.red;
-            odds.red = 1 - odds.blue;
+            odds[colors.team1.color] += expectedScores[0] + handicap -
+                odds[colors.team2.color];
+            odds[colors.team2.color] = 1 - odds[colors.team1.color];
         } else {
-            odds.red += 1 - expectedScores[0] + handicap - odds.blue;
-            odds.blue = 1 - odds.red;
+            odds[colors.team2.color] += 1 - expectedScores[0] + handicap -
+                odds[colors.team1.color];
+            odds[colors.team1.color] = 1 - odds[colors.team2.color];
         }
     } else {
-        odds.blue += expectedScores[0];
-        odds.red += 1 - odds.blue;
+        odds[colors.team1.color] += expectedScores[0];
+        odds[colors.team2.color] += 1 - odds[colors.team1.color];
     }
 
     // round winning chances
@@ -224,7 +232,8 @@ const calculateOdds = async () => {
                 "text": {
                     "type": "mrkdwn",
                     "text": "Place your bets by writing " +
-                        "`bet red/blue [amount]` in the chat.",
+                        "`bet " + colors.team1.color + "/" +
+                        colors.team2.color + " [amount]` in the chat.",
                 },
             },
             {
@@ -245,16 +254,16 @@ const calculateOdds = async () => {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*Red team* :red_circle: : " +
-                        roundProbablity(1 / odds.red),
+                    "text": `*${colors.team2.name}* ${colors.team2.emoji} : ` +
+                        roundProbablity(1 / odds[colors.team2.color]),
                 },
             },
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*Blue team* :large_blue_circle: : " +
-                        roundProbablity(1 / odds.blue),
+                    "text": `*${colors.team1.name}* ${colors.team1.emoji} : ` +
+                        roundProbablity(1 / odds[colors.team1.color]),
                 },
             },
         ],
@@ -262,8 +271,10 @@ const calculateOdds = async () => {
 
 
     await db.ref("bets").update({
-        "blue/odds": roundProbablity(1 / odds.blue),
-        "red/odds": roundProbablity(1 / odds.red),
+        [`${colors.team1.color}/odds`]: roundProbablity(1 /
+            odds[colors.team1.color]),
+        [`${colors.team2.color}/odds`]: roundProbablity(1 /
+            odds[colors.team2.color]),
     });
 };
 
@@ -288,15 +299,18 @@ const handleWallet = async (userId) => {
 };
 
 const addCoinsForJoining = async (teams) => {
-    let updates = teams.map((team) => {
-        return team.players.map((user) => {
-            return {
-                [user.userId + "/coins"]:
-                    firebase.database.ServerValue.increment(100),
-            };
-        });
-    }).flat();
-    updates = Object.assign({}, ...updates);
+    const updates = {};
+
+    for (const team of teams) {
+        for (const user of team.players) {
+            // Get current coins and add 100
+            const userRef = db.ref("users/" + user.userId + "/coins");
+            const snapshot = await userRef.once("value");
+            const currentCoins = snapshot.val() || 0;
+
+            updates[user.userId + "/coins"] = currentCoins + 100;
+        }
+    }
     await db.ref("users").update(updates);
 };
 

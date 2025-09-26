@@ -1,5 +1,7 @@
-const {firebase, db} = require("../../firebase");
+const {db} = require("../../firebase");
 const {sendSlackMessage} = require("../services/helpers");
+const {CLIENT_URL} = require("../../config");
+const {getTeamColors} = require("../services/colors");
 
 /**
  *
@@ -7,6 +9,7 @@ const {sendSlackMessage} = require("../services/helpers");
  */
 const buildScoringBlocks = async () => {
     const currentScore = await getCurrentScore();
+    const colors = getTeamColors();
 
     const scoringBlocks = [
         {
@@ -43,7 +46,7 @@ const buildScoringBlocks = async () => {
                     "emoji": true,
                 },
                 "value": "click_me_123",
-                "url": "https://xn--slckball3000-7cb.no/current-match",
+                "url": CLIENT_URL + "/current-match",
                 "action_id": "button-action",
             },
         },
@@ -58,23 +61,21 @@ const buildScoringBlocks = async () => {
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Score Blue",
+                        "text": `Score ${colors.team1.name}`,
                         "emoji": true,
                     },
                     "value": "score_blue",
                     "action_id": "actionId-0",
-                    "style": "primary",
                 },
                 {
                     "type": "button",
                     "text": {
                         "type": "plain_text",
-                        "text": "Score Red",
+                        "text": `Score ${colors.team2.name}`,
                         "emoji": true,
                     },
                     "value": "score_red",
                     "action_id": "actionId-1",
-                    "style": "danger",
                 },
             ],
         },
@@ -88,8 +89,13 @@ const buildScoringBlocks = async () => {
  * @return {Promise<string>}
  */
 const scoreBlue = async () => {
+    // Get current score and increment manually
+    const scoreRef = db.ref("current_score/0");
+    const snapshot = await scoreRef.once("value");
+    const currentScore = snapshot.val() || 0;
+
     const updates = {
-        "current_score/0": firebase.database.ServerValue.increment(1),
+        "current_score/0": currentScore + 1,
     };
     return await db.ref().update(updates).then((r) => {
         console.log(r);
@@ -102,8 +108,13 @@ const scoreBlue = async () => {
  * @return {Promise<string>}
  */
 const scoreRed = async () => {
+    // Get current score and increment manually
+    const scoreRef = db.ref("current_score/1");
+    const snapshot = await scoreRef.once("value");
+    const currentScore = snapshot.val() || 0;
+
     const updates = {
-        "current_score/1": firebase.database.ServerValue.increment(1),
+        "current_score/1": currentScore + 1,
     };
     return await db.ref().update(updates).then(() => {
         return "Go red";

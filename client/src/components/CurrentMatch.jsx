@@ -3,13 +3,15 @@ import {getCurrentScoreData} from "../fetch/Data";
 import BouncingLogo from "./BouncingLogo";
 import useWindowDimensions from "../hooks/window";
 import Confetti from "react-confetti";
+import {getTeamColors, getGradientStyle} from "../utils/colors";
 
 const CurrentMatch = () => {
-
+    const colors = getTeamColors();
     const [currentScore, setCurrentScore] = useState([]);
     const [celebrate, setCelebrate] = useState(0);
     const [showCelebration, setShowCelebration] = useState(false)
     const {width, height} = useWindowDimensions()
+
 
     const getCurrentScore = async () => {
 
@@ -38,7 +40,8 @@ const CurrentMatch = () => {
 
     return (
         <div
-            className={"flex items-center content-center w-full min-h-screen fixed custom-team-gradient overflow-hidden"}>
+            className={"flex items-center content-center w-full min-h-screen fixed overflow-hidden"}
+            style={getGradientStyle(colors)}>
 
             <BouncingLogo/>
             {showCelebration &&

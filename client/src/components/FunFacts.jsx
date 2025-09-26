@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo, useCallback} from "react";
 import {getMostPlayedPlayer} from "./FunFacts/getMostPlayedPlayer";
 import {getLeastPlayedPlayer} from "./FunFacts/getLeastPlayedPlayer";
 import {getRivals} from "./FunFacts/getRivals";
@@ -11,18 +11,23 @@ import {getInteractions} from "./FunFacts/getInteractions";
 
 const FunFacts = ({users, games}) => {
 
-    let extendedUsers = {}
-    for (const user in users) {
-        extendedUsers[user] = {
-            name: users[user].name,
-            totalGames: users[user].totalGames,
-            rivals: {},
-            teamMates: {},
-            exp: users[user].exp
+    // Memoize expensive computation to prevent recalculation on every render
+    const extendedUsers = useMemo(() => {
+        const result = {}
+        for (const user in users) {
+            result[user] = {
+                name: users[user].name,
+                totalGames: users[user].totalGames,
+                rivals: {},
+                teamMates: {},
+                exp: users[user].exp
+            }
         }
-    }
+        return result
+    }, [users])
 
-    const generateFunFact = () => {
+    // Memoize the fun fact generation to prevent recreation on every render
+    const generateFunFact = useCallback(() => {
         const factType = [
             "most",
             "least",
@@ -82,14 +87,14 @@ const FunFacts = ({users, games}) => {
         }
 
         return funFact
-    }
+    }, [users, games, extendedUsers])
 
-    const [funFact, setFunFact] = useState(generateFunFact());
+    const [funFact, setFunFact] = useState(() => generateFunFact());
 
     useEffect(() => {
         const interval = setInterval(() => setFunFact(generateFunFact()), 15000)
         return () => clearInterval(interval)
-    })
+    }, [generateFunFact]) // Add dependency array to prevent infinite re-renders
 
     return (
         <div className={"max-w-7xl mx-auto mb-8 bg-white p-4 relative"}>

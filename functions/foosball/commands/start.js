@@ -16,6 +16,7 @@ const {addPlayerToGame} = require("./addPlayer");
 const {gifSearch} = require("../services/giphy");
 const {buildScoringBlocks} = require("./scoring");
 const {calculateOdds} = require("./betting");
+const {getTeamColors} = require("../services/colors");
 
 /**
  * Handles start command
@@ -73,7 +74,7 @@ const startGame = async (user) => {
         "Game started by " +
         "<@" + user + ">" +
         " time left: " + timeLeft() +
-        ", HURRY <!channel>",
+        ", HURRY <!channel> write `join` or `join single` to join the game",
     );
 };
 
@@ -136,19 +137,20 @@ const shuffleTeams = async () => {
 const lockInGame = async (teams) => {
     console.log("locking in game");
     let playerIndex = 0;
-    let blueTeamSingle = false;
+    const colors = getTeamColors();
+    let team1Single = false;
     const joinedForMessage = teams.map((team, index) => {
-        let message = "team " +
-            (index ? ":red_circle:" : ":large_blue_circle:") + ": ";
+        const teamColor = index ? colors.team2 : colors.team1;
+        let message = "team " + teamColor.emoji + ": ";
 
         if (!index) {
-            blueTeamSingle = team.length === 1;
+            team1Single = team.length === 1;
         }
 
         message += team.map((player, pIndex) => {
-            console.log(blueTeamSingle, index, pIndex);
+            console.log(team1Single, index, pIndex);
             if (player.userId) {
-                return " " + (blueTeamSingle && index && !pIndex ?
+                return " " + (team1Single && index && !pIndex ?
                     playerIndex = playerIndex + 2 : ++playerIndex) +
                     " - " + prepareUserIdForMessage(player.userId);
             }
