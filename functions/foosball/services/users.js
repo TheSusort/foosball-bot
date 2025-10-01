@@ -1,6 +1,27 @@
 const {db} = require("../../firebase");
 const {getUsers, setUsers} = require("./shared");
 const {escapeHtml} = require("./helpers");
+const {getUserProfile} = require("./slack");
+
+/**
+ * Determine the best username from Slack profile data
+ * @param {string} userId
+ * @param {object} profile
+ * @return {string}
+ */
+const determineUsername = (userId, profile) => {
+    let username = "player" + userId; // final fallback
+
+    if (profile) {
+        if (profile.first_name && profile.first_name.trim()) {
+            username = profile.first_name.trim();
+        } else if (profile.real_name && profile.real_name.trim()) {
+            username = profile.real_name.trim().split(" ")[0];
+        }
+    }
+
+    return username;
+};
 
 /**
  * gets user
@@ -40,9 +61,15 @@ const getUser = async (userId) => {
 const createUser = async (userId) => {
     const users = await getUsers();
     if (!users[userId]) {
+        // Get user profile from Slack
+        const profile = await getUserProfile(userId);
+
+        // Determine username with fallback hierarchy
+        const username = determineUsername(userId, profile);
+
         const newPlayer = {
             userId: userId,
-            name: "player" + userId,
+            name: escapeHtml(username),
             wins: 0,
             totalGames: 0,
             rating: 1000,
@@ -51,7 +78,9 @@ const createUser = async (userId) => {
         users[userId] = newPlayer;
         db.ref("users")
             .update({[userId]: newPlayer})
-            .then(() => console.log(userId + " saved"));
+            .then(() => console.log(
+                userId + " saved with username: " + username,
+            ));
     }
     return users[userId];
 };
@@ -117,4 +146,5 @@ module.exports = {
     updateUser,
     updateUserName,
     updateExp,
+    determineUsername,
 };

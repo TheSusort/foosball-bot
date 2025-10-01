@@ -26,6 +26,7 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
         );
     } else if (usersStatus === "succeeded") {
         content = users
+            .filter(user => (user.totalGames ?? 0) > 0)  // Only show users who have played games
             .sort((a, b) => (b[sortBy] ?? 0) - (a[sortBy] ?? 0))
             .map((user, index) => (
                 <div

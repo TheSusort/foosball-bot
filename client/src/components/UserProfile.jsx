@@ -31,7 +31,10 @@ const UserProfile = () => {
             >
                 <div ref={nodeRef} className="container mx-auto p-4 ">
                     <div className="text-center my-5">
-                        <h1 className="text-4xl">Slæckball 3000</h1>
+                        <h1 className="stripe-text">
+                            Slæckball 3000
+                            <div className="stripe-text--overlay">Slæckball 3000</div>
+                        </h1>
                     </div>
                     <DetailedUser {...user} />
                     <GameList filter={id}/>

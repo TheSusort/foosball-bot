@@ -13,7 +13,7 @@ const {
     prepareUserIdForMessage, pickRandomFromArray, insults,
 } = require("./foosball/services/helpers");
 const {updateUserName, updateExp} = require("./foosball/services/users");
-const {getEmojis} = require("./foosball/services/slack");
+const {getEmojis, getBotUserId} = require("./foosball/services/slack");
 const axios = require("axios");
 const {
     getCurrentScore,
@@ -42,10 +42,14 @@ app.post("/game", async (req, res) => {
         return;
     }
     if (Object.prototype.hasOwnProperty.call(req.body, "event")) {
+        // Get bot user ID from Slack API
+        const botUserId = await getBotUserId();
+
         if (req.body.event.type !== "message" ||
             req.body.event.text === "undefined" ||
             req.body.event.bot_profile ||
-            req.body.event.message) {
+            req.body.event.message ||
+            req.body.event.user === botUserId) {// Filter out bot's own messages
             res.send("ok");
             return;
         }
@@ -168,6 +172,15 @@ app.post("/scorered", (req, res) => {
 
 app.get("/getemojis", async (req, res) => {
     res.json(await getEmojis());
+});
+
+app.get("/getbotid", async (req, res) => {
+    try {
+        const botUserId = await getBotUserId();
+        res.json({botUserId});
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
 });
 
 app.get("/debug", (req, res) => {

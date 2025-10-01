@@ -21,8 +21,21 @@ const Game = ({game, users}) => {
 
     }
 
-    const date = new Date(Number(game.uid))
-    const dateString = [date.getDate(), date.getMonth() + 1, date.getFullYear()].join("/")
+    // Format duration from seconds to "Xmin Xseconds"
+    const formatDuration = (timeInSeconds) => {
+        if (!timeInSeconds) return "-- --";
+        const totalSeconds = Math.round(timeInSeconds); // Round to nearest second
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        if (minutes > 0) {
+            return `${minutes}min ${seconds}s`;
+        } else {
+            return `${seconds}s`;
+        }
+    };
+
+    const durationString = formatDuration(game.time);
     const perfectGame = game.result === "10-0" || game.result === "0-10";
     const perfectGameWinner = perfectGame ? (
         game.result === "10-0" ? 0 : 1
@@ -33,7 +46,7 @@ const Game = ({game, users}) => {
             key={game.uid}
             className={"grid grid-flow-col auto-cols-fr text-xs lg:text-base "}
         >
-            <p className={"compact-grid-cell hidden md:inline col-span-2"}>{dateString}</p>
+            <p className={"compact-grid-cell hidden md:inline col-span-2"}>{durationString}</p>
             {game.teams.map((team, index) =>
                 <p className={
                     "compact-grid-cell col-span-3 flex " +

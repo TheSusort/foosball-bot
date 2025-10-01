@@ -469,6 +469,34 @@ const jokes = [
     "So a thought crossed your mind? Must have been a long and lonely journey.",
 ];
 
+const gameStartGifs = [
+    "game on",
+    "let's go",
+    "here we go",
+    "bring it on",
+    "showtime",
+    "game time",
+    "let's play",
+    "ready player one",
+    "battle royale",
+    "fight club",
+    "competition",
+    "tournament",
+    "challenge accepted",
+    "get ready",
+    "it's time",
+    "let the games begin",
+    "ready set go",
+    "sports",
+    "foosball",
+    "table football",
+    "epic battle",
+    "game face",
+    "pumped up",
+    "excited",
+    "hyped",
+];
+
 const zingers = [
     "zing, ",
     "grab a plate you just got served, ",
@@ -650,6 +678,7 @@ module.exports = {
     feelings,
     insults,
     jokes,
+    gameStartGifs,
     zingers,
     coins,
     pickRandomFromArray,

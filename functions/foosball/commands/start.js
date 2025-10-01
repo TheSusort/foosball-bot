@@ -3,6 +3,8 @@ const {
     shuffle,
     prepareUserIdForMessage,
     timeLeft,
+    gameStartGifs,
+    pickRandomFromArray,
 } = require("./../services/helpers");
 const {db} = require("../../firebase");
 const {
@@ -167,7 +169,7 @@ const lockInGame = async (teams) => {
         ". Post result to start new game.",
     );
 
-    sendSlackMessage(await gifSearchAsImage("game on"));
+    sendSlackMessage(await gifSearchAsImage(pickRandomFromArray(gameStartGifs)));
 
     await db.ref("current_score").set([0, 0]);
     await buildScoringBlocks();

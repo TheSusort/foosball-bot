@@ -22,6 +22,26 @@ const getEmojis = async () => {
     return await slack.emoji.list();
 };
 
+const getUserProfile = async (userId) => {
+    try {
+        const result = await slack.users.info({user: userId});
+        return result.user.profile;
+    } catch (error) {
+        console.error("Failed to fetch user profile for", userId, ":", error);
+        return null;
+    }
+};
+
+const getBotUserId = async () => {
+    try {
+        const result = await slack.auth.test();
+        return result.user_id;
+    } catch (error) {
+        console.error("Failed to get bot user ID:", error);
+        return null;
+    }
+};
+
 const getChannelMessageList = async () => {
     let messageData = await slack.conversations.history({
         channel: SLACK_CHANNEL_ID,
@@ -53,5 +73,7 @@ const getChannelMessageList = async () => {
 module.exports = {
     sendSlackMessageViaAPI,
     getEmojis,
+    getUserProfile,
+    getBotUserId,
     getChannelMessageList,
 };

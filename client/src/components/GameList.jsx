@@ -85,7 +85,7 @@ const GameList = ({filter}) => {
                 <h2 className={"text-center text-2xl"}>History</h2>
                 <div
                     className="grid grid-flow-col auto-cols-fr text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
-                    <span className={"compact-grid-cell hidden md:inline col-span-2"}>date</span>
+                    <span className={"compact-grid-cell hidden md:inline col-span-2"}>duration</span>
                     <span className={"compact-grid-cell col-span-3"}>{colors.team1.name}</span>
                     <span className={"compact-grid-cell col-span-3"}>{colors.team2.name}</span>
                     <span dir="rtl" className={"compact-grid-cell text-right md:text-left"}>result</span>
