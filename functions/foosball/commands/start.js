@@ -169,7 +169,9 @@ const lockInGame = async (teams) => {
         ". Post result to start new game.",
     );
 
-    sendSlackMessage(await gifSearchAsImage(pickRandomFromArray(gameStartGifs)));
+    sendSlackMessage(
+        await gifSearchAsImage(pickRandomFromArray(gameStartGifs)),
+    );
 
     await db.ref("current_score").set([0, 0]);
     await buildScoringBlocks();
