@@ -13,8 +13,10 @@ const LoadingIndicator = props => {
             unmountOnExit
             nodeRef={nodeRef}
         >
-            <div ref={nodeRef} className={"fixed w-full h-full flex justify-center items-center z-50"}>
-                <img src={loadingImage} alt={"loading"} className={"animate-spin-slow absolute"}/>
+            <div ref={nodeRef} className={"fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50"}>
+                <div className="flex flex-col items-center">
+                    <img src={loadingImage} alt={"loading"} className={"animate-spin-slow"}/>
+                </div>
             </div>
         </CSSTransition>
     )

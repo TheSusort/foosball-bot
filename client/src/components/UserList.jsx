@@ -17,14 +17,7 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
 
     let content;
 
-    if (usersStatus === "loading") {
-        content = (
-            <div className="text-center py-8">
-                <div className="animate-spin-slow text-4xl">⚽</div>
-                <p className="mt-2 text-gray-600">Loading users...</p>
-            </div>
-        );
-    } else if (usersStatus === "succeeded") {
+    if (usersStatus === "succeeded") {
         content = users
             .filter(user => (user.totalGames ?? 0) > 0)  // Only show users who have played games
             .sort((a, b) => (b[sortBy] ?? 0) - (a[sortBy] ?? 0))
@@ -41,8 +34,8 @@ const UserList = ({ranking, title = "Leaderboard", sortBy = "rating"}) => {
                     <User user={user} ranking={index} sortBy={sortBy}/>
                 </div>
             ))
-    } else if (usersStatus === "error") {
-        content = <div>{usersError}</div>
+    } else if (usersStatus === "failed") {
+        content = <div className="text-red-600 p-4">{usersError}</div>
     }
 
     return (

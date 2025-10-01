@@ -108,6 +108,114 @@ app.post("/add", (req, res) => {
     res.json("ok");
 });
 
+app.post("/manual-match", async (req, res) => {
+    try {
+        const {team1, team2, score} = req.body;
+
+        // Validate input
+        if (!team1 || !team2 || !score) {
+            return res.status(400).json({
+                error: "Missing required fields: team1, team2, score",
+            });
+        }
+
+        if (!Array.isArray(team1) || !Array.isArray(team2)) {
+            return res.status(400).json({
+                error: "team1 and team2 must be arrays of user IDs",
+            });
+        }
+
+        if (team1.length === 0 || team2.length === 0) {
+            return res.status(400).json({
+                error: "Teams cannot be empty",
+            });
+        }
+
+        // Validate score format
+        const scores = score.split(" ");
+        if (scores.length !== 2) {
+            return res.status(400).json({
+                error: "Score must be in format '10 5'",
+            });
+        }
+
+        const score1 = parseInt(scores[0]);
+        const score2 = parseInt(scores[1]);
+
+        if (isNaN(score1) || isNaN(score2)) {
+            return res.status(400).json({
+                error: "Scores must be valid numbers",
+            });
+        }
+
+        if (score1 === score2) {
+            return res.status(400).json({
+                error: "Score cannot be a tie",
+            });
+        }
+
+        if (score1 < 0 || score1 > 10 || score2 < 0 || score2 > 10) {
+            return res.status(400).json({
+                error: "Scores must be between 0 and 10",
+            });
+        }
+
+        if (score1 !== 10 && score2 !== 10) {
+            return res.status(400).json({
+                error: "One team must have scored 10 to win",
+            });
+        }
+
+        // Check for duplicate players
+        const allPlayers = [...team1, ...team2];
+        const uniquePlayers = new Set(allPlayers);
+        if (allPlayers.length !== uniquePlayers.size) {
+            return res.status(400).json({
+                error: "A player cannot be on both teams",
+            });
+        }
+
+        // Build teams structure with player data
+        const {getUser} = require("./foosball/services/users");
+        const team1Players = await Promise.all(
+            team1.map(async (userId) => await getUser(userId)),
+        );
+        const team2Players = await Promise.all(
+            team2.map(async (userId) => await getUser(userId)),
+        );
+
+        // Check if all users exist
+        if (team1Players.includes(undefined) ||
+            team2Players.includes(undefined)) {
+            return res.status(400).json({
+                error: "One or more user IDs not found",
+            });
+        }
+
+        // Build game structure
+        const teams = {
+            0: team1Players,
+            1: team2Players,
+            time: Date.now() - 600000, // 10 minutes ago as placeholder
+        };
+
+        // Submit the game using existing logic
+        const {submitGame} = require("./foosball/commands/result");
+        await submitGame(scores, teams);
+
+        res.json({
+            success: true,
+            message: "Match registered successfully",
+            result: score,
+        });
+    } catch (error) {
+        console.error("Error in manual-match:", error);
+        res.status(500).json({
+            error: "Failed to register match: " + error.message,
+        });
+    }
+});
+
 app.get("/getusers", async (req, res) => {
     try {
         if (req.query.userid) {

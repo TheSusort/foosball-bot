@@ -28,9 +28,9 @@ const Home = () => {
         <>
             <LoadingIndicator loading={loading}/>
             <CSSTransition
-                key={"profile"}
+                key={"content"}
                 in={!loading}
-                timeout={500}
+                timeout={300}
                 classNames="fade"
                 unmountOnExit
                 nodeRef={nodeRef}

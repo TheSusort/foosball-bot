@@ -42,20 +42,7 @@ const GameList = ({filter}) => {
 
     let content, funfacts;
 
-    if (gamesStatus === "loading" || usersStatus === "loading") {
-        content = (
-            <div className="text-center py-8">
-                <div className="animate-spin-slow text-4xl">⚽</div>
-                <p className="mt-2 text-gray-600">Loading games...</p>
-            </div>
-        );
-        funfacts = (
-            <div className="text-center py-4">
-                <div className="animate-spin-slow text-2xl">📊</div>
-                <p className="mt-2 text-gray-600">Loading fun facts...</p>
-            </div>
-        );
-    } else if (gamesStatus === "succeeded" || usersStatus === "succeeded") {
+    if (gamesStatus === "succeeded" && usersStatus === "succeeded") {
 
         content = filteredGames
             .sort((a, b) => b.uid - a.uid)
@@ -69,9 +56,9 @@ const GameList = ({filter}) => {
             ))
 
         funfacts = <FunFacts users={users} games={games}/>
-    } else if (gamesStatus === "error" || usersStatus === "error") {
-        content = <div>{gamesError || usersError}</div>
-        funfacts = <div>{gamesError || usersError}</div>
+    } else if (gamesStatus === "failed" || usersStatus === "failed") {
+        content = <div className="text-red-600 p-4">{gamesError || usersError}</div>
+        funfacts = <div className="text-red-600 p-4">{gamesError || usersError}</div>
     }
 
     return (

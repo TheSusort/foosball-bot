@@ -89,7 +89,7 @@ const SmoothGradientBackground = ({ children }) => {
             // Move to next scheme (skip game mode - last item in array)
             currentSchemeIndex = (currentSchemeIndex + 1) % (colorSchemes.length - 1);
             animateToScheme(currentSchemeIndex, 2); // 2 second smooth transition
-        }, 6000); // Every 6 seconds
+        }, 2000); // Every 6 seconds
 
         return () => clearInterval(interval);
     }, [location.pathname]);
