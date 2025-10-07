@@ -18,7 +18,9 @@ const axios = require("axios");
 const {
     getCurrentScore,
     scoreBlue,
-    scoreRed, getCurrentGame,
+    scoreRed,
+    getCurrentGame,
+    updateScoringBlocks,
 } = require("./foosball/commands/scoring");
 const {gifSearchAsImage} = require("./foosball/services/giphy");
 const {getSpicyMemeAsImage} = require("./foosball/services/memes");
@@ -270,12 +272,34 @@ app.get("/getcurrentscore", async (req, res) => {
     res.json(result);
 });
 
-app.post("/scoreblue", (req, res) => {
-    res.json(scoreBlue());
+app.post("/scoreblue", async (req, res) => {
+    await scoreBlue();
+    const updatedScore = await getCurrentScore();
+
+    // Update the Slack scoring message
+    await updateScoringBlocks();
+
+    // Check if game is won and finish it
+    if (updatedScore.indexOf("WON") !== -1) {
+        await finishGame();
+    }
+
+    res.json(updatedScore);
 });
 
-app.post("/scorered", (req, res) => {
-    res.json(scoreRed());
+app.post("/scorered", async (req, res) => {
+    await scoreRed();
+    const updatedScore = await getCurrentScore();
+
+    // Update the Slack scoring message
+    await updateScoringBlocks();
+
+    // Check if game is won and finish it
+    if (updatedScore.indexOf("WON") !== -1) {
+        await finishGame();
+    }
+
+    res.json(updatedScore);
 });
 
 app.get("/getemojis", async (req, res) => {

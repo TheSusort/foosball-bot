@@ -1,5 +1,6 @@
 const {db} = require("../../firebase");
 const {sendSlackMessage} = require("../services/helpers");
+const {updateSlackMessage} = require("../services/slack");
 const {CLIENT_URL} = require("../../config");
 const {getTeamColors} = require("../services/colors");
 
@@ -81,7 +82,110 @@ const buildScoringBlocks = async () => {
         },
     ];
 
-    sendSlackMessage(scoringBlocks);
+    const response = await sendSlackMessage(scoringBlocks);
+
+    // Store the message timestamp in the database for later updates
+    if (response && response.ts) {
+        await db.ref("current_game/scoring_message_ts").set(response.ts);
+    }
+};
+
+/**
+ * Updates the scoring blocks with the current score
+ * @return {Promise<void>}
+ */
+const updateScoringBlocks = async () => {
+    try {
+        // Get the stored message timestamp
+        const tsSnapshot = await db.ref("current_game/scoring_message_ts")
+            .once("value");
+        const messageTs = tsSnapshot.val();
+
+        if (!messageTs) {
+            console.log("No scoring message timestamp found");
+            return;
+        }
+
+        const currentScore = await getCurrentScore();
+        const colors = getTeamColors();
+
+        // Build the blocks (same structure as buildScoringBlocks)
+        const scoringBlocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*CURRENT GAME*",
+                },
+            },
+            {
+                "type": "divider",
+            },
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": currentScore,
+                    "emoji": true,
+                },
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Click the buttons below to " +
+                        "register scores in realtime.",
+                },
+                "accessory": {
+                    "type": "button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Realtime View",
+                        "emoji": true,
+                    },
+                    "value": "click_me_123",
+                    "url": CLIENT_URL + "/current-match",
+                    "action_id": "button-action",
+                },
+            },
+            {
+                "type": "divider",
+            },
+        ];
+
+        // If game is won, don't include the action buttons
+        if (currentScore.indexOf("WON") === -1) {
+            scoringBlocks.push({
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": `Score ${colors.team1.name}`,
+                            "emoji": true,
+                        },
+                        "value": "score_blue",
+                        "action_id": "actionId-0",
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": `Score ${colors.team2.name}`,
+                            "emoji": true,
+                        },
+                        "value": "score_red",
+                        "action_id": "actionId-1",
+                    },
+                ],
+            });
+        }
+
+        await updateSlackMessage(messageTs, scoringBlocks);
+    } catch (error) {
+        console.error("Error updating scoring blocks:", error);
+    }
 };
 
 /**
@@ -166,6 +270,7 @@ const getCurrentGame = async () => {
 
 module.exports = {
     buildScoringBlocks,
+    updateScoringBlocks,
     scoreBlue,
     scoreRed,
     getCurrentScore,

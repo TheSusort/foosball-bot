@@ -80,7 +80,7 @@ const handleScore = async (text, teams, user) => {
         );
 
         let scoreText = scores[0] + " - " +
-            scores[1] + " :slackball::clap_gif:";
+            scores[1] + " :cool-doge::catjam:";
         if (parseInt(scores[0]) > parseInt(scores[1])) {
             scoreText += buildResultMessage(teams[0]);
         } else {

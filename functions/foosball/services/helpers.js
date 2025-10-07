@@ -582,6 +582,9 @@ const shuffle = (array) => {
  * @return {string}
  */
 const prepareUserIdForMessage = (userId) => {
+    if (userId === "Slæckball") {
+        return ":typingcat:";
+    }
     return "<@" + userId + ">";
 };
 

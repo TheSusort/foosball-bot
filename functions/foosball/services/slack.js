@@ -5,16 +5,30 @@ const slack = new WebClient(SLACK_BOT_TOKEN);
 
 const sendSlackMessageViaAPI = async (message) => {
     if (typeof message === "string") {
-        await slack.chat.postMessage({
+        return await slack.chat.postMessage({
             text: message,
             channel: SLACK_CHANNEL_ID,
         });
     } else {
-        await slack.chat.postMessage({
+        return await slack.chat.postMessage({
             text: "fallback text",
             blocks: message,
             channel: SLACK_CHANNEL_ID,
         });
+    }
+};
+
+const updateSlackMessage = async (timestamp, blocks) => {
+    try {
+        return await slack.chat.update({
+            channel: SLACK_CHANNEL_ID,
+            ts: timestamp,
+            text: "fallback text",
+            blocks: blocks,
+        });
+    } catch (error) {
+        console.error("Failed to update Slack message:", error);
+        return null;
     }
 };
 
@@ -72,6 +86,7 @@ const getChannelMessageList = async () => {
 
 module.exports = {
     sendSlackMessageViaAPI,
+    updateSlackMessage,
     getEmojis,
     getUserProfile,
     getBotUserId,

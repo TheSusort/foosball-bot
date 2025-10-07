@@ -10,9 +10,8 @@ const getCurrentEnv = () => import.meta.env.DEV ? 'development' : 'production';
 export const getUserData = async () => {
     const env = getCurrentEnv();
     const url = serverUrl[env] + "getusers";
-    console.log('Fetching users from:', url, 'Environment:', env);
+
     return await axios.get(url).then((response) => {
-        console.log('Users response:', response.data);
         return response.data
     }).catch((error) => {
         console.error('Error fetching users:', error);
@@ -22,9 +21,8 @@ export const getUserData = async () => {
 export const getGamesData = async () => {
     const env = getCurrentEnv();
     const url = serverUrl[env] + "getgames";
-    console.log('Fetching games from:', url, 'Environment:', env);
+
     return await axios.get(url).then((response) => {
-        console.log('Games response:', response.data);
         return response.data
     }).catch((error) => {
         console.error('Error fetching games:', error);

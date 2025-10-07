@@ -220,7 +220,7 @@ const calculateOdds = async () => {
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "Placing bets :slackball:",
+                    "text": "Placing bets :bowtie:",
                     "emoji": true,
                 },
             },
@@ -243,7 +243,7 @@ const calculateOdds = async () => {
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": "Active odds :pepog:",
+                    "text": "Active odds :excuseme:",
                     "emoji": true,
                 },
             },

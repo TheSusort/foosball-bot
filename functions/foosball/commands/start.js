@@ -50,7 +50,53 @@ const handleStart = async (user, isSingle) => {
  * @return {Promise<void>}
  */
 const handleForceStart = async (userId) => {
+    // Check if game is already started
+    if (getStarted()) {
+        const eyesightInsults = [
+            "Have you considered getting your eyes checked? " +
+            "The game's already started, genius.",
+            "Might want to clean those glasses... " +
+            "or get a new prescription. Game's already on.",
+            "I know you can't see the future, " +
+            "but can you at least see the present? Game's literally happening.",
+            "Did you miss the memo? Or just can't read? " +
+            "Game already started, Einstein.",
+            "Maybe invest in some binoculars?",
+            "Congratulations on discovering the 'force start' command! " +
+            "Too bad the game already started. Better luck next time, champ.",
+            "Oh wow, what a brilliant idea! " +
+            "Except the game is already in progress.",
+            "Is this a vision test? Because you're failing. " +
+            "Game's already started.",
+            "Breaking news: Local player discovers game already started. " +
+            "Optometrists everywhere weep.",
+        ];
+        sendSlackMessage(pickRandomFromArray(eyesightInsults));
+        return;
+    }
+
     const joined = await getJoined();
+
+    // Check if the user is actually in the game
+    const userInGame = joined.some((user) => user.userId === userId);
+    if (!userInGame) {
+        const notInGameInsults = [
+            "You can't force start a game you're not even in, genius.",
+            "Interesting strategy: trying to start a game you didn't join. " +
+            "Bold. Stupid. But bold.",
+            "Did you think this was a spectator sport? Join first, then talk.",
+            "Imagine having the audacity " +
+            "to force start a game you're not in. " +
+            "Couldn't be me.",
+            "Oh, you want to start the game? Cool. Join it first, " +
+            "you absolute walnut.",
+            "Sorry, this is for players only. " +
+            "Maybe try actually joining next time?",
+        ];
+        sendSlackMessage(pickRandomFromArray(notInGameInsults));
+        return;
+    }
+
     joined.map((user) => {
         if (user.userId === userId) {
             user.isSingle = true;

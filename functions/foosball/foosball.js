@@ -70,9 +70,9 @@ const handleCommands = async (text, user) => {
         await updateExp(user, "game");
         break;
 
-    case /^help/i.test(text):
+    case /^help$/i.test(text):
         sendSlackMessage(
-            "<@" + user + "> requested help :lulw: \n",
+            "<@" + user + "> requested help :gopher_dance: \n",
         );
         generateHelpMessage();
         break;
