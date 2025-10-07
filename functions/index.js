@@ -5,6 +5,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const {db} = require("./firebase");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const {handleCommands} = require("./foosball/foosball");
 const {handleResult, finishGame} = require("./foosball/commands/result");
 const {
@@ -27,9 +28,42 @@ const {getSpicyMemeAsImage} = require("./foosball/services/memes");
 
 const app = express();
 
+// Rate limiter for scoring endpoints (most critical)
+// Allow 1 score per 3 seconds per IP
+const scoringLimiter = rateLimit({
+    windowMs: 3000, // 3 seconds
+    max: 1, // 1 request per window
+    message: {error: "Too many scoring requests, please slow down"},
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Rate limiter for read endpoints
+// Allow 1 request per 5 seconds per IP
+const readLimiter = rateLimit({
+    windowMs: 5000, // 5 seconds
+    max: 1,
+    message: {error: "Too many requests, please try again later"},
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// General rate limiter for all other endpoints
+// Allow 100 requests per minute per IP
+const generalLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 100,
+    message: {error: "Too many requests, please try again later"},
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cors());
+
+// Apply general rate limiter to all routes
+app.use(generalLimiter);
 
 app.post("/game", async (req, res) => {
     // Handle Slack URL verification challenge
@@ -218,7 +252,7 @@ app.post("/manual-match", async (req, res) => {
     }
 });
 
-app.get("/getusers", async (req, res) => {
+app.get("/getusers", readLimiter, async (req, res) => {
     try {
         if (req.query.userid) {
             const ref = db.ref("users/" + req.query.userid);
@@ -243,7 +277,7 @@ app.get("/getusers", async (req, res) => {
     }
 });
 
-app.get("/getgames", async (req, res) => {
+app.get("/getgames", readLimiter, async (req, res) => {
     try {
         const ref = db.ref("games");
         const snapshot = await ref.once("value");
@@ -258,7 +292,7 @@ app.get("/getgames", async (req, res) => {
     }
 });
 
-app.get("/getcurrentgame", async (req, res) => {
+app.get("/getcurrentgame", readLimiter, async (req, res) => {
     const result = await getCurrentGame();
     if (result.error) {
         res.status(500).send(result.error);
@@ -267,12 +301,12 @@ app.get("/getcurrentgame", async (req, res) => {
     res.json(result);
 });
 
-app.get("/getcurrentscore", async (req, res) => {
+app.get("/getcurrentscore", readLimiter, async (req, res) => {
     const result = await getCurrentScore();
     res.json(result);
 });
 
-app.post("/scoreblue", async (req, res) => {
+app.post("/scoreblue", scoringLimiter, async (req, res) => {
     await scoreBlue();
     const updatedScore = await getCurrentScore();
 
@@ -287,7 +321,7 @@ app.post("/scoreblue", async (req, res) => {
     res.json(updatedScore);
 });
 
-app.post("/scorered", async (req, res) => {
+app.post("/scorered", scoringLimiter, async (req, res) => {
     await scoreRed();
     const updatedScore = await getCurrentScore();
 
