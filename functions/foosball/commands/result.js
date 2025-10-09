@@ -48,7 +48,7 @@ const handleScore = async (text, teams, user) => {
     const errorString = prepareUserIdForMessage(user) +
         " is a great QA worker: ";
 
-    // Check if the user is the bot/server (don't send messages for automated scoring)
+    // Check if the user is the bot/server
     const isBotUser = user === "Slæckball";
 
     if (scores.length !== 2) {
@@ -97,7 +97,8 @@ const handleScore = async (text, teams, user) => {
         }
         if (!isBotUser) {
             sendSlackMessage(
-                prepareUserIdForMessage(user) + " is registering score: " + text,
+                prepareUserIdForMessage(user) +
+                " is registering score: " + text,
             );
         }
         sendSlackMessage(scoreText);

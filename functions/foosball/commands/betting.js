@@ -159,10 +159,6 @@ const calculateOdds = async () => {
     const currentGame = await getCurrentGame();
     const colors = getTeamColors();
 
-    const odds = {
-        [colors.team1.color]: await getBlueWinChance() - 0.5,
-        [colors.team2.color]: 0,
-    };
     const teamLengths = [];
     const ratings = [];
 
@@ -182,30 +178,51 @@ const calculateOdds = async () => {
         }
     }
 
-    // calculate winning chance based on difference in rating
+    // calculate winning chance based on difference in rating (ELO formula)
     const ratio = (ratings[0] - ratings[1]) / 400;
     const expectedScores = [1 / (1 + (Math.pow(10, -1 * ratio)))];
     expectedScores.push(1 - expectedScores[0]);
 
-    console.log(expectedScores, odds);
+    const odds = {
+        [colors.team1.color]: expectedScores[0],
+        [colors.team2.color]: expectedScores[1],
+    };
 
-    // subtract chance of winning as solo from 50% and
-    // multiply by a set adjusting factor.
-    const handicap = (await getSoloWinChance() - 0.5) * 3;
-    if (Math.max(...teamLengths) === 2 && Math.min(...teamLengths) === 1) {
+    console.log("Base odds from ELO:", expectedScores);
+
+    // Apply handicap for 2v1 games based on historical solo performance
+    // Cap the handicap multiplier to prevent extreme swings
+    const is2v1 = Math.max(...teamLengths) === 2 && Math.min(...teamLengths) === 1;
+    if (is2v1) {
+        const soloWinRate = await getSoloWinChance();
+        // Use capped handicap: max adjustment of ±0.15 (was ±0.45 with *3 multiplier)
+        const handicap = Math.max(-0.15, Math.min(0.15, (soloWinRate - 0.5) * 1.5));
+        console.log(`2v1 detected. Solo win rate: ${soloWinRate.toFixed(2)}, handicap: ${handicap.toFixed(2)}`);
+
         if (teamLengths[0] === 1) {
-            odds[colors.team1.color] += expectedScores[0] + handicap -
-                odds[colors.team2.color];
+            // Team 1 is solo
+            odds[colors.team1.color] += handicap;
             odds[colors.team2.color] = 1 - odds[colors.team1.color];
         } else {
-            odds[colors.team2.color] += 1 - expectedScores[0] + handicap -
-                odds[colors.team1.color];
+            // Team 2 is solo
+            odds[colors.team2.color] += handicap;
             odds[colors.team1.color] = 1 - odds[colors.team2.color];
         }
-    } else {
-        odds[colors.team1.color] += expectedScores[0];
-        odds[colors.team2.color] += 1 - odds[colors.team1.color];
     }
+
+    // Clamp odds to valid range [0.05, 0.95] to prevent extreme/negative values
+    for (const team in odds) {
+        if ({}.hasOwnProperty.call(odds, team)) {
+            odds[team] = Math.max(0.05, Math.min(0.95, odds[team]));
+        }
+    }
+
+    // Normalize to ensure they sum to 1.0
+    const total = odds[colors.team1.color] + odds[colors.team2.color];
+    odds[colors.team1.color] = odds[colors.team1.color] / total;
+    odds[colors.team2.color] = odds[colors.team2.color] / total;
+
+    console.log("Final odds:", odds);
 
     // round winning chances
     for (const odd in odds) {
