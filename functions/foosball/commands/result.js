@@ -48,12 +48,19 @@ const handleScore = async (text, teams, user) => {
     const errorString = prepareUserIdForMessage(user) +
         " is a great QA worker: ";
 
+    // Check if the user is the bot/server (don't send messages for automated scoring)
+    const isBotUser = user === "Slæckball";
+
     if (scores.length !== 2) {
-        sendSlackMessage(errorString + text + "has to be two scores");
+        if (!isBotUser) {
+            sendSlackMessage(errorString + text + "has to be two scores");
+        }
         return;
     }
     if (scores[0] === scores[1]) {
-        sendSlackMessage(errorString + text + " can't be a tie");
+        if (!isBotUser) {
+            sendSlackMessage(errorString + text + " can't be a tie");
+        }
         return;
     }
 
@@ -66,9 +73,11 @@ const handleScore = async (text, teams, user) => {
             parseInt(score) < 0 ||
             parseInt(score) > 10
         ) {
-            sendSlackMessage(
-                errorString + text + " has to be numbers equal or below 10",
-            );
+            if (!isBotUser) {
+                sendSlackMessage(
+                    errorString + text + " has to be numbers equal or below 10",
+                );
+            }
             return;
         }
     }
@@ -86,13 +95,17 @@ const handleScore = async (text, teams, user) => {
         } else {
             scoreText += buildResultMessage(teams[1]);
         }
-        sendSlackMessage(
-            prepareUserIdForMessage(user) + " is registering score: " + text,
-        );
+        if (!isBotUser) {
+            sendSlackMessage(
+                prepareUserIdForMessage(user) + " is registering score: " + text,
+            );
+        }
         sendSlackMessage(scoreText);
         stopGame();
     } else {
-        sendSlackMessage(errorString + text + " you're not finished");
+        if (!isBotUser) {
+            sendSlackMessage(errorString + text + " you're not finished");
+        }
     }
 };
 

@@ -26,7 +26,7 @@ const CurrentMatch = () => {
 
     useEffect(() => {
         getCurrentScore()
-        const interval = setInterval(() => getCurrentScore(), 3000)
+        const interval = setInterval(() => getCurrentScore(), 5000)
         return () => clearInterval(interval)
     })
 
