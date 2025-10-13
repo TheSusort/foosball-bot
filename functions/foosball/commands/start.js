@@ -120,7 +120,6 @@ const handleForceStart = async (userId) => {
  */
 const startGame = async (user) => {
     timeLeft(120000);
-    setStarted(true);
 
     sendSlackMessage(
         "Game started by " +
@@ -148,11 +147,11 @@ const shuffleTeams = async () => {
     let teams;
     let joined = await getJoined();
     const singles = getSingles();
-    // split into teams and shuffle, save as current game
-    if (singles.length === 1 && joined.length === 3) {
+
+    // Handle games with a single player (force start scenarios: 2v1 or 1v1)
+    if (singles.length === 1) {
         console.log("found singles", singles);
-        // if single, then loop through single,
-        // find index in joined, and set these to own team
+        // Find the player marked as single
         const singleIndex = joined.findIndex(
             (player) => {
                 return player.isSingle;
@@ -166,6 +165,7 @@ const shuffleTeams = async () => {
             shuffle(withoutSingle),
         ];
     } else {
+        // Regular shuffle for non-single games (2v2, etc.)
         joined = shuffle(joined);
         const half = Math.ceil(joined.length / 2);
 
@@ -219,6 +219,7 @@ const lockInGame = async (teams) => {
         await gifSearchAsImage(pickRandomFromArray(gameStartGifs)),
     );
 
+    setStarted(true);
     await db.ref("current_score").set([0, 0]);
     await buildScoringBlocks();
     await calculateOdds();

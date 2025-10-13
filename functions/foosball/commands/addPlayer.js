@@ -3,7 +3,7 @@ const {
     getMaxJoined,
     setMaxJoined, pushToJoined, pushToSingles,
 } = require("../services/shared");
-const {sendSlackMessage, timeLeft} = require("../services/helpers");
+const {sendSlackMessage} = require("../services/helpers");
 /**
  * Adds player to game
  * @param {string} playerName
@@ -31,8 +31,7 @@ const addPlayerToGame = async (playerName, isSingle) => {
                 "<@" + playerName + ">" +
                 " joined" + (isSingle ? " as single" : "") + ", " +
                 (maxJoined - joined.length) +
-                " space(s) left" +
-                ", time left: " + timeLeft(),
+                " space(s) left",
             );
         }
         return false;

@@ -7,7 +7,7 @@ const {
     coins,
 } = require("../services/helpers");
 const {getCurrentGame, getCurrentScore} = require("./scoring");
-const {getSoloWinChance, getBlueWinChance} = require("../stats/stats");
+const {getSoloWinChance} = require("../stats/stats");
 const {getTeamColors} = require("../services/colors");
 
 const registerBet = async (text, userId) => {
@@ -192,12 +192,14 @@ const calculateOdds = async () => {
 
     // Apply handicap for 2v1 games based on historical solo performance
     // Cap the handicap multiplier to prevent extreme swings
-    const is2v1 = Math.max(...teamLengths) === 2 && Math.min(...teamLengths) === 1;
+    const is2v1 = Math.max(...teamLengths) === 2 &&
+        Math.min(...teamLengths) === 1;
     if (is2v1) {
         const soloWinRate = await getSoloWinChance();
-        // Use capped handicap: max adjustment of ±0.15 (was ±0.45 with *3 multiplier)
-        const handicap = Math.max(-0.15, Math.min(0.15, (soloWinRate - 0.5) * 1.5));
-        console.log(`2v1 detected. Solo win rate: ${soloWinRate.toFixed(2)}, handicap: ${handicap.toFixed(2)}`);
+        // Use capped handicap: max adjustment of ±0.15
+        // (was ±0.45 with *3 multiplier)
+        const handicap =
+            Math.max(-0.15, Math.min(0.15, (soloWinRate - 0.5) * 1.5));
 
         if (teamLengths[0] === 1) {
             // Team 1 is solo

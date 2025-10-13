@@ -252,7 +252,7 @@ app.post("/manual-match", async (req, res) => {
     }
 });
 
-app.get("/getusers", readLimiter, async (req, res) => {
+app.get("/getusers", async (req, res) => {
     try {
         if (req.query.userid) {
             const ref = db.ref("users/" + req.query.userid);
@@ -277,7 +277,7 @@ app.get("/getusers", readLimiter, async (req, res) => {
     }
 });
 
-app.get("/getgames", readLimiter, async (req, res) => {
+app.get("/getgames", async (req, res) => {
     try {
         const ref = db.ref("games");
         const snapshot = await ref.once("value");
