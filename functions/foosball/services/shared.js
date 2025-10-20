@@ -40,8 +40,10 @@ const getJoined = async () => {
     }
 };
 
-const setJoined = (newJoined) => {
-    db.ref("joined").set(newJoined).then(() => joined = newJoined);
+const setJoined = async (newJoined) => {
+    await db.ref("joined").set(newJoined);
+    joined = newJoined;
+    setSinglesFromJoined(joined);
 };
 
 const pushToJoined = async (user) => {

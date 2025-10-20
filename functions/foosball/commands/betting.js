@@ -191,22 +191,30 @@ const calculateOdds = async () => {
     console.log("Base odds from ELO:", expectedScores);
 
     // Apply handicap for 2v1 games based on historical solo performance
-    // Cap the handicap multiplier to prevent extreme swings
+    // The handicap adjusts the DUO team's odds based on how solo players perform historically
     const is2v1 = Math.max(...teamLengths) === 2 &&
         Math.min(...teamLengths) === 1;
     if (is2v1) {
         const soloWinRate = await getSoloWinChance();
-        // Use capped handicap: max adjustment of ±0.15
-        // (was ±0.45 with *3 multiplier)
+        // Calculate handicap: if solos win more than 50%, boost duo team (negative handicap for solo)
+        // If solos win less than 50%, boost solo team (positive handicap for solo)
+        // Capped at ±0.15 to prevent extreme swings
         const handicap =
-            Math.max(-0.15, Math.min(0.15, (soloWinRate - 0.5) * 1.5));
+            Math.max(-0.15, Math.min(0.15, (0.5 - soloWinRate) * 1.5));
+
+        console.log(
+            `2v1 detected. Solo win rate: ${(soloWinRate * 100).toFixed(1)}%, ` +
+            `handicap: ${handicap.toFixed(3)}`,
+        );
 
         if (teamLengths[0] === 1) {
-            // Team 1 is solo
+            // Team 1 is solo, team 2 is duo
+            // Apply handicap to SOLO team
             odds[colors.team1.color] += handicap;
             odds[colors.team2.color] = 1 - odds[colors.team1.color];
         } else {
-            // Team 2 is solo
+            // Team 2 is solo, team 1 is duo
+            // Apply handicap to SOLO team
             odds[colors.team2.color] += handicap;
             odds[colors.team1.color] = 1 - odds[colors.team2.color];
         }

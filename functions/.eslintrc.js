@@ -9,8 +9,9 @@ module.exports = {
         "google",
     ],
     rules: {
-        quotes: ["error", "double"],
-        indent: ["error", 4],
+        "quotes": ["error", "double"],
+        "indent": ["error", 4],
+        "max-len": ["error", {code: 120}],
     },
     parserOptions: {
         "ecmaVersion": 2017,
