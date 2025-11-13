@@ -21,7 +21,12 @@ const {
 } = require("./services/shared");
 const {timeLeft} = require("./services/helpers");
 const {getUser, updateExp} = require("./services/users");
-const {buildScoringBlocks} = require("./commands/scoring");
+const {
+    buildScoringBlocks,
+    subtractBlue,
+    subtractRed,
+    updateScoringBlocks,
+} = require("./commands/scoring");
 const {gifSearchAsImage} = require("./services/giphy");
 const {getSpicyMemeAsImage} = require("./services/memes");
 const {getChannelMessageList} = require("./services/slack");
@@ -114,6 +119,20 @@ const handleCommands = async (text, user) => {
 
     case /^test scoring$/i.test(text):
         await buildScoringBlocks();
+        break;
+
+    case /^subtract blue$/i.test(text):
+        // eslint-disable-next-line no-case-declarations
+        const subtractBlueResult = await subtractBlue();
+        await updateScoringBlocks();
+        sendSlackMessage(subtractBlueResult);
+        break;
+
+    case /^subtract red$/i.test(text):
+        // eslint-disable-next-line no-case-declarations
+        const subtractRedResult = await subtractRed();
+        await updateScoringBlocks();
+        sendSlackMessage(subtractRedResult);
         break;
 
     case /^bet.*/i.test(text):

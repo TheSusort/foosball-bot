@@ -208,6 +208,28 @@ const scoreBlue = async () => {
 };
 
 /**
+ * Subtracts a goal from blue team
+ * @return {Promise<string>}
+ */
+const subtractBlue = async () => {
+    const scoreRef = db.ref("current_score/0");
+    const snapshot = await scoreRef.once("value");
+    const currentScore = snapshot.val() || 0;
+
+    // Prevent negative scores
+    if (currentScore <= 0) {
+        return "Cannot subtract - blue team score is already 0";
+    }
+
+    const updates = {
+        "current_score/0": currentScore - 1,
+    };
+    return await db.ref().update(updates).then(() => {
+        return "Subtracted goal from blue";
+    });
+};
+
+/**
  *
  * @return {Promise<string>}
  */
@@ -222,6 +244,28 @@ const scoreRed = async () => {
     };
     return await db.ref().update(updates).then(() => {
         return "Go red";
+    });
+};
+
+/**
+ * Subtracts a goal from red team
+ * @return {Promise<string>}
+ */
+const subtractRed = async () => {
+    const scoreRef = db.ref("current_score/1");
+    const snapshot = await scoreRef.once("value");
+    const currentScore = snapshot.val() || 0;
+
+    // Prevent negative scores
+    if (currentScore <= 0) {
+        return "Cannot subtract - red team score is already 0";
+    }
+
+    const updates = {
+        "current_score/1": currentScore - 1,
+    };
+    return await db.ref().update(updates).then(() => {
+        return "Subtracted goal from red";
     });
 };
 
@@ -273,6 +317,8 @@ module.exports = {
     updateScoringBlocks,
     scoreBlue,
     scoreRed,
+    subtractBlue,
+    subtractRed,
     getCurrentScore,
     getCurrentGame,
 };

@@ -2,7 +2,6 @@ const {
     sendSlackMessage,
     shuffle,
     prepareUserIdForMessage,
-    timeLeft,
     gameStartGifs,
     pickRandomFromArray,
 } = require("./../services/helpers");
@@ -51,7 +50,7 @@ const handleStart = async (user, isSingle) => {
  */
 const handleForceStart = async (userId) => {
     // Check if game is already started
-    if (getStarted()) {
+    /* if (getStarted()) {
         const eyesightInsults = [
             "Have you considered getting your eyes checked? " +
             "The game's already started, genius.",
@@ -73,11 +72,12 @@ const handleForceStart = async (userId) => {
         ];
         sendSlackMessage(pickRandomFromArray(eyesightInsults));
         return;
-    }
+    }*/
 
     const joined = await getJoined();
 
     // Check if the user is actually in the game
+    /*
     const userInGame = joined.some((user) => user.userId === userId);
     if (!userInGame) {
         const notInGameInsults = [
@@ -95,7 +95,7 @@ const handleForceStart = async (userId) => {
         ];
         sendSlackMessage(pickRandomFromArray(notInGameInsults));
         return;
-    }
+    }*/
 
     joined.map((user) => {
         if (user.userId === userId) {
@@ -119,13 +119,9 @@ const handleForceStart = async (userId) => {
  * @return {Promise<void>}
  */
 const startGame = async (user) => {
-    timeLeft(120000);
-    setStarted(true);
-
     sendSlackMessage(
         "Game started by " +
         "<@" + user + ">" +
-        " time left: " + timeLeft() +
         ", HURRY <!channel> write `join` or `join single` to join the game",
     );
 };
@@ -219,6 +215,7 @@ const lockInGame = async (teams) => {
         await gifSearchAsImage(pickRandomFromArray(gameStartGifs)),
     );
 
+    setStarted(true);
     await db.ref("current_score").set([0, 0]);
     await buildScoringBlocks();
     await calculateOdds();

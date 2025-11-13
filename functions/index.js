@@ -20,6 +20,8 @@ const {
     getCurrentScore,
     scoreBlue,
     scoreRed,
+    subtractBlue,
+    subtractRed,
     getCurrentGame,
     updateScoringBlocks,
 } = require("./foosball/commands/scoring");
@@ -334,6 +336,26 @@ app.post("/scorered", scoringLimiter, async (req, res) => {
     }
 
     res.json(updatedScore);
+});
+
+app.post("/subtractblue", scoringLimiter, async (req, res) => {
+    const result = await subtractBlue();
+    const updatedScore = await getCurrentScore();
+
+    // Update the Slack scoring message
+    await updateScoringBlocks();
+
+    res.json({message: result, score: updatedScore});
+});
+
+app.post("/subtractred", scoringLimiter, async (req, res) => {
+    const result = await subtractRed();
+    const updatedScore = await getCurrentScore();
+
+    // Update the Slack scoring message
+    await updateScoringBlocks();
+
+    res.json({message: result, score: updatedScore});
 });
 
 app.get("/getemojis", async (req, res) => {
