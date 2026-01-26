@@ -35,6 +35,7 @@ const {
     calculateOdds,
     handleWallet,
 } = require("./commands/betting");
+const {handleLeaderboard} = require("./commands/leaderboard");
 const {getSoloWinChance, getBlueWinChance} = require("./stats/stats");
 
 const handleCommands = async (text, user) => {
@@ -145,6 +146,10 @@ const handleCommands = async (text, user) => {
 
     case /^wallet$/i.test(text):
         await handleWallet(user);
+        break;
+
+    case /^leaderboard$/i.test(text):
+        await handleLeaderboard();
         break;
 
     case /^gif/i.test(text):
