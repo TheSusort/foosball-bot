@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-'on':
+on:
   push:
     branches:
       - main
@@ -10,11 +10,18 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: cd client && npm install && npm run build
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+        working-directory: client
+        env:
+          # Same values as the live build from 2025-10-07; all public.
+          VITE_API_URL_LIVE: https://us-central1-foosball-bot-85377.cloudfunctions.net/app/
+          VITE_TEAM_2_COLOR: yellow
+          VITE_TEAM_2_NAME: Yellows
+          VITE_TEAM_2_CLASSES: bg-yellow-500 text-black
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FOOSBALL_BOT_1B613 }}'
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FOOSBALL_BOT_85377 }}
           channelId: live
-          projectId: foosball-bot-1b613
+          projectId: foosball-bot-85377

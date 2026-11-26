@@ -1,6 +1,8 @@
 // server/index.js
 
-const functions = require("firebase-functions");
+// v1 = gen1 HTTPS function. Keep it: gen2 would change the function URL
+// that Slack, the scoring buttons and the client all call.
+const functions = require("firebase-functions/v1");
 const express = require("express");
 const bodyParser = require("body-parser");
 const {db} = require("./firebase");
@@ -27,6 +29,23 @@ const {
 } = require("./foosball/commands/scoring");
 const {gifSearchAsImage} = require("./foosball/services/giphy");
 const {getSpicyMemeAsImage} = require("./foosball/services/memes");
+const {
+    verifySlackRequest,
+    requireManualMatchKey,
+    isSlackResponseUrl,
+} = require("./foosball/services/requestAuth");
+const {DEVELOPMENT_MODE} = require("./config");
+
+const isDevelopment = Number(DEVELOPMENT_MODE) === 1;
+
+// Debug and test-data routes exist only in development mode.
+const devOnly = (req, res, next) => {
+    if (!isDevelopment) {
+        res.status(404).send("Not found");
+        return;
+    }
+    next();
+};
 
 const app = express();
 
@@ -67,7 +86,7 @@ app.use(cors());
 // Apply general rate limiter to all routes
 app.use(generalLimiter);
 
-app.post("/game", async (req, res) => {
+app.post("/game", verifySlackRequest, async (req, res) => {
     // Handle Slack URL verification challenge
     if (req.body.challenge) {
         res.status(200).send(req.body.challenge);
@@ -98,7 +117,7 @@ app.post("/game", async (req, res) => {
     res.send("ok");
 });
 
-app.post("/result", (req, res) => {
+app.post("/result", verifySlackRequest, (req, res) => {
     // register teams and result, and clear everything for new game.
     console.log("result request: ", req.body.text);
     handleResult(req.body.text, req.body.user_id).then((r) => res.send(r));
@@ -110,24 +129,24 @@ app.post("/time", (req, res) => {
     res.send(timeLeft());
 });
 
-app.post("/help", async (req, res) => {
+app.post("/help", verifySlackRequest, async (req, res) => {
     await handleCommands("help", req.body.user_id);
     res.json("ok");
 });
 
-app.post("/username", (req, res) => {
+app.post("/username", verifySlackRequest, (req, res) => {
     console.log("username request: ", req.body.user_id, req.body.text);
     updateUserName(req.body.user_id, req.body.text).then(
         (r) => res.send("updated to username to " + String(req.body.text)),
     );
 });
 
-app.post("/meme", async (req, res) => {
+app.post("/meme", verifySlackRequest, async (req, res) => {
     sendSlackMessage(await getSpicyMemeAsImage());
     res.json("ok");
 });
 
-app.post("/add", (req, res) => {
+app.post("/add", devOnly, (req, res) => {
     if (req.body.text === "2v1") {
         handleCommands("start", "test");
         handleCommands("join single", "test2");
@@ -146,7 +165,7 @@ app.post("/add", (req, res) => {
     res.json("ok");
 });
 
-app.post("/manual-match", async (req, res) => {
+app.post("/manual-match", requireManualMatchKey, async (req, res) => {
     try {
         const {team1, team2, score} = req.body;
 
@@ -257,6 +276,11 @@ app.post("/manual-match", async (req, res) => {
 app.get("/getusers", async (req, res) => {
     try {
         if (req.query.userid) {
+            // Slack user IDs only; stops paths like "../games".
+            if (!/^[A-Za-z0-9_-]+$/.test(String(req.query.userid))) {
+                res.status(400).json({error: "Invalid userid"});
+                return;
+            }
             const ref = db.ref("users/" + req.query.userid);
             const snapshot = await ref.once("value");
             if (snapshot.val()) {
@@ -371,7 +395,7 @@ app.get("/getbotid", async (req, res) => {
     }
 });
 
-app.get("/debug", (req, res) => {
+app.get("/debug", devOnly, (req, res) => {
     res.json({
         databaseUrl: process.env.DATABASE_URL,
         hasEnv: !!process.env.DATABASE_URL,
@@ -379,7 +403,7 @@ app.get("/debug", (req, res) => {
     });
 });
 
-app.get("/testdb", async (req, res) => {
+app.get("/testdb", devOnly, async (req, res) => {
     try {
         const {db} = require("./firebase");
         const snapshot = await db.ref("test").once("value");
@@ -389,8 +413,19 @@ app.get("/testdb", async (req, res) => {
     }
 });
 
-app.post("/interactivity", async (req, res) => {
-    const parsedBody = JSON.parse(req.body.payload);
+app.post("/interactivity", verifySlackRequest, async (req, res) => {
+    let parsedBody;
+    try {
+        parsedBody = JSON.parse(req.body.payload);
+    } catch (e) {
+        res.status(400).send("Bad payload");
+        return;
+    }
+    if (!parsedBody || !parsedBody.message || !parsedBody.actions ||
+        !isSlackResponseUrl(parsedBody.response_url)) {
+        res.status(400).send("Bad payload");
+        return;
+    }
     const payload = parsedBody.message.blocks;
 
     console.log("interactivity ", parsedBody.user.id);

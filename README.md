@@ -33,7 +33,15 @@ FIREBASE_DB_URL_TEST=
 
 // api key for giphy
 GIPHY_API_KEY=
+
+// optional: when set, POST /manual-match requires it in the x-api-key header
+MANUAL_MATCH_API_KEY=
 ```
+
+`SLACK_SIGNING_SECRET` (Slack app → Basic Information → Signing Secret) turns on
+signature checks for the Slack endpoints (`/game`, `/interactivity`, `/result`,
+`/help`, `/username`, `/meme`). Without it they accept any caller, and the
+function logs a warning at startup.
 
 ## Running it
 
@@ -101,6 +109,7 @@ Register a match manually without going through the Slack game flow. Useful for 
 ```bash
 curl -X POST https://your-api-url.com/manual-match \
   -H "Content-Type: application/json" \
+  -H "x-api-key: $MANUAL_MATCH_API_KEY" \
   -d '{
     "team1": ["U123ABC", "U456DEF"],
     "team2": ["U789GHI"],
