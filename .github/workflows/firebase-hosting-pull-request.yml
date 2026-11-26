@@ -2,16 +2,27 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-'on': pull_request
+on: pull_request
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
 jobs:
   build_and_preview:
-    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd client && npm ci && npm run build
+      - run: npm ci && npm run build
+        working-directory: client
+        env:
+          # Same values as the live build from 2025-10-07; all public.
+          VITE_API_URL_LIVE: https://us-central1-foosball-bot-85377.cloudfunctions.net/app/
+          VITE_TEAM_2_COLOR: yellow
+          VITE_TEAM_2_NAME: Yellows
+          VITE_TEAM_2_CLASSES: bg-yellow-500 text-black
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FOOSBALL_BOT_1B613 }}'
-          projectId: foosball-bot-1b613
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FOOSBALL_BOT_85377 }}
+          projectId: foosball-bot-85377
