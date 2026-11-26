@@ -1,6 +1,8 @@
 // server/index.js
 
-const functions = require("firebase-functions");
+// v1 = gen1 HTTPS function. Keep it: gen2 would change the function URL
+// that Slack, the scoring buttons and the client all call.
+const functions = require("firebase-functions/v1");
 const express = require("express");
 const bodyParser = require("body-parser");
 const {db} = require("./firebase");
